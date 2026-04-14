@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320" fill="none">
+  <rect width="480" height="320" fill="#FEF3C7"/>
+  <rect x="78" y="58" width="324" height="204" rx="16" fill="#FDE68A"/>
+  <circle cx="196" cy="160" r="34" fill="#F59E0B"/>
+  <rect x="246" y="130" width="102" height="14" rx="7" fill="#B45309"/>
+  <rect x="246" y="156" width="82" height="14" rx="7" fill="#B45309"/>
+  <rect x="246" y="182" width="94" height="14" rx="7" fill="#B45309"/>
+  <text x="240" y="286" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" fill="#92400E">Foto Menu</text>
+</svg>
