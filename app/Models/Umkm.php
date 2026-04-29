@@ -43,6 +43,10 @@ class Umkm extends Model
         return $this->hasMany(Menu::class, 'id_umkm', 'id_umkm');
     }
 
+    public function menuSubmissions(){
+        return $this->hasMany(MenuSubmission::class, 'id_umkm', 'id_umkm');
+    }
+
     public function getFotoUmkmUrlAttribute(): string
     {
         if (!$this->foto_umkm || $this->foto_umkm === '-') {

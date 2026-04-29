@@ -19,6 +19,7 @@ Route::get('/map', [DataUmkmController::class, 'map'])->name('data-umkm.map');
 Route::post('/rating', [DataUmkmController::class, 'storeRating'])->name('rating.store');
 Route::get('/data-umkm', [DataUmkmController::class, 'index'])->name('data-umkm.index');
 Route::post('/umkm-submissions', [PublicUmkmSubmissionController::class, 'store'])->name('umkm-submissions.store');
+Route::post('/menu-submissions', [PublicUmkmSubmissionController::class, 'storeMenu'])->name('menu-submissions.store');
 
 Route::get('/dashboard', function () {
     return redirect()->route('admin.dashboard');
@@ -36,7 +37,6 @@ Route::prefix('admin')
         Route::resource('kelompok', KelompokAdminController::class);
         Route::resource('lokasi', LokasiAdminController::class);
         Route::resource('user', UserAdminController::class);
-
         Route::resource('rating', RatingAdminController::class)
             ->only(['index', 'show', 'destroy']);
 
@@ -44,6 +44,11 @@ Route::prefix('admin')
             ->name('submissions.approve');
         Route::patch('submissions/{submission}/reject', [AdminDashboardController::class, 'rejectSubmission'])
             ->name('submissions.reject');
+
+        Route::patch('menu-submissions/{menuSubmission}/approve', [AdminDashboardController::class, 'approveMenuSubmission'])
+            ->name('menu-submissions.approve');
+        Route::patch('menu-submissions/{menuSubmission}/reject', [AdminDashboardController::class, 'rejectMenuSubmission'])
+            ->name('menu-submissions.reject');
     });
 
 Route::middleware('auth')->group(function () {

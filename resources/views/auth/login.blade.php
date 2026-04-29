@@ -1,47 +1,125 @@
 <x-guest-layout>
-    <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <style>
+        /* From Uiverse.io by bociKond */
+        .form {
+          --bg-light: #efefef;
+          --bg-dark: #707070;
+          --clr: #58bc82;
+          --clr-alpha: #9c9c9c60;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+          width: 100%;
+          max-width: 300px;
+          margin: 0 auto; /* Tambahan agar form di tengah */
+        }
+
+        .form .input-span {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .form input[type="email"],
+        .form input[type="password"] {
+          border-radius: 0.5rem;
+          padding: 1rem 0.75rem;
+          width: 100%;
+          border: none;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background-color: var(--clr-alpha);
+          outline: 2px solid var(--bg-dark);
+          color: #333; /* Tambahan warna teks agar terbaca */
+        }
+
+        .form input[type="email"]:focus,
+        .form input[type="password"]:focus {
+          outline: 2px solid var(--clr);
+        }
+
+        .label {
+          align-self: flex-start;
+          color: var(--clr);
+          font-weight: 600;
+        }
+
+        .form .submit {
+          padding: 1rem 0.75rem;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          border-radius: 3rem;
+          background-color: var(--bg-dark);
+          color: var(--bg-light);
+          border: none;
+          cursor: pointer;
+          transition: all 300ms;
+          font-weight: 600;
+          font-size: 0.9rem;
+        }
+
+        .form .submit:hover {
+          background-color: var(--clr);
+          color: var(--bg-dark);
+        }
+
+        .span {
+          text-decoration: none;
+          color: var(--bg-dark);
+          font-size: 0.9rem;
+        }
+
+        .span a {
+          color: var(--clr);
+        }
+
+        /* Styling tambahan untuk checkbox Remember Me */
+        .remember-span {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          align-self: flex-start;
+        }
+    </style>
+
+    <form method="POST" action="{{ route('login') }}" class="form">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <span class="input-span">
+            <label for="email" class="label">Email</label>
+            <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" class="mt-1" />
+        </span>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <span class="input-span">
+            <label for="password" class="label">Password</label>
+            <input type="password" name="password" id="password" required autocomplete="current-password" />
+            <x-input-error :messages="$errors->get('password')" class="mt-1" />
+        </span>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+        <span class="remember-span span">
+            <input id="remember_me" type="checkbox" name="remember" style="accent-color: var(--clr);">
+            <label for="remember_me">{{ __('Remember me') }}</label>
+        </span>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+        @if (Route::has('password.request'))
+            <span class="span">
+                <a href="{{ route('password.request') }}">Forgot password?</a>
+            </span>
+        @endif
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+        <input class="submit" type="submit" value="Log in" />
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
+        @if (Route::has('register'))
+            <span class="span">Don't have an account? <a href="{{ route('register') }}">Sign up</a></span>
+        @endif
     </form>
 </x-guest-layout>

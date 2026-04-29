@@ -124,6 +124,7 @@
     <!-- UMKM Detail Panel -->
     @if ($selectedUmkm)
         <div id="umkm-detail-panel" class="umkm-detail-panel">
+            <div class="detail-sheet-handle"></div>
             <div class="detail-header">
                 <h4 class="mb-0">{{ $selectedUmkm->nama_umkm }}</h4>
                 <button type="button" class="custom-btn-close" onclick="closeDetailPanel()">
@@ -132,7 +133,8 @@
             </div>
             <div class="detail-content">
                 <div class="detail-section">
-                    <img src="{{ $selectedUmkm->foto_umkm_url }}" alt="Foto {{ $selectedUmkm->nama_umkm }}" class="detail-umkm-photo"
+                    <img src="{{ $selectedUmkm->foto_umkm_url }}" alt="Foto {{ $selectedUmkm->nama_umkm }}" class="detail-umkm-photo lightbox-trigger"
+                        onclick="openImageLightbox('{{ $selectedUmkm->foto_umkm_url }}', 'Foto {{ addslashes($selectedUmkm->nama_umkm) }}')"
                         onerror="this.onerror=null;this.src='{{ asset('images/default-umkm.svg') }}';">
                 </div>
 
@@ -215,22 +217,49 @@
 
                 <div class="detail-section">
                     <h6><i class="fas fa-utensils me-2"></i>Menu UMKM</h6>
-                    @if ($selectedUmkm->menu->isNotEmpty())
+                    @php
+                        $menuItems = $selectedUmkm->menu->filter(fn($menu) => !$menu->is_foto_daftar_menu);
+                        $menuGallery = $selectedUmkm->menu->filter(fn($menu) => $menu->is_foto_daftar_menu && $menu->foto_menu && $menu->foto_menu !== '-');
+                    @endphp
+
+                    @if ($menuItems->isNotEmpty())
                         <div class="menu-list d-grid gap-2">
-                            @foreach ($selectedUmkm->menu as $menu)
+                            @foreach ($menuItems as $menu)
                                 <div class="menu-item d-flex align-items-center gap-2">
-                                    <img src="{{ $menu->foto_menu_url }}" alt="Foto {{ $menu->nama_menu }}" class="menu-thumb"
+                                    <img src="{{ $menu->foto_menu_url }}" alt="Foto {{ $menu->nama_menu }}" class="menu-thumb lightbox-trigger"
+                                        onclick="openImageLightbox('{{ $menu->foto_menu_url }}', 'Foto {{ addslashes($menu->nama_menu) }}')"
                                         onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
-                                    <div class="flex-grow-1">
+                                    <div class="grow">
                                         <div class="fw-semibold">{{ $menu->nama_menu }}</div>
-                                        <small class="text-muted">Rp{{ number_format((float) $menu->harga_menu, 0, ',', '.') }}</small>
+                                        <small class="text-muted">
+                                            {{ (float) $menu->harga_menu > 0 ? 'Rp ' . number_format((float) $menu->harga_menu, 0, ',', '.') : '- (harga belum dimasukan)' }}
+                                        </small>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     @else
-                        <p class="mb-0 text-muted">Belum ada data menu.</p>
+                        <p class="mb-1 text-muted">Belum ada data menu dengan nama dan harga.</p>
                     @endif
+
+                    @if ($menuGallery->isNotEmpty())
+                        <div class="mt-2">
+                            <small class="text-muted fw-semibold d-block text-bold mb-2">Foto daftar menu</small>
+                            <div class="menu-gallery d-flex flex-wrap gap-2">
+                                @foreach ($menuGallery as $menuPhoto)
+                                    <img src="{{ $menuPhoto->foto_menu_url }}" alt="Foto daftar menu {{ $selectedUmkm->nama_umkm }}"
+                                        class="menu-gallery-thumb lightbox-trigger"
+                                        onclick="openImageLightbox('{{ $menuPhoto->foto_menu_url }}', 'Foto daftar menu {{ addslashes($selectedUmkm->nama_umkm) }}')"
+                                        onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <button type="button" class="btn btn-outline-primary btn-sm mt-2"
+                        onclick="openMenuSubmissionModal({{ $selectedUmkm->id_umkm }}, '{{ addslashes($selectedUmkm->nama_umkm) }}')">
+                        <i class="fas fa-plus-circle me-1"></i>Ajukan Menu Baru
+                    </button>
                 </div>
 
                 <div class="detail-actions mt-3">
@@ -327,6 +356,163 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="menuSubmissionModal" tabindex="-1" aria-labelledby="menuSubmissionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="menuSubmissionModalLabel">
+                    <i class="fas fa-utensils text-primary me-2"></i>Ajukan Menu Baru
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ route('menu-submissions.store') }}" enctype="multipart/form-data">
+                @csrf
+                @php
+                    $oldMenuTargetName = null;
+                    if (old('id_umkm')) {
+                        $oldTarget = $dataUmkms->firstWhere('id_umkm', (int) old('id_umkm'));
+                        $oldMenuTargetName = optional($oldTarget)->nama_umkm;
+                    }
+
+                    $oldMenuNames = old('menu_nama', ['']);
+                    $oldMenuPrices = old('menu_harga', ['']);
+                    $maxMenuRows = max(count($oldMenuNames), count($oldMenuPrices), 1);
+                @endphp
+                <div class="modal-body">
+                    <input type="hidden" id="menuSubmissionUmkmId" name="id_umkm" value="{{ old('id_umkm') }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">UMKM Tujuan</label>
+                        <div id="menuSubmissionTargetName" class="form-control bg-light">{{ $oldMenuTargetName ?: '-' }}</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="menuSubmissionPengusul" class="form-label">Nama Pengusul <span class="text-danger">*</span></label>
+                        <input type="text" id="menuSubmissionPengusul" name="nama_pengusul" class="form-control"
+                            value="{{ old('nama_pengusul') }}" required>
+                        @error('nama_pengusul')<span class="text-danger small d-block mt-1">{{ $message }}</span>@enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="menuSubmissionEmail" class="form-label">Email Pengusul</label>
+                        <input type="email" id="menuSubmissionEmail" name="email_pengusul" class="form-control"
+                            value="{{ old('email_pengusul') }}" placeholder="opsional">
+                        @error('email_pengusul')<span class="text-danger small d-block mt-1">{{ $message }}</span>@enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Data Menu</label>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="addMenuSubmissionItem">
+                                <i class="fas fa-plus me-1"></i>Tambah Menu
+                            </button>
+                        </div>
+
+                        <div id="menuSubmissionList" class="d-grid gap-2">
+                            @for ($i = 0; $i < $maxMenuRows; $i++)
+                                <div class="border rounded-3 p-2 submission-menu-item" data-menu-item>
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label small">Nama Menu</label>
+                                            <input type="text" name="menu_nama[]" class="form-control form-control-sm"
+                                                value="{{ $oldMenuNames[$i] ?? '' }}" placeholder="Contoh: Ayam Bakar">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small">Harga</label>
+                                            <input type="number" step="0.01" min="0" name="menu_harga[]"
+                                                class="form-control form-control-sm" value="{{ $oldMenuPrices[$i] ?? '' }}"
+                                                placeholder="Contoh: 25000">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small">Foto Menu</label>
+                                            <input type="file" name="menu_foto[]" class="form-control form-control-sm" accept="image/*">
+                                        </div>
+                                        <div class="col-md-1 d-grid">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-remove-menu-item title="Hapus menu">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endfor
+                        </div>
+
+                        @if ($errors->has('menu_nama') || $errors->has('menu_nama.*') || $errors->has('menu_harga') || $errors->has('menu_harga.*') || $errors->has('menu_foto') || $errors->has('menu_foto.*'))
+                            <div class="text-danger small mt-2">
+                                @foreach (array_merge($errors->get('menu_nama'), $errors->get('menu_nama.*'), $errors->get('menu_harga'), $errors->get('menu_harga.*'), $errors->get('menu_foto'), $errors->get('menu_foto.*')) as $messages)
+                                    @foreach ((array) $messages as $message)
+                                        <div>{{ $message }}</div>
+                                    @endforeach
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Foto Daftar Menu (Opsional)</label>
+                        <input type="file" name="menu_daftar_foto[]" class="form-control" accept="image/*" multiple>
+                        <small class="text-muted">Unggah satu atau lebih foto daftar menu, tanpa wajib isi data menu (nama/harga menu).</small>
+                        @if ($errors->has('menu_daftar_foto') || $errors->has('menu_daftar_foto.*'))
+                            <div class="text-danger small mt-2">
+                                @foreach (array_merge($errors->get('menu_daftar_foto'), $errors->get('menu_daftar_foto.*')) as $messages)
+                                    @foreach ((array) $messages as $message)
+                                        <div>{{ $message }}</div>
+                                    @endforeach
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-1"></i>Kirim Pengajuan Menu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="imageLightboxModal" tabindex="-1" aria-labelledby="imageLightboxLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 bg-transparent shadow-none lightbox-modal-content">
+            <div class="modal-header border-0 pb-1 lightbox-modal-header">
+                <h6 class="modal-title text-white" id="imageLightboxLabel">Preview Gambar</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center pt-0 lightbox-modal-body">
+                <div class="lightbox-stage">
+                    <div class="lightbox-zoom-controls" aria-label="Kontrol zoom foto">
+                        <button type="button" class="btn btn-light btn-sm lightbox-zoom-btn" id="lightboxZoomOutBtn" title="Zoom out">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-light btn-sm lightbox-zoom-btn" id="lightboxResetZoomBtn" title="Reset zoom">Reset</button>
+                        <button type="button" class="btn btn-light btn-sm lightbox-zoom-btn" id="lightboxZoomInBtn" title="Zoom in">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="lightbox-preview-box">
+                        <img id="imageLightboxPreview" src="" alt="Preview" class="lightbox-preview-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if ($errors->any() && old('id_umkm') && (old('menu_nama') || $errors->has('menu_daftar_foto') || $errors->has('menu_daftar_foto.*')))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalEl = document.getElementById('menuSubmissionModal');
+            if (!modalEl || typeof bootstrap === 'undefined') return;
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        });
+    </script>
+@endif
+
 <a href="{{ url('/') }}" class="btn-back-landing">
     <i class="fas fa-arrow-left"></i>
     <span>Kembali</span>
@@ -374,6 +560,7 @@
                                 'nama_menu' => $menu->nama_menu,
                                 'harga_menu' => (float) $menu->harga_menu,
                                 'foto_menu_url' => $menu->foto_menu_url,
+                                'is_daftar_foto' => (bool) $menu->is_foto_daftar_menu,
                             ],
                         )
                         ->values(),
@@ -403,6 +590,81 @@
             'radius' => 1000,
         ],
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalEl = document.getElementById('menuSubmissionModal');
+            const menuList = document.getElementById('menuSubmissionList');
+            const addBtn = document.getElementById('addMenuSubmissionItem');
+
+            if (menuList && addBtn) {
+                const bindRemoveButtons = (root) => {
+                    root.querySelectorAll('[data-remove-menu-item]').forEach((button) => {
+                        button.addEventListener('click', function() {
+                            const rows = menuList.querySelectorAll('[data-menu-item]');
+                            if (rows.length <= 1) {
+                                const row = this.closest('[data-menu-item]');
+                                row?.querySelectorAll('input').forEach((input) => {
+                                    input.value = '';
+                                });
+                                return;
+                            }
+
+                            this.closest('[data-menu-item]')?.remove();
+                        });
+                    });
+                };
+
+                const createMenuRow = () => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'border rounded-3 p-2 submission-menu-item';
+                    wrapper.setAttribute('data-menu-item', '1');
+                    wrapper.innerHTML = `
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-5">
+                                <label class="form-label small">Nama Menu</label>
+                                <input type="text" name="menu_nama[]" class="form-control form-control-sm" placeholder="Contoh: Ayam Bakar">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small">Harga</label>
+                                <input type="number" step="0.01" min="0" name="menu_harga[]" class="form-control form-control-sm" placeholder="Contoh: 25000">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small">Foto Menu</label>
+                                <input type="file" name="menu_foto[]" class="form-control form-control-sm" accept="image/*">
+                            </div>
+                            <div class="col-md-1 d-grid">
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-remove-menu-item title="Hapus menu">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    menuList.appendChild(wrapper);
+                    bindRemoveButtons(wrapper);
+                };
+
+                addBtn.addEventListener('click', createMenuRow);
+                bindRemoveButtons(menuList);
+            }
+
+            if (modalEl && typeof bootstrap !== 'undefined' && menuList) {
+                modalEl.addEventListener('hidden.bs.modal', function() {
+                    const rows = menuList.querySelectorAll('[data-menu-item]');
+                    rows.forEach((row, index) => {
+                        if (index === 0) {
+                            row.querySelectorAll('input').forEach((input) => {
+                                input.value = '';
+                            });
+                            return;
+                        }
+
+                        row.remove();
+                    });
+                });
+            }
+        });
     </script>
 
     @vite('resources/js/map.js')

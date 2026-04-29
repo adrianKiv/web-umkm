@@ -179,8 +179,14 @@ html, body {
                     @if (request()->filled('id_kategori'))
                         <input type="hidden" name="id_kategori" value="{{ request('id_kategori') }}">
                     @endif
+                    @if (request()->filled('min_rating'))
+                        <input type="hidden" name="min_rating" value="{{ request('min_rating') }}">
+                    @endif
                     <button class="btn btn-primary px-3" type="submit" aria-label="Cari">
                         <i class="fas fa-search"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary px-3" type="button" id="openMobileFilterBtn" aria-label="Buka filter">
+                        <i class="fas fa-sliders-h"></i>
                     </button>
                 </form>
             @endif
@@ -224,13 +230,23 @@ html, body {
                                         </select>
                                     </div>
 
+                                    <div class="mb-3">
+                                        <label class="form-label small mb-1">Rating Minimal</label>
+                                        <select name="min_rating" class="form-select form-select-sm navbar-filter-select">
+                                            <option value="">Semua Rating</option>
+                                            <option value="1" {{ (string) request('min_rating') === '1' ? 'selected' : '' }}>1.0 ke atas</option>
+                                            <option value="2" {{ (string) request('min_rating') === '2' ? 'selected' : '' }}>2.0 ke atas</option>
+                                            <option value="3" {{ (string) request('min_rating') === '3' ? 'selected' : '' }}>3.0 ke atas</option>
+                                            <option value="4" {{ (string) request('min_rating') === '4' ? 'selected' : '' }}>4.0 ke atas</option>
+                                            <option value="4.5" {{ (string) request('min_rating') === '4.5' ? 'selected' : '' }}>4.5 ke atas</option>
+                                        </select>
+                                    </div>
+
                                     <div class="navbar-filter-actions">
                                         <button class="btn btn-primary btn-sm" type="submit">
                                             Terapkan
                                         </button>
-                                        @if (request()->filled('search') || request()->filled('id_kategori') || request()->filled('id_kelompok'))
-                                            <a href="{{ route('landing') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
-                                        @endif
+                                        <a href="{{ route('landing') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
                                     </div>
                                 </div>
                             </div>
@@ -258,6 +274,62 @@ html, body {
             </div>
         </div>
     </nav>
+
+    @if (Route::currentRouteName() === 'landing')
+        <div class="modal fade" id="mobileLandingFilterModal" tabindex="-1" aria-labelledby="mobileLandingFilterModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title" id="mobileLandingFilterModalLabel">
+                            <i class="fas fa-sliders-h me-1"></i>Filter Pencarian
+                        </h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small mb-1">Kelompok</label>
+                            <select id="mobileFilterKelompok" class="form-select form-select-sm">
+                                <option value="">Semua Kelompok</option>
+                                @foreach (($kelompokList ?? collect()) as $kelompok)
+                                    <option value="{{ $kelompok->id_kelompok }}" {{ (string) request('id_kelompok') === (string) $kelompok->id_kelompok ? 'selected' : '' }}>
+                                        {{ $kelompok->nama_kelompok }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small mb-1">Kategori</label>
+                            <select id="mobileFilterKategori" class="form-select form-select-sm">
+                                <option value="">Semua Kategori</option>
+                                @foreach (($kategoriList ?? collect()) as $kategori)
+                                    <option value="{{ $kategori->id_kategori }}" {{ (string) request('id_kategori') === (string) $kategori->id_kategori ? 'selected' : '' }}>
+                                        {{ $kategori->nama_kategori }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small mb-1">Rating Minimal</label>
+                            <select id="mobileFilterRating" class="form-select form-select-sm">
+                                <option value="">Semua Rating</option>
+                                <option value="1" {{ (string) request('min_rating') === '1' ? 'selected' : '' }}>1.0 ke atas</option>
+                                <option value="2" {{ (string) request('min_rating') === '2' ? 'selected' : '' }}>2.0 ke atas</option>
+                                <option value="3" {{ (string) request('min_rating') === '3' ? 'selected' : '' }}>3.0 ke atas</option>
+                                <option value="4" {{ (string) request('min_rating') === '4' ? 'selected' : '' }}>4.0 ke atas</option>
+                                <option value="4.5" {{ (string) request('min_rating') === '4.5' ? 'selected' : '' }}>4.5 ke atas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="mobileFilterResetBtn">Reset</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="mobileFilterApplyBtn">Terapkan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <main>
         <div class="container">

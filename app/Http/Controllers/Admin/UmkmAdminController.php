@@ -9,16 +9,26 @@ use App\Models\Lokasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Support\WebpImageUploader;
 
 class UmkmAdminController extends Controller
 {
     /**
      * Display a listing of UMKM
      */
-    public function index()
+    public function index(Request $request)
     {
-        $umkms = Umkm::with(['kategori', 'lokasi', 'rating'])
-            ->paginate(15);
+
+        $query = Umkm::with(['kategori', 'lokasi', 'rating']);
+
+        // Jika ada inputan pencarian
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('nama_umkm', 'like', '%' . $search . '%');
+            // Anda juga bisa menambahkan OR WHERE di sini jika ingin mencari berdasarkan kategori
+        }
+
+        $umkms = $query->paginate(15)->withQueryString();
 
         return view('admin.umkm.index', compact('umkms'));
     }
@@ -45,7 +55,7 @@ class UmkmAdminController extends Controller
             'no_telfon' => 'nullable|max:20',
             'alamat_lengkap' => 'required|max:500',
             'deskripsi' => 'nullable|max:1000',
-            'foto_umkm' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto_umkm' => 'nullable|image|mimes:jpg,jpeg,png,gif,bmp,webp|max:2048',
             'id_kategori' => 'required|exists:kategori,id_kategori',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
@@ -62,7 +72,7 @@ class UmkmAdminController extends Controller
 
         $fotoUmkm = '-';
         if ($request->hasFile('foto_umkm')) {
-            $fotoUmkm = $request->file('foto_umkm')->store('umkm', 'public');
+            $fotoUmkm = WebpImageUploader::store($request->file('foto_umkm'), 'umkm', 'umkm');
         }
 
         Umkm::create([
@@ -113,7 +123,7 @@ class UmkmAdminController extends Controller
             'no_telfon' => 'nullable|max:20',
             'alamat_lengkap' => 'required|max:500',
             'deskripsi' => 'nullable|max:1000',
-            'foto_umkm' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto_umkm' => 'nullable|image|mimes:jpg,jpeg,png,gif,bmp,webp|max:2048',
             'id_kategori' => 'required|exists:kategori,id_kategori',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
@@ -141,7 +151,7 @@ class UmkmAdminController extends Controller
             if ($umkm->foto_umkm && $umkm->foto_umkm !== '-' && Storage::disk('public')->exists($umkm->foto_umkm)) {
                 Storage::disk('public')->delete($umkm->foto_umkm);
             }
-            $fotoUmkm = $request->file('foto_umkm')->store('umkm', 'public');
+            $fotoUmkm = WebpImageUploader::store($request->file('foto_umkm'), 'umkm', 'umkm');
         }
 
         $umkm->update([

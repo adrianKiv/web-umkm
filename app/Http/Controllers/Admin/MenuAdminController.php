@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\Umkm;
+use App\Support\WebpImageUploader;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,9 +15,27 @@ class MenuAdminController extends Controller
     /**
      * Display a listing of menu items.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $menus = Menu::with('umkm')->latest('id_menu')->paginate(15);
+        // Mulai query dengan relasi umkm
+        $query = Menu::with('umkm')->latest('id_menu');
+
+        // Jika ada parameter pencarian
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+
+            // Cari berdasarkan nama menu ATAU nama UMKM yang berelasi
+            $query->where(function($q) use ($search) {
+                $q->where('nama_menu', 'like', '%' . $search . '%')
+                ->orWhereHas('umkm', function($subQuery) use ($search) {
+                    $subQuery->where('nama_umkm', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        // Paginate dan tambahkan withQueryString() agar parameter pencarian
+        // tidak hilang saat admin pindah ke halaman (page) 2, 3, dst.
+        $menus = $query->paginate(15)->withQueryString();
 
         return view('admin.menu.index', compact('menus'));
     }
@@ -36,18 +56,73 @@ class MenuAdminController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_menu' => 'required|string|max:100',
-            'harga_menu' => 'required|numeric|min:0',
             'id_umkm' => 'required|exists:umkm,id_umkm',
-            'foto_menu' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'menu_nama' => 'nullable|array',
+            'menu_nama.*' => 'nullable|string|max:100',
+            'menu_harga' => 'nullable|array',
+            'menu_harga.*' => 'nullable|numeric|min:0',
+            'menu_foto' => 'nullable|array',
+            'menu_foto.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,bmp,webp|max:2048',
+            'menu_daftar_foto' => 'nullable|array',
+            'menu_daftar_foto.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,bmp,webp|max:4096',
         ]);
 
-        $validated['foto_menu'] = '-';
-        if ($request->hasFile('foto_menu')) {
-            $validated['foto_menu'] = $request->file('foto_menu')->store('menu', 'public');
+        $menuNames = $request->input('menu_nama', []);
+        $menuPrices = $request->input('menu_harga', []);
+        $menuFiles = $request->file('menu_foto', []);
+        $maxItems = max(count($menuNames), count($menuPrices), count($menuFiles));
+        $createdAny = false;
+
+        for ($i = 0; $i < $maxItems; $i++) {
+            $namaMenu = trim((string) ($menuNames[$i] ?? ''));
+            $hargaMenu = $menuPrices[$i] ?? null;
+            $menuFile = $menuFiles[$i] ?? null;
+
+            if ($namaMenu === '' && ($hargaMenu === null || $hargaMenu === '') && !$menuFile) {
+                continue;
+            }
+
+            if ($namaMenu === '' || $hargaMenu === null || $hargaMenu === '') {
+                throw ValidationException::withMessages([
+                    'menu_nama' => 'Setiap baris menu harus memiliki nama menu dan harga menu.',
+                ]);
+            }
+
+            $fotoMenu = '-';
+            if ($menuFile) {
+                $fotoMenu = WebpImageUploader::store($menuFile, 'menu', 'menu');
+            }
+
+            Menu::create([
+                'nama_menu' => $namaMenu,
+                'harga_menu' => $hargaMenu,
+                'foto_menu' => $fotoMenu,
+                'id_umkm' => $validated['id_umkm'],
+            ]);
+
+            $createdAny = true;
         }
 
-        Menu::create($validated);
+        foreach ($request->file('menu_daftar_foto', []) as $daftarFotoFile) {
+            if (!$daftarFotoFile) {
+                continue;
+            }
+
+            Menu::create([
+                'nama_menu' => Menu::FOTO_DAFTAR_MENU_SENTINEL,
+                'harga_menu' => 0,
+                'foto_menu' => WebpImageUploader::store($daftarFotoFile, 'menu', 'menu'),
+                'id_umkm' => $validated['id_umkm'],
+            ]);
+
+            $createdAny = true;
+        }
+
+        if (!$createdAny) {
+            throw ValidationException::withMessages([
+                'menu_nama' => 'Isi minimal satu menu atau unggah minimal satu foto daftar menu sebelum menyimpan.',
+            ]);
+        }
 
         return redirect()->route('admin.menu.index')
             ->with('success', 'Menu berhasil ditambahkan.');
@@ -82,7 +157,7 @@ class MenuAdminController extends Controller
             'nama_menu' => 'required|string|max:100',
             'harga_menu' => 'required|numeric|min:0',
             'id_umkm' => 'required|exists:umkm,id_umkm',
-            'foto_menu' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto_menu' => 'nullable|image|mimes:jpg,jpeg,png,gif,bmp,webp|max:2048',
         ]);
 
         $fotoMenu = $menu->foto_menu ?: '-';
@@ -90,7 +165,7 @@ class MenuAdminController extends Controller
             if ($menu->foto_menu && $menu->foto_menu !== '-' && Storage::disk('public')->exists($menu->foto_menu)) {
                 Storage::disk('public')->delete($menu->foto_menu);
             }
-            $fotoMenu = $request->file('foto_menu')->store('menu', 'public');
+            $fotoMenu = WebpImageUploader::store($request->file('foto_menu'), 'menu', 'menu');
         }
 
         $menu->update([

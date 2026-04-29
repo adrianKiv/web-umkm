@@ -31,6 +31,15 @@ class DataUmkmController extends Controller
             });
         }
 
+        // Filter by minimum average rating
+        if ($request->filled('min_rating') && (float) $request->min_rating > 0) {
+            $minRating = (float) $request->min_rating;
+            $query->whereRaw(
+                '(select coalesce(avg(r.nilai_rating), 0) from rating r where r.id_umkm = umkm.id_umkm) >= ?',
+                [$minRating],
+            );
+        }
+
         // Search functionality
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;

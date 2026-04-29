@@ -24,26 +24,73 @@
                         @error('id_umkm')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
                     </div>
 
+                    @php
+                        $oldMenuNames = old('menu_nama', ['']);
+                        $oldMenuPrices = old('menu_harga', ['']);
+                        $maxMenuRows = max(count($oldMenuNames), count($oldMenuPrices), 1);
+                    @endphp
+
                     <div class="mb-3">
-                        <label for="nama_menu" class="form-label">Nama Menu <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('nama_menu') is-invalid @enderror"
-                               id="nama_menu" name="nama_menu" value="{{ old('nama_menu') }}" required>
-                        @error('nama_menu')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Data Menu</label>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="addAdminMenuItem">
+                                <i class="fas fa-plus me-1"></i>Tambah Menu
+                            </button>
+                        </div>
+
+                        <div id="adminMenuList" class="d-grid gap-2">
+                            @for ($i = 0; $i < $maxMenuRows; $i++)
+                                <div class="border rounded-3 p-2 submission-menu-item" data-menu-item>
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label small">Nama Menu</label>
+                                            <input type="text" name="menu_nama[]" class="form-control form-control-sm"
+                                                value="{{ $oldMenuNames[$i] ?? '' }}" placeholder="Contoh: Ayam Bakar">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small">Harga</label>
+                                            <input type="number" step="0.01" min="0" name="menu_harga[]"
+                                                class="form-control form-control-sm" value="{{ $oldMenuPrices[$i] ?? '' }}"
+                                                placeholder="Contoh: 25000">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small">Foto Menu</label>
+                                            <input type="file" name="menu_foto[]" class="form-control form-control-sm" accept="image/*">
+                                        </div>
+                                        <div class="col-md-1 d-grid">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-remove-menu-item title="Hapus menu">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endfor
+                        </div>
+
+                        @if ($errors->has('menu_nama') || $errors->has('menu_nama.*') || $errors->has('menu_harga') || $errors->has('menu_harga.*'))
+                            <div class="text-danger small mt-2">
+                                @foreach (array_merge($errors->get('menu_nama'), $errors->get('menu_nama.*'), $errors->get('menu_harga'), $errors->get('menu_harga.*')) as $messages)
+                                    @foreach ((array) $messages as $message)
+                                        <div>{{ $message }}</div>
+                                    @endforeach
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
 
                     <div class="mb-3">
-                        <label for="harga_menu" class="form-label">Harga Menu <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" min="0" class="form-control @error('harga_menu') is-invalid @enderror"
-                               id="harga_menu" name="harga_menu" value="{{ old('harga_menu') }}" required>
-                        @error('harga_menu')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="foto_menu" class="form-label">Foto Menu</label>
-                        <input type="file" class="form-control @error('foto_menu') is-invalid @enderror"
-                               id="foto_menu" name="foto_menu" accept="image/*">
-                        <small class="text-muted">Format: JPG, JPEG, PNG, WEBP. Maksimal 2MB.</small>
-                        @error('foto_menu')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+                        <label class="form-label">Foto Daftar Menu (Opsional)</label>
+                        <input type="file" name="menu_daftar_foto[]" class="form-control" accept="image/*" multiple>
+                        <small class="text-muted">Unggah satu atau lebih foto daftar menu tanpa nama/harga menu.</small>
+                        @if ($errors->has('menu_daftar_foto') || $errors->has('menu_daftar_foto.*'))
+                            <div class="text-danger small mt-2">
+                                @foreach (array_merge($errors->get('menu_daftar_foto'), $errors->get('menu_daftar_foto.*')) as $messages)
+                                    @foreach ((array) $messages as $message)
+                                        <div>{{ $message }}</div>
+                                    @endforeach
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
 
                     <div class="d-flex gap-2">
@@ -60,3 +107,60 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuList = document.getElementById('adminMenuList');
+            const addBtn = document.getElementById('addAdminMenuItem');
+            if (!menuList || !addBtn) return;
+
+            const bindRemoveButtons = (root) => {
+                root.querySelectorAll('[data-remove-menu-item]').forEach((button) => {
+                    button.addEventListener('click', function () {
+                        const rows = menuList.querySelectorAll('[data-menu-item]');
+                        if (rows.length <= 1) {
+                            const row = this.closest('[data-menu-item]');
+                            row?.querySelectorAll('input').forEach((input) => input.value = '');
+                            return;
+                        }
+
+                        this.closest('[data-menu-item]')?.remove();
+                    });
+                });
+            };
+
+            const createMenuRow = () => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'border rounded-3 p-2 submission-menu-item';
+                wrapper.setAttribute('data-menu-item', '1');
+                wrapper.innerHTML = `
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label small">Nama Menu</label>
+                            <input type="text" name="menu_nama[]" class="form-control form-control-sm" placeholder="Contoh: Ayam Bakar">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Harga</label>
+                            <input type="number" step="0.01" min="0" name="menu_harga[]" class="form-control form-control-sm" placeholder="Contoh: 25000">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Foto Menu</label>
+                            <input type="file" name="menu_foto[]" class="form-control form-control-sm" accept="image/*">
+                        </div>
+                        <div class="col-md-1 d-grid">
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-remove-menu-item title="Hapus menu">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                menuList.appendChild(wrapper);
+                bindRemoveButtons(wrapper);
+            };
+
+            addBtn.addEventListener('click', createMenuRow);
+            bindRemoveButtons(menuList);
+        });
+    </script>
+@endpush

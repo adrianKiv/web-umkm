@@ -11,9 +11,28 @@ class LokasiAdminController extends Controller
     /**
      * Display a listing of locations
      */
-    public function index()
+    public function index(Request $request)
     {
-        $lokasis = Lokasi::paginate(20);
+        $query = Lokasi::with('umkm');
+
+        // Logika Pencarian
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+
+            $query->where(function($q) use ($search) {
+                // Cari di tabel lokasi sendiri (koordinat)
+                $q->where('latitude', 'like', '%' . $search . '%')
+                ->orWhere('longitude', 'like', '%' . $search . '%')
+                // Cari di tabel relasi UMKM (alamat & nama)
+                ->orWhereHas('umkm', function($subQuery) use ($search) {
+                    $subQuery->where('alamat_lengkap', 'like', '%' . $search . '%')
+                            ->orWhere('nama_umkm', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        // Gunakan withQueryString agar filter search tidak hilang saat pindah halaman
+        $lokasis = $query->paginate(20)->withQueryString();
 
         return view('admin.lokasi.index', compact('lokasis'));
     }

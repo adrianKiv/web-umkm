@@ -1,5 +1,7 @@
 let map;
 let ratingModal = null;
+let menuSubmissionModal = null;
+let imageLightboxModal = null;
 const umkmData = {};
 const markerLookup = {};
 let liveTrackingWatchId = null;
@@ -12,6 +14,12 @@ let liveTrackingLastUserPosition = null;
 let liveTrackingLastRouteFetchAt = 0;
 let locationPermissionModal = null;
 let pendingLiveTrackingPayload = null;
+let activeBottomSheetCleanup = null;
+let imageLightboxZoom = 1;
+let imageLightboxMode = 'desktop';
+let imageLightboxGestureCleanup = null;
+let imageLightboxTranslateX = 0;
+let imageLightboxTranslateY = 0;
 const locationConsentKey = 'map_live_tracking_location_consent';
 const filterState = {
 	searchQuery: '',
@@ -138,6 +146,60 @@ function generateStars(rating) {
 	return starsHtml;
 }
 
+function formatMenuPrice(value) {
+	const price = Number(value);
+	if (!Number.isFinite(price) || price <= 0) {
+		return '- (harga belum dimasukan)';
+	}
+
+	return `Rp ${new Intl.NumberFormat('id-ID').format(price)}`;
+}
+
+function resetLightboxTransform(imageEl, resetButton = null) {
+	imageLightboxZoom = 1;
+	imageLightboxTranslateX = 0;
+	imageLightboxTranslateY = 0;
+	if (imageEl) {
+		imageEl.style.transform = 'translate3d(0px, 0px, 0) scale(1)';
+		imageEl.style.cursor = 'zoom-in';
+	}
+	if (resetButton) {
+		resetButton.textContent = 'Reset';
+	}
+}
+
+function updateLightboxTransform(imageEl, resetButton = null) {
+	if (!imageEl) return;
+
+	imageEl.style.transform = `translate3d(${imageLightboxTranslateX}px, ${imageLightboxTranslateY}px, 0) scale(${imageLightboxZoom})`;
+	imageEl.style.cursor = imageLightboxZoom > 1 ? 'grab' : 'zoom-in';
+	if (resetButton) {
+		resetButton.textContent = imageLightboxZoom === 1 ? 'Reset' : `${Math.round(imageLightboxZoom * 100)}%`;
+	}
+}
+
+function clampLightboxTranslation(imageEl, nextX, nextY) {
+	if (!imageEl) {
+		return { x: nextX, y: nextY };
+	}
+
+	const previewBox = imageEl.parentElement;
+	const stage = previewBox?.parentElement;
+	if (!previewBox || !stage) {
+		return { x: nextX, y: nextY };
+	}
+
+	const previewRect = previewBox.getBoundingClientRect();
+	const stageRect = stage.getBoundingClientRect();
+	const maxX = Math.max(0, ((previewRect.width * imageLightboxZoom) - stageRect.width) / 2);
+	const maxY = Math.max(0, ((previewRect.height * imageLightboxZoom) - stageRect.height) / 2);
+
+	return {
+		x: Math.min(Math.max(nextX, -maxX), maxX),
+		y: Math.min(Math.max(nextY, -maxY), maxY),
+	};
+}
+
 function formatReviewDate(rawDate) {
 	if (!rawDate) return '-';
 	const date = new Date(rawDate);
@@ -196,11 +258,243 @@ function buildUlasanElement(ulasanList) {
 }
 
 function closeDetailPanel() {
+	if (typeof activeBottomSheetCleanup === 'function') {
+		activeBottomSheetCleanup();
+		activeBottomSheetCleanup = null;
+	}
+
 	const panel = document.getElementById('umkm-detail-panel');
 	if (!panel) return;
 
-	panel.style.animation = 'slideOutRight 0.3s ease-in';
-	setTimeout(() => panel.remove(), 300);
+	const isMobileSheet = panel.classList.contains('umkm-bottom-sheet') && isMobileViewport();
+	panel.style.animation = isMobileSheet ? 'slideOutDown 0.24s ease-in' : 'slideOutRight 0.3s ease-in';
+	setTimeout(() => panel.remove(), isMobileSheet ? 240 : 300);
+}
+
+function syncSearchFilterToggleState(isActive) {
+	const toggleBtn = document.getElementById('toggleSearchFiltersBtn');
+	if (!toggleBtn) return;
+
+	toggleBtn.classList.toggle('is-active', Boolean(isActive));
+	toggleBtn.setAttribute('aria-pressed', Boolean(isActive).toString());
+	toggleBtn.setAttribute('aria-expanded', Boolean(isActive).toString());
+}
+
+function initCategoryChipsInteraction() {
+	const chipsContainer = document.getElementById('categoryChips');
+	if (!chipsContainer) return;
+
+	chipsContainer.style.overflowX = 'auto';
+	chipsContainer.style.overflowY = 'hidden';
+	chipsContainer.style.touchAction = 'pan-x';
+	chipsContainer.style.pointerEvents = 'auto';
+	chipsContainer.style.cursor = 'grab';
+	chipsContainer.style.webkitUserSelect = 'none';
+
+	const stopMapGesturePropagation = (event) => {
+		event.stopPropagation();
+	};
+
+	let dragState = {
+		pointerId: null,
+		startX: 0,
+		startScrollLeft: 0,
+		dragging: false,
+		suppressClickUntil: 0,
+	};
+
+	const wheelToHorizontal = (event) => {
+		if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+		chipsContainer.scrollLeft += event.deltaY;
+		event.preventDefault();
+	};
+
+	const beginDrag = (event) => {
+		if (!chipsContainer.contains(event.target)) return;
+		dragState.pointerId = event.pointerId;
+		dragState.startX = event.clientX;
+		dragState.startScrollLeft = chipsContainer.scrollLeft;
+		dragState.dragging = false;
+		chipsContainer.classList.remove('is-dragging');
+		chipsContainer.style.cursor = 'grab';
+	};
+
+	const moveDrag = (event) => {
+		if (dragState.pointerId !== event.pointerId) return;
+
+		const deltaX = event.clientX - dragState.startX;
+		if (!dragState.dragging && Math.abs(deltaX) < 6) return;
+
+		if (!dragState.dragging) {
+			dragState.dragging = true;
+			chipsContainer.classList.add('is-dragging');
+			chipsContainer.setPointerCapture?.(dragState.pointerId);
+		}
+
+		chipsContainer.scrollLeft = dragState.startScrollLeft - deltaX;
+		event.preventDefault();
+	};
+
+	const endDrag = (event) => {
+		if (dragState.pointerId !== event.pointerId) return;
+
+		if (dragState.dragging) {
+			dragState.suppressClickUntil = Date.now() + 220;
+		}
+
+		dragState.pointerId = null;
+		dragState.dragging = false;
+		chipsContainer.classList.remove('is-dragging');
+		chipsContainer.style.cursor = 'grab';
+	};
+
+	const blockClickAfterDrag = (event) => {
+		if (Date.now() <= dragState.suppressClickUntil) {
+			event.preventDefault();
+			event.stopPropagation();
+			dragState.suppressClickUntil = 0;
+		}
+	};
+
+	if (!chipsContainer.dataset.scrollGuardBound) {
+		chipsContainer.addEventListener('pointerdown', stopMapGesturePropagation, { passive: true });
+		chipsContainer.addEventListener('pointermove', stopMapGesturePropagation, { passive: true });
+		chipsContainer.addEventListener('touchstart', stopMapGesturePropagation, { passive: true });
+		chipsContainer.addEventListener('touchmove', stopMapGesturePropagation, { passive: true });
+		chipsContainer.addEventListener('wheel', wheelToHorizontal, { passive: false });
+		chipsContainer.addEventListener('pointerdown', beginDrag, { passive: true });
+		chipsContainer.addEventListener('pointermove', moveDrag, { passive: false });
+		chipsContainer.addEventListener('pointerup', endDrag, { passive: true });
+		chipsContainer.addEventListener('pointercancel', endDrag, { passive: true });
+		chipsContainer.addEventListener('click', blockClickAfterDrag, true);
+		chipsContainer.dataset.scrollGuardBound = 'true';
+	}
+
+	requestAnimationFrame(() => {
+		chipsContainer.scrollLeft = 0;
+	});
+}
+
+function initMobileDetailBottomSheet(panel) {
+	if (!panel || !isMobileViewport()) return null;
+
+	const header = panel.querySelector('.detail-header');
+	const content = panel.querySelector('.detail-content');
+	if (!header || !content) return null;
+
+	panel.classList.add('umkm-bottom-sheet');
+	panel.classList.add('is-expanded');
+	panel.classList.remove('is-collapsed');
+
+	if (!panel.querySelector('.detail-sheet-handle')) {
+		const handle = document.createElement('div');
+		handle.className = 'detail-sheet-handle';
+		panel.insertBefore(handle, header);
+	}
+
+	let startY = 0;
+	let startHeight = 0;
+	let currentHeight = 0;
+	let dragging = false;
+
+	const getCollapsedHeight = () => Math.ceil(header.getBoundingClientRect().height);
+	const getExpandedHeight = () => Math.max(getCollapsedHeight() + 160, Math.floor(window.innerHeight - 12));
+
+	const clampHeight = (value) => {
+		const min = getCollapsedHeight();
+		const max = getExpandedHeight();
+		return Math.min(Math.max(value, min), max);
+	};
+
+	const applyHeight = (value, withTransition = false) => {
+		currentHeight = clampHeight(value);
+		panel.style.height = `${currentHeight}px`;
+		panel.classList.toggle('is-collapsed', currentHeight <= getCollapsedHeight() + 2);
+		panel.classList.toggle('is-expanded', currentHeight > getCollapsedHeight() + 2);
+		panel.classList.toggle('is-snapping', withTransition);
+	};
+
+	const snapSheet = () => {
+		const collapsed = getCollapsedHeight();
+		const expanded = getExpandedHeight();
+		const threshold = collapsed + ((expanded - collapsed) * 0.28);
+		const target = currentHeight <= threshold ? collapsed : expanded;
+		applyHeight(target, true);
+	};
+
+	const onPointerDown = (event) => {
+		if (event.pointerType === 'mouse' && event.button !== 0) return;
+		if (!event.target.closest('.detail-sheet-handle')) return;
+
+		dragging = true;
+		startY = event.clientY;
+		startHeight = currentHeight || panel.getBoundingClientRect().height;
+		panel.classList.add('is-dragging');
+		panel.classList.remove('is-snapping');
+
+		if (typeof header.setPointerCapture === 'function') {
+			header.setPointerCapture(event.pointerId);
+		}
+
+		event.preventDefault();
+	};
+
+	const onPointerMove = (event) => {
+		if (!dragging) return;
+
+		const deltaY = startY - event.clientY;
+		applyHeight(startHeight + deltaY);
+	};
+
+	const onPointerUp = () => {
+		if (!dragging) return;
+		dragging = false;
+		panel.classList.remove('is-dragging');
+		snapSheet();
+	};
+
+	const onResize = () => {
+		if (!isMobileViewport()) {
+			panel.classList.remove('umkm-bottom-sheet', 'is-collapsed', 'is-expanded', 'is-dragging', 'is-snapping');
+			panel.style.height = '';
+			const sheetHandle = panel.querySelector('.detail-sheet-handle');
+			sheetHandle?.remove();
+			return;
+		}
+
+		if (!panel.classList.contains('umkm-bottom-sheet')) {
+			panel.classList.add('umkm-bottom-sheet');
+		}
+
+		const nextHeight = panel.classList.contains('is-collapsed') ? getCollapsedHeight() : currentHeight || getExpandedHeight();
+		applyHeight(nextHeight);
+	};
+
+	const sheetHandle = panel.querySelector('.detail-sheet-handle');
+	sheetHandle?.addEventListener('pointerdown', onPointerDown);
+	window.addEventListener('pointermove', onPointerMove);
+	window.addEventListener('pointerup', onPointerUp);
+	window.addEventListener('resize', onResize);
+
+	applyHeight(getExpandedHeight(), true);
+
+	return () => {
+		sheetHandle?.removeEventListener('pointerdown', onPointerDown);
+		window.removeEventListener('pointermove', onPointerMove);
+		window.removeEventListener('pointerup', onPointerUp);
+		window.removeEventListener('resize', onResize);
+	};
+}
+
+function prepareDetailPanel(panel) {
+	if (!panel) return;
+
+	if (typeof activeBottomSheetCleanup === 'function') {
+		activeBottomSheetCleanup();
+		activeBottomSheetCleanup = null;
+	}
+
+	activeBottomSheetCleanup = initMobileDetailBottomSheet(panel);
 }
 
 function toggleUlasan(containerId, triggerBtn = null) {
@@ -265,52 +559,29 @@ function renderCategoryChips() {
 }
 
 function renderGroupFilters() {
-    // 1. Ambil elemen Desktop (Asumsinya ini masih berupa <select>)
-    const desktopGroup = document.getElementById('desktopGroupFilter');
+	const desktopGroup = document.getElementById('desktopGroupFilter');
+	const mobileGroup = document.getElementById('mobileGroupFilter');
 
-    // 2. Ambil elemen Mobile (SANGAT PENTING: Gunakan ID dari tag <ul>, BUKAN hidden input)
-    // Sesuai panduan sebelumnya, pastikan <ul> Anda memiliki id="list-mobileGroupFilter"
-    const listMobileGroup = document.getElementById('list-mobileGroupFilter');
+	if (!desktopGroup && !mobileGroup) return;
 
-    if (!desktopGroup && !listMobileGroup) return;
+	const groups = Array.from(
+		new Set(Object.values(umkmData).map((item) => item.kelompok).filter(Boolean)),
+	).sort((a, b) => a.localeCompare(b, 'id-ID'));
 
-    // Mengambil data unik kelompok dari umkmData
-    const groups = Array.from(
-        new Set(Object.values(umkmData).map((item) => item.kelompok).filter(Boolean)),
-    ).sort((a, b) => a.localeCompare(b, 'id-ID'));
+	const buildSelectOptions = (selectEl) => {
+		if (!selectEl || selectEl.tagName.toLowerCase() !== 'select') return;
 
-    // 3. Fungsi pintar untuk menyusun HTML berdasarkan jenis elemennya
-    const buildOptions = (containerEl, targetId) => {
-        if (!containerEl) return;
+		selectEl.innerHTML = '<option value="all">Semua Kelompok</option>';
+		groups.forEach((groupName) => {
+			const option = document.createElement('option');
+			option.value = toCategoryKey(groupName);
+			option.textContent = groupName;
+			selectEl.appendChild(option);
+		});
+	};
 
-        // JIKA ELEMEN ADALAH <select> (Bawaan HTML)
-        if (containerEl.tagName.toLowerCase() === 'select') {
-            containerEl.innerHTML = '<option value="all">Semua Kelompok</option>';
-
-            groups.forEach((groupName) => {
-                const option = document.createElement('option');
-                option.value = toCategoryKey(groupName);
-                option.textContent = groupName;
-                containerEl.appendChild(option);
-            });
-        }
-
-        // JIKA ELEMEN ADALAH <ul> (Dropdown Bootstrap)
-        else if (containerEl.tagName.toLowerCase() === 'ul') {
-            let html = `<li><button class="dropdown-item active" type="button" data-value="all" data-target="${targetId}">Semua Kelompok</button></li>`;
-
-            groups.forEach((groupName) => {
-                const value = toCategoryKey(groupName);
-                html += `<li><button class="dropdown-item" type="button" data-value="${value}" data-target="${targetId}">${groupName}</button></li>`;
-            });
-
-            containerEl.innerHTML = html;
-        }
-    };
-
-    // 4. Jalankan fungsinya
-    buildOptions(desktopGroup, 'desktopGroupFilter');
-    buildOptions(listMobileGroup, 'mobileGroupFilter');
+	buildSelectOptions(desktopGroup);
+	buildSelectOptions(mobileGroup);
 }
 
 function syncFilterControls() {
@@ -426,6 +697,10 @@ function showUmkmDetail(umkmId) {
 	photoEl.className = 'detail-umkm-photo';
 	photoEl.src = data.foto_umkm_url || '/images/default-umkm.svg';
 	photoEl.alt = `Foto ${data.nama_umkm}`;
+	photoEl.style.cursor = 'zoom-in';
+	photoEl.addEventListener('click', () => {
+		openImageLightbox(photoEl.src, `Foto ${data.nama_umkm}`);
+	});
 	photoEl.onerror = function onImageError() {
 		this.onerror = null;
 		this.src = '/images/default-umkm.svg';
@@ -496,11 +771,18 @@ function showUmkmDetail(umkmId) {
 	}
 
 	const menuWrap = document.createElement('div');
-	if (Array.isArray(data.menu) && data.menu.length > 0) {
+	const menuItems = Array.isArray(data.menu)
+		? data.menu.filter((menuItem) => !menuItem.is_daftar_foto)
+		: [];
+	const menuGalleryItems = Array.isArray(data.menu)
+		? data.menu.filter((menuItem) => menuItem.is_daftar_foto && menuItem.foto_menu_url)
+		: [];
+
+	if (menuItems.length > 0) {
 		const menuList = document.createElement('div');
 		menuList.className = 'menu-list d-grid gap-2';
 
-		data.menu.forEach((menuItem) => {
+		menuItems.forEach((menuItem) => {
 			const menuRow = document.createElement('div');
 			menuRow.className = 'menu-item d-flex align-items-center gap-2';
 
@@ -508,6 +790,10 @@ function showUmkmDetail(umkmId) {
 			menuImage.className = 'menu-thumb';
 			menuImage.src = menuItem.foto_menu_url || '/images/default-menu.svg';
 			menuImage.alt = `Foto ${menuItem.nama_menu}`;
+			menuImage.style.cursor = 'zoom-in';
+			menuImage.addEventListener('click', () => {
+				openImageLightbox(menuImage.src, `Foto ${menuItem.nama_menu || 'Menu'}`);
+			});
 			menuImage.onerror = function onMenuImageError() {
 				this.onerror = null;
 				this.src = '/images/default-menu.svg';
@@ -520,7 +806,7 @@ function showUmkmDetail(umkmId) {
 			menuName.textContent = menuItem.nama_menu || '-';
 			const menuPrice = document.createElement('small');
 			menuPrice.className = 'text-muted';
-			menuPrice.textContent = `Rp${new Intl.NumberFormat('id-ID').format(Number(menuItem.harga_menu || 0))}`;
+			menuPrice.textContent = formatMenuPrice(menuItem.harga_menu);
 
 			menuInfo.appendChild(menuName);
 			menuInfo.appendChild(menuPrice);
@@ -532,12 +818,48 @@ function showUmkmDetail(umkmId) {
 		menuWrap.appendChild(menuList);
 	} else {
 		const emptyMenuText = document.createElement('p');
-		emptyMenuText.className = 'mb-0 text-muted';
-		emptyMenuText.textContent = 'Belum ada data menu.';
+		emptyMenuText.className = 'mb-1 text-muted';
+		emptyMenuText.textContent = 'Belum ada data menu dengan nama dan harga.';
 		menuWrap.appendChild(emptyMenuText);
 	}
 
+	if (menuGalleryItems.length > 0) {
+		const galleryTitle = document.createElement('small');
+		galleryTitle.className = 'text-muted fw-semibold d-block mb-2';
+		galleryTitle.textContent = 'Ini foto daftar menu';
+
+		const galleryWrap = document.createElement('div');
+		galleryWrap.className = 'menu-gallery d-flex flex-wrap gap-2';
+
+		menuGalleryItems.forEach((galleryItem) => {
+			const galleryImg = document.createElement('img');
+			galleryImg.className = 'menu-gallery-thumb';
+			galleryImg.src = galleryItem.foto_menu_url || '/images/default-menu.svg';
+			galleryImg.alt = `Foto daftar menu ${data.nama_umkm}`;
+			galleryImg.style.cursor = 'zoom-in';
+			galleryImg.addEventListener('click', () => {
+				openImageLightbox(galleryImg.src, `Foto daftar menu ${data.nama_umkm}`);
+			});
+			galleryImg.onerror = function onGalleryError() {
+				this.onerror = null;
+				this.src = '/images/default-menu.svg';
+			};
+
+			galleryWrap.appendChild(galleryImg);
+		});
+
+		menuWrap.appendChild(galleryTitle);
+		menuWrap.appendChild(galleryWrap);
+	}
+
 	content.appendChild(makeSection('fa-utensils', 'Menu UMKM', menuWrap));
+
+	const submitMenuBtn = document.createElement('button');
+	submitMenuBtn.type = 'button';
+	submitMenuBtn.className = 'btn btn-outline-primary btn-sm mt-2';
+	submitMenuBtn.innerHTML = '<i class="fas fa-plus-circle me-1"></i>Ajukan Menu Baru';
+	submitMenuBtn.addEventListener('click', () => openMenuSubmissionModal(data.id, data.nama_umkm));
+	menuWrap.appendChild(submitMenuBtn);
 
 	const resolvedCoords = resolveUmkmCoordinates(data);
 
@@ -594,6 +916,7 @@ function showUmkmDetail(umkmId) {
 	panel.appendChild(header);
 	panel.appendChild(content);
 	document.body.appendChild(panel);
+	prepareDetailPanel(panel);
 }
 
 function resetStars() {
@@ -617,6 +940,223 @@ function showAlert(type, message) {
 	setTimeout(() => {
 		if (alertDiv.parentNode) alertDiv.remove();
 	}, 4000);
+}
+
+function openImageLightbox(imageUrl, caption = 'Preview Gambar') {
+	if (!imageUrl || typeof bootstrap === 'undefined') return;
+
+	const modalEl = document.getElementById('imageLightboxModal');
+	const imageEl = document.getElementById('imageLightboxPreview');
+	const titleEl = document.getElementById('imageLightboxLabel');
+	const zoomOutBtn = document.getElementById('lightboxZoomOutBtn');
+	const zoomInBtn = document.getElementById('lightboxZoomInBtn');
+	const resetZoomBtn = document.getElementById('lightboxResetZoomBtn');
+	if (!modalEl || !imageEl || !titleEl) return;
+
+	if (!imageLightboxModal) {
+		imageLightboxModal = new bootstrap.Modal(modalEl);
+	}
+
+	const applyZoom = (nextZoom) => {
+		imageLightboxZoom = Math.min(Math.max(nextZoom, 1), 3);
+		if (imageLightboxZoom === 1) {
+			imageLightboxTranslateX = 0;
+			imageLightboxTranslateY = 0;
+		} else {
+			const clamped = clampLightboxTranslation(imageEl, imageLightboxTranslateX, imageLightboxTranslateY);
+			imageLightboxTranslateX = clamped.x;
+			imageLightboxTranslateY = clamped.y;
+		}
+		updateLightboxTransform(imageEl, resetZoomBtn);
+	};
+
+	const removeGestureBindings = () => {
+		if (typeof imageLightboxGestureCleanup === 'function') {
+			imageLightboxGestureCleanup();
+			imageLightboxGestureCleanup = null;
+		}
+	};
+
+	const bindGestureBindings = () => {
+		removeGestureBindings();
+
+		const onWheel = (event) => {
+			if (imageLightboxMode === 'mobile') return;
+			event.preventDefault();
+			applyZoom(imageLightboxZoom + (event.deltaY < 0 ? 0.15 : -0.15));
+		};
+
+		let pinchStartDistance = 0;
+		let pinchStartZoom = 1;
+		let pinchStartTranslateX = 0;
+		let pinchStartTranslateY = 0;
+		let pinchStartCenter = null;
+		let dragStartX = 0;
+		let dragStartY = 0;
+		let dragOriginX = 0;
+		let dragOriginY = 0;
+		let panning = false;
+		let mouseDragging = false;
+
+		const getTouchDistance = (touches) => Math.hypot(
+			touches[0].clientX - touches[1].clientX,
+			touches[0].clientY - touches[1].clientY,
+		);
+
+		const getTouchCenter = (touches) => ({
+			x: (touches[0].clientX + touches[1].clientX) / 2,
+			y: (touches[0].clientY + touches[1].clientY) / 2,
+		});
+
+		const onTouchStart = (event) => {
+			if (imageLightboxMode !== 'mobile') return;
+			if (event.touches.length === 2) {
+				pinchStartDistance = getTouchDistance(event.touches);
+				pinchStartZoom = imageLightboxZoom;
+				pinchStartTranslateX = imageLightboxTranslateX;
+				pinchStartTranslateY = imageLightboxTranslateY;
+				pinchStartCenter = getTouchCenter(event.touches);
+				return;
+			}
+
+			if (event.touches.length === 1 && imageLightboxZoom > 1) {
+				const touch = event.touches[0];
+				dragStartX = touch.clientX;
+				dragStartY = touch.clientY;
+				dragOriginX = imageLightboxTranslateX;
+				dragOriginY = imageLightboxTranslateY;
+				panning = true;
+			}
+		};
+
+		const onTouchMove = (event) => {
+			if (imageLightboxMode !== 'mobile') return;
+			if (event.touches.length === 2 && pinchStartDistance > 0) {
+				event.preventDefault();
+				const nextZoom = Math.min(Math.max(pinchStartZoom * (getTouchDistance(event.touches) / pinchStartDistance), 1), 3);
+				const center = getTouchCenter(event.touches);
+				const referenceCenter = pinchStartCenter || center;
+				imageLightboxZoom = nextZoom;
+				imageLightboxTranslateX = pinchStartTranslateX + (center.x - referenceCenter.x);
+				imageLightboxTranslateY = pinchStartTranslateY + (center.y - referenceCenter.y);
+				const clamped = clampLightboxTranslation(imageEl, imageLightboxTranslateX, imageLightboxTranslateY);
+				imageLightboxTranslateX = clamped.x;
+				imageLightboxTranslateY = clamped.y;
+				updateLightboxTransform(imageEl, resetZoomBtn);
+				return;
+			}
+
+			if (event.touches.length === 1 && panning && imageLightboxZoom > 1) {
+				event.preventDefault();
+				const touch = event.touches[0];
+				const next = clampLightboxTranslation(imageEl, dragOriginX + (touch.clientX - dragStartX), dragOriginY + (touch.clientY - dragStartY));
+				imageLightboxTranslateX = next.x;
+				imageLightboxTranslateY = next.y;
+				updateLightboxTransform(imageEl, resetZoomBtn);
+			}
+		};
+
+		const onTouchEnd = () => {
+			pinchStartDistance = 0;
+			pinchStartCenter = null;
+			panning = false;
+		};
+
+		const onMouseDown = (event) => {
+			if (imageLightboxMode === 'mobile' || imageLightboxZoom <= 1) return;
+			event.preventDefault();
+			mouseDragging = true;
+			dragStartX = event.clientX;
+			dragStartY = event.clientY;
+			dragOriginX = imageLightboxTranslateX;
+			dragOriginY = imageLightboxTranslateY;
+			imageEl.style.cursor = 'grabbing';
+		};
+
+		const onMouseMove = (event) => {
+			if (!mouseDragging || imageLightboxZoom <= 1) return;
+			event.preventDefault();
+			const next = clampLightboxTranslation(imageEl, dragOriginX + (event.clientX - dragStartX), dragOriginY + (event.clientY - dragStartY));
+			imageLightboxTranslateX = next.x;
+			imageLightboxTranslateY = next.y;
+			updateLightboxTransform(imageEl, resetZoomBtn);
+		};
+
+		const onMouseUp = () => {
+			mouseDragging = false;
+			updateLightboxTransform(imageEl, resetZoomBtn);
+		};
+
+		const onDoubleClick = () => {
+			if (imageLightboxMode !== 'mobile') return;
+			applyZoom(imageLightboxZoom > 1 ? 1 : 2);
+		};
+
+		imageEl.addEventListener('wheel', onWheel, { passive: false });
+		imageEl.addEventListener('touchstart', onTouchStart, { passive: true });
+		imageEl.addEventListener('touchmove', onTouchMove, { passive: false });
+		imageEl.addEventListener('touchend', onTouchEnd);
+		imageEl.addEventListener('touchcancel', onTouchEnd);
+		imageEl.addEventListener('mousedown', onMouseDown);
+		window.addEventListener('mousemove', onMouseMove);
+		window.addEventListener('mouseup', onMouseUp);
+		imageEl.addEventListener('dblclick', onDoubleClick);
+
+		imageLightboxGestureCleanup = () => {
+			imageEl.removeEventListener('wheel', onWheel);
+			imageEl.removeEventListener('touchstart', onTouchStart);
+			imageEl.removeEventListener('touchmove', onTouchMove);
+			imageEl.removeEventListener('touchend', onTouchEnd);
+			imageEl.removeEventListener('touchcancel', onTouchEnd);
+			imageEl.removeEventListener('mousedown', onMouseDown);
+			window.removeEventListener('mousemove', onMouseMove);
+			window.removeEventListener('mouseup', onMouseUp);
+			imageEl.removeEventListener('dblclick', onDoubleClick);
+		};
+	};
+
+	if (zoomOutBtn && !zoomOutBtn.dataset.bound) {
+		zoomOutBtn.addEventListener('click', () => applyZoom(imageLightboxZoom - 0.15));
+		zoomOutBtn.dataset.bound = 'true';
+	}
+
+	if (zoomInBtn && !zoomInBtn.dataset.bound) {
+		zoomInBtn.addEventListener('click', () => applyZoom(imageLightboxZoom + 0.15));
+		zoomInBtn.dataset.bound = 'true';
+	}
+
+	if (resetZoomBtn && !resetZoomBtn.dataset.bound) {
+		resetZoomBtn.addEventListener('click', () => resetLightboxTransform(imageEl, resetZoomBtn));
+		resetZoomBtn.dataset.bound = 'true';
+	}
+
+	modalEl.style.zIndex = '9999';
+
+	imageLightboxMode = isMobileViewport() ? 'mobile' : 'desktop';
+	modalEl.classList.toggle('is-mobile-lightbox', imageLightboxMode === 'mobile');
+	titleEl.textContent = caption || 'Preview Gambar';
+	imageEl.src = imageUrl;
+	imageEl.alt = caption || 'Preview Gambar';
+	imageEl.onerror = function onImageError() {
+		this.onerror = null;
+		this.src = '/images/default-menu.svg';
+	};
+	resetLightboxTransform(imageEl, resetZoomBtn);
+	bindGestureBindings();
+
+	imageLightboxModal.show();
+	setTimeout(() => {
+		const backdrops = document.querySelectorAll('.modal-backdrop');
+		const backdrop = backdrops[backdrops.length - 1];
+		if (backdrop) {
+			backdrop.style.zIndex = '9998';
+		}
+	}, 0);
+
+	modalEl.addEventListener('hidden.bs.modal', () => {
+		removeGestureBindings();
+		resetLightboxTransform(imageEl, resetZoomBtn);
+	}, { once: true });
 }
 
 function resolveUmkmCoordinates(umkmDataItem) {
@@ -959,6 +1499,22 @@ function openRatingModal(umkmId, umkmName) {
 	ratingModal.show();
 }
 
+function openMenuSubmissionModal(umkmId, umkmName) {
+	const modalEl = document.getElementById('menuSubmissionModal');
+	if (!modalEl || typeof bootstrap === 'undefined') return;
+
+	if (!menuSubmissionModal) {
+		menuSubmissionModal = new bootstrap.Modal(modalEl);
+	}
+
+	const inputUmkmId = document.getElementById('menuSubmissionUmkmId');
+	const targetName = document.getElementById('menuSubmissionTargetName');
+	if (inputUmkmId) inputUmkmId.value = String(umkmId || '');
+	if (targetName) targetName.textContent = umkmName || '-';
+
+	menuSubmissionModal.show();
+}
+
 function initRatingFeature() {
 	const starsWrapper = document.querySelector('.rating-stars');
 	const ratingForm = document.getElementById('ratingForm');
@@ -1068,12 +1624,14 @@ function initMapFeature(config) {
 
 	const showSearchFilters = () => {
 		searchFilterDropdown?.classList.remove('d-none');
+		syncSearchFilterToggleState(true);
 	};
 
 	const hideSearchFilters = () => {
 		if (filterState.searchQuery) return;
 		searchFilterDropdown?.classList.add('d-none');
 		desktopFilterPanel?.classList.add('d-none');
+		syncSearchFilterToggleState(false);
 	};
 
 	if (mapSearchInput) {
@@ -1107,40 +1665,27 @@ function initMapFeature(config) {
 	});
 
 	toggleSearchFiltersBtn?.addEventListener('click', () => {
-		searchFilterDropdown?.classList.toggle('d-none');
+		const isHidden = searchFilterDropdown?.classList.toggle('d-none');
+		syncSearchFilterToggleState(!isHidden);
 	});
-
-document.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('dropdown-item')) {
-
-        const targetId = e.target.getAttribute('data-target');
-
-        if(targetId) {
-            const selectedValue = e.target.getAttribute('data-value');
-            const selectedText = e.target.innerHTML;
-
-            // 1. Update teks pada tombol dropdown
-            document.getElementById('text-' + targetId).innerHTML = selectedText;
-
-            // 2. Update nilai pada hidden input
-            const hiddenInput = document.getElementById(targetId);
-            hiddenInput.value = selectedValue;
-
-            // 3. Pindahkan warna abu-abu (active)
-            const parentMenu = e.target.closest('.dropdown-menu');
-            parentMenu.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
-            e.target.classList.add('active');
-
-            // KITA HAPUS AUTO-APPLY DI SINI.
-            // Aplikasi sekarang akan diam dan menunggu pengguna menekan "Terapkan"
-        }
-    }
-});
 
 	const closeMobileSheet = () => {
 		mobileFilterSheet?.classList.add('d-none');
 		mobileFilterBackdrop?.classList.add('d-none');
 		document.body.classList.remove('sheet-open');
+	};
+
+	const syncResponsiveFilterUI = () => {
+		initCategoryChipsInteraction();
+
+		const detailPanel = document.getElementById('umkm-detail-panel');
+		if (detailPanel) {
+			prepareDetailPanel(detailPanel);
+		}
+
+		if (window.innerWidth > 768) {
+			closeMobileSheet();
+		}
 	};
 
 	toggleMoreFiltersBtn?.addEventListener('click', () => {
@@ -1154,8 +1699,11 @@ document.addEventListener('click', function(e) {
 		}
 	});
 
-	document.getElementById('closeMobileFilterSheet')?.addEventListener('click', closeMobileSheet);
+	document.getElementById('closeMobileFilterSheet')?.addEventListener('click', () => {
+		closeMobileSheet();
+	});
 	mobileFilterBackdrop?.addEventListener('click', closeMobileSheet);
+	window.addEventListener('resize', syncResponsiveFilterUI);
 
 	document.getElementById('desktopApplyFilters')?.addEventListener('click', () => {
 		filterState.group = document.getElementById('desktopGroupFilter').value || 'all';
@@ -1198,6 +1746,10 @@ document.addEventListener('click', function(e) {
 	renderCategoryChips();
 	renderGroupFilters();
 	syncFilterControls();
+	initCategoryChipsInteraction();
+	syncResponsiveFilterUI();
+	prepareDetailPanel(document.getElementById('umkm-detail-panel'));
+	syncSearchFilterToggleState(!searchFilterDropdown?.classList.contains('d-none'));
 	if (filterState.searchQuery) {
 		showSearchFilters();
 	}
@@ -1223,38 +1775,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	const config = readMapConfig();
 	if (!config) return;
 
-// Ambil semua item di dalam dropdown kita
-    const dropdownItems = document.querySelectorAll('.dropdown-item');
-
-    dropdownItems.forEach(item => {
-        item.addEventListener('click', function() {
-            // 1. Ambil data target (ID asli Anda) dan nilainya
-            const targetId = this.getAttribute('data-target'); // cth: mobileMinRating
-            const selectedValue = this.getAttribute('data-value');
-            const selectedText = this.innerHTML;
-
-            // 2. Update teks pada tombol dropdown agar pengguna tahu apa yang dipilih
-            document.getElementById('text-' + targetId).innerHTML = selectedText;
-
-            // 3. Masukkan nilai tersebut ke hidden input ID asli Anda
-            const hiddenInput = document.getElementById(targetId);
-            hiddenInput.value = selectedValue;
-
-            // 4. SANGAT PENTING: Picu event 'change' secara manual.
-            // Ini membuat script JS filter peta Anda (yang mendengarkan 'change' event) otomatis berjalan!
-            hiddenInput.dispatchEvent(new Event('change'));
-
-            // 5. Rapikan tampilan (pindahkan highlight abu-abu 'active' ke item yang baru diklik)
-            const parentMenu = this.closest('.dropdown-menu');
-            parentMenu.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-
 	window.mapPageConfig = config;
 	window.closeDetailPanel = closeDetailPanel;
 	window.toggleUlasan = toggleUlasan;
 	window.openRatingModal = openRatingModal;
+	window.openMenuSubmissionModal = openMenuSubmissionModal;
+	window.openImageLightbox = openImageLightbox;
 	window.showUmkmDetail = showUmkmDetail;
 	window.startLiveTrackingTo = startLiveTrackingTo;
 	window.stopLiveTracking = stopLiveTracking;

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Kategori;
 use App\Models\Lokasi;
+use App\Models\Menu;
+use App\Models\MenuSubmission;
 use App\Models\Umkm;
 use App\Models\Rating;
 use App\Models\UmkmSubmission;
@@ -26,6 +28,7 @@ class AdminDashboardController extends Controller
             'total_rating' => Rating::count(),
             'avg_rating' => Rating::avg('nilai_rating') ?? 0,
             'total_users' => User::count(),
+            'total_menu' => menu::count(),
         ];
 
         $recentUmkm = Umkm::with('kategori')
@@ -73,10 +76,17 @@ class AdminDashboardController extends Controller
             ->orWhere('foto_umkm', '')
             ->count();
 
-        $pendingSubmissions = UmkmSubmission::with('kategori')
+        $pendingSubmissions = UmkmSubmission::with(['kategori', 'menuSubmissions'])
             ->where('status', 'pending')
             ->latest('created_at')
             ->take(10)
+            ->get();
+
+        $pendingMenuSubmissions = MenuSubmission::with('umkm')
+            ->whereNull('umkm_submission_id')
+            ->where('status', 'pending')
+            ->latest('created_at')
+            ->take(12)
             ->get();
 
         return view('admin.dashboard', compact(
@@ -89,7 +99,8 @@ class AdminDashboardController extends Controller
             'kategoriStats',
             'umkmTanpaKoordinat',
             'umkmTanpaTelepon',
-            'pendingSubmissions'
+            'pendingSubmissions',
+            'pendingMenuSubmissions'
         ));
     }
 
@@ -113,7 +124,7 @@ class AdminDashboardController extends Controller
                 $counter++;
             }
 
-            Umkm::create([
+            $umkm = Umkm::create([
                 'nama_umkm' => $submission->nama_umkm,
                 'slug_umkm' => $slug,
                 'jam_buka' => $submission->jam_buka,
@@ -125,6 +136,27 @@ class AdminDashboardController extends Controller
                 'id_kategori' => $submission->id_kategori,
                 'source' => 'user_submission',
             ]);
+
+            $submittedMenus = $submission->menuSubmissions()
+                ->where('status', 'pending')
+                ->get();
+
+            foreach ($submittedMenus as $menuSubmission) {
+                Menu::create([
+                    'nama_menu' => $menuSubmission->nama_menu,
+                    'harga_menu' => $menuSubmission->harga_menu,
+                    'foto_menu' => $menuSubmission->foto_menu ?: '-',
+                    'id_umkm' => $umkm->id_umkm,
+                ]);
+
+                $menuSubmission->update([
+                    'id_umkm' => $umkm->id_umkm,
+                    'status' => 'approved',
+                    'reviewed_by' => auth()->id(),
+                    'reviewed_at' => now(),
+                    'admin_note' => 'Disetujui bersamaan dengan pengajuan UMKM.',
+                ]);
+            }
 
             $submission->update([
                 'status' => 'approved',
@@ -154,6 +186,65 @@ class AdminDashboardController extends Controller
             'admin_note' => $request->input('admin_note') ?: 'Ditolak oleh admin.',
         ]);
 
+        $submission->menuSubmissions()
+            ->where('status', 'pending')
+            ->update([
+                'status' => 'rejected',
+                'reviewed_by' => auth()->id(),
+                'reviewed_at' => now(),
+                'admin_note' => 'Ditolak otomatis karena pengajuan UMKM ditolak.',
+            ]);
+
         return back()->with('success', 'Pengajuan UMKM telah ditolak.');
+    }
+
+    public function approveMenuSubmission(MenuSubmission $menuSubmission): RedirectResponse
+    {
+        if ($menuSubmission->status !== 'pending') {
+            return back()->with('error', 'Pengajuan menu ini sudah diproses sebelumnya.');
+        }
+
+        if (!$menuSubmission->id_umkm) {
+            return back()->with('error', 'UMKM tujuan untuk pengajuan menu ini tidak ditemukan.');
+        }
+
+        DB::transaction(function () use ($menuSubmission): void {
+            Menu::create([
+                'nama_menu' => $menuSubmission->nama_menu,
+                'harga_menu' => $menuSubmission->harga_menu,
+                'foto_menu' => $menuSubmission->foto_menu ?: '-',
+                'id_umkm' => $menuSubmission->id_umkm,
+                'source' => 'user_submission',
+            ]);
+
+            $menuSubmission->update([
+                'status' => 'approved',
+                'reviewed_by' => auth()->id(),
+                'reviewed_at' => now(),
+                'admin_note' => 'Menu disetujui oleh admin.',
+            ]);
+        });
+
+        return back()->with('success', 'Pengajuan menu berhasil disetujui.');
+    }
+
+    public function rejectMenuSubmission(Request $request, MenuSubmission $menuSubmission): RedirectResponse
+    {
+        if ($menuSubmission->status !== 'pending') {
+            return back()->with('error', 'Pengajuan menu ini sudah diproses sebelumnya.');
+        }
+
+        $request->validate([
+            'admin_note' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $menuSubmission->update([
+            'status' => 'rejected',
+            'reviewed_by' => auth()->id(),
+            'reviewed_at' => now(),
+            'admin_note' => $request->input('admin_note') ?: 'Menu ditolak oleh admin.',
+        ]);
+
+        return back()->with('success', 'Pengajuan menu telah ditolak.');
     }
 }

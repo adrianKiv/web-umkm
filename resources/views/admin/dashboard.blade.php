@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'UMKM ADMIN')
+
 @section('admin-content')
     <div class="row mb-4">
         <div class="col-md-12">
@@ -56,8 +58,8 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-0">Total admin</h6>
-                            <h3 class="mb-0">{{ $stats['total_users'] }}</h3>
+                            <h6 class="text-muted mb-0">Total Menu</h6>
+                            <h3 class="mb-0">{{ $stats['total_menu'] }}</h3>
                         </div>
                         <i class="fas fa-users fa-3x text-info opacity-50"></i>
                     </div>
@@ -76,7 +78,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0">
+                        <table class="table table-sm table-hover mb-2.5">
                             <thead class="table-light">
                                 <tr>
                                     <th class="px-3">Kategori</th>
@@ -111,7 +113,7 @@
                     <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Pengecekan Kualitas Data</h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted small mb-1">
+                    <p class="text-muted small mb-0">
                         Beberapa data UMKM di bawah ini belum lengkap dan mungkin tidak akan tampil optimal di Peta.
                     </p>
 
@@ -216,6 +218,7 @@
                                         <th>Nama UMKM</th>
                                         <th>Kategori</th>
                                         <th>Kontak</th>
+                                        <th>Menu Diajukan</th>
                                         <th>Koordinat</th>
                                         <th>Waktu</th>
                                         <th class="text-end">Aksi</th>
@@ -235,6 +238,19 @@
                                             <td>{{ $submission->kategori->nama_kategori ?? '-' }}</td>
                                             <td>{{ $submission->no_telfon }}</td>
                                             <td>
+                                                @php
+                                                    $menuCount = $submission->menuSubmissions->count();
+                                                @endphp
+                                                @if($menuCount > 0)
+                                                    <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal"
+                                                        data-bs-target="#submissionMenuDetailModal{{ $submission->id }}">
+                                                        <i class="fas fa-utensils me-1"></i>{{ $menuCount }} Menu
+                                                    </button>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
                                                 <small>{{ $submission->latitude }}, {{ $submission->longitude }}</small>
                                             </td>
                                             <td><small>{{ $submission->created_at?->format('d M Y H:i') }}</small></td>
@@ -250,6 +266,124 @@
                                                     </form>
                                                     <form action="{{ route('admin.submissions.reject', $submission) }}" method="POST" class="d-inline"
                                                         onsubmit="return confirm('Tolak pengajuan ini?')">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            <i class="fas fa-times me-1"></i>Tolak
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @foreach($pendingSubmissions as $submission)
+                            @if($submission->menuSubmissions->count() > 0)
+                                <div class="modal fade" id="submissionMenuDetailModal{{ $submission->id }}" tabindex="-1"
+                                    aria-labelledby="submissionMenuDetailModalLabel{{ $submission->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="submissionMenuDetailModalLabel{{ $submission->id }}">
+                                                    Menu Yang Diajukan Untuk {{ $submission->nama_umkm }}
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row g-2">
+                                                    @foreach($submission->menuSubmissions as $menuSubmission)
+                                                        <div class="col-md-6">
+                                                            <div class="border rounded p-2 h-100 d-flex gap-2 align-items-start">
+                                                                <img src="{{ $menuSubmission->foto_menu_url }}" alt="Foto {{ $menuSubmission->nama_menu }}"
+                                                                    style="width: 56px; height: 56px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6;"
+                                                                    onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
+                                                                <div>
+                                                                    @if($menuSubmission->is_foto_daftar_menu)
+                                                                        <div class="fw-semibold">Foto daftar menu</div>
+                                                                        <small class="text-muted">Tanpa nama/harga menu</small>
+                                                                    @else
+                                                                        <div class="fw-semibold">{{ $menuSubmission->nama_menu }}</div>
+                                                                        <small class="text-muted">Rp{{ number_format((float) $menuSubmission->harga_menu, 0, ',', '.') }}</small>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-utensils me-2 text-primary"></i>Konfirmasi Pengajuan Data MENU</h5>
+                    <span class="badge bg-primary">{{ $pendingMenuSubmissions->count() }} pending</span>
+                </div>
+                <div class="card-body p-0">
+                    @if($pendingMenuSubmissions->isEmpty())
+                        <div class="p-4 text-center text-muted">
+                            Tidak ada pengajuan menu yang menunggu konfirmasi.
+                        </div>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Menu</th>
+                                        <th>Foto</th>
+                                        <th>Pengusul</th>
+                                        <th>UMKM Tujuan</th>
+                                        <th>Waktu</th>
+                                        <th class="text-end">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($pendingMenuSubmissions as $menuSubmission)
+                                        <tr>
+                                            <td>
+                                                @if($menuSubmission->is_foto_daftar_menu)
+                                                    <div class="fw-semibold">Foto daftar menu</div>
+                                                    <small class="text-muted">Tanpa nama/harga menu</small>
+                                                @else
+                                                    <div class="fw-semibold">{{ $menuSubmission->nama_menu }}</div>
+                                                    <small class="text-muted">Rp{{ number_format((float) $menuSubmission->harga_menu, 0, ',', '.') }}</small>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <img src="{{ $menuSubmission->foto_menu_url }}" alt="Foto {{ $menuSubmission->nama_menu }}"
+                                                    style="width: 56px; height: 56px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6;"
+                                                    onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
+                                            </td>
+                                            <td>
+                                                <div class="fw-semibold">{{ $menuSubmission->nama_pengusul ?: '-' }}</div>
+                                                <small class="text-muted">{{ $menuSubmission->email_pengusul ?: '-' }}</small>
+                                            </td>
+                                            <td>{{ $menuSubmission->umkm->nama_umkm ?? '-' }}</td>
+                                            <td><small>{{ $menuSubmission->created_at?->format('d M Y H:i') }}</small></td>
+                                            <td class="text-end">
+                                                <div class="d-flex justify-content-end gap-2">
+                                                    <form action="{{ route('admin.menu-submissions.approve', $menuSubmission) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" class="btn btn-sm btn-success"
+                                                            onclick="return confirm('Setujui pengajuan menu ini?')">
+                                                            <i class="fas fa-check me-1"></i>Setujui
+                                                        </button>
+                                                    </form>
+                                                    <form action="{{ route('admin.menu-submissions.reject', $menuSubmission) }}" method="POST" class="d-inline"
+                                                        onsubmit="return confirm('Tolak pengajuan menu ini?')">
                                                         @csrf
                                                         @method('PATCH')
                                                         <button type="submit" class="btn btn-sm btn-outline-danger">

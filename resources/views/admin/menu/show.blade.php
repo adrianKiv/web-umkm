@@ -20,12 +20,24 @@
 
                 <div class="row mb-3">
                     <div class="col-sm-3 fw-semibold">Nama Menu:</div>
-                    <div class="col-sm-9">{{ $menu->nama_menu }}</div>
+                    <div class="col-sm-9">
+                        @if($menu->is_foto_daftar_menu)
+                            <span class="badge bg-info">Foto daftar menu</span>
+                        @else
+                            {{ $menu->nama_menu }}
+                        @endif
+                    </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-sm-3 fw-semibold">Harga:</div>
-                    <div class="col-sm-9">Rp{{ number_format((float) $menu->harga_menu, 0, ',', '.') }}</div>
+                    <div class="col-sm-9">
+                        @if($menu->is_foto_daftar_menu)
+                            <span class="text-muted">-</span>
+                        @else
+                            Rp{{ number_format((float) $menu->harga_menu, 0, ',', '.') }}
+                        @endif
+                    </div>
                 </div>
 
                 <div class="row mb-4">

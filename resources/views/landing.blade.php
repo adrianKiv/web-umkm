@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'UMKM Dashboard - Temukan Usaha Terdekat')
+@section('title', 'UMKM SEKITAR UPI - Temukan Usaha Terdekat')
 
 @section('content')
     @php
@@ -183,7 +183,8 @@
                     $hasFilters =
                         request()->filled('search') ||
                         request()->filled('id_kategori') ||
-                        request()->filled('id_kelompok');
+                        request()->filled('id_kelompok') ||
+                        request()->filled('min_rating');
                 @endphp
                 @if ($umkms->isEmpty())
                     <div class="text-center py-5">

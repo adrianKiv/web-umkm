@@ -9,7 +9,22 @@
 </div>
 
 <div class="card border-0 shadow-sm">
-    <div class="table-responsive">
+    <div class="card-header bg-white border-0 pt-4 pb-0 d-flex justify-content-end">
+        <form action="{{ route('admin.umkm.index') }}" method="GET" class="m-0">
+            <div class="input-group" style="width: 300px;">
+                <input type="text" name="search" class="form-control" placeholder="Cari nama UMKM..." value="{{ request('search') }}">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+                @if(request('search'))
+                    <a href="{{ route('admin.umkm.index') }}" class="btn btn-outline-danger" title="Reset Pencarian">
+                        <i class="fas fa-times"></i>
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+    <div class="table-responsive mt-2">
         <table class="table table-hover mb-0">
             <thead class="table-light">
                 <tr>
@@ -25,7 +40,7 @@
             <tbody>
                 @forelse($umkms as $key => $umkm)
                     <tr>
-                        <td>{{ $umkms->firstItem() + $key }}</td>
+                        <td>{{ ($umkms->currentPage() - 1) * $umkms->perPage() + $loop->iteration }}</td>
                         <td>
                             <img src="{{ $umkm->foto_umkm_url }}" alt="Foto {{ $umkm->nama_umkm }}"
                                  style="width: 56px; height: 56px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6;"
@@ -56,7 +71,13 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">Tidak ada data UMKM</td>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            @if(request('search'))
+                                UMKM dengan kata kunci "<strong>{{ request('search') }}</strong>" tidak ditemukan.
+                            @else
+                                Tidak ada data UMKM.
+                            @endif
+                        </td>
                     </tr>
                 @endforelse
             </tbody>

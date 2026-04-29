@@ -23,6 +23,12 @@
                     </div>
                 @endif
 
+                @php
+                    $oldMenuNames = old('menu_nama', ['']);
+                    $oldMenuPrices = old('menu_harga', ['']);
+                    $maxMenuRows = max(count($oldMenuNames), count($oldMenuPrices), 1);
+                @endphp
+
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Nama Pengusul <span class="text-danger">*</span></label>
@@ -99,6 +105,69 @@
                         <small class="text-muted">Format: JPG, JPEG, PNG, WEBP. Maksimal 2MB.</small>
                         @error('foto_umkm')<span class="text-danger small d-block mt-1">{{ $message }}</span>@enderror
                     </div>
+
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Menu UMKM (Opsional)</label>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="addSubmissionMenuItem">
+                                <i class="fas fa-plus me-1"></i>Tambah Menu
+                            </button>
+                        </div>
+
+                        <div id="submissionMenuList" class="d-grid gap-2">
+                            @for ($i = 0; $i < $maxMenuRows; $i++)
+                                <div class="border rounded-3 p-2 submission-menu-item" data-menu-item>
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label small">Nama Menu</label>
+                                            <input type="text" name="menu_nama[]" class="form-control form-control-sm"
+                                                value="{{ $oldMenuNames[$i] ?? '' }}" placeholder="Contoh: Ayam Bakar">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small">Harga</label>
+                                            <input type="number" step="0.01" min="0" name="menu_harga[]"
+                                                class="form-control form-control-sm" value="{{ $oldMenuPrices[$i] ?? '' }}"
+                                                placeholder="Contoh: 25000">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small">Foto Menu</label>
+                                            <input type="file" name="menu_foto[]" class="form-control form-control-sm" accept="image/*">
+                                        </div>
+                                        <div class="col-md-1 d-grid">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-remove-menu-item title="Hapus menu">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endfor
+                        </div>
+
+                        @if ($errors->has('menu_nama') || $errors->has('menu_nama.*') || $errors->has('menu_harga') || $errors->has('menu_harga.*') || $errors->has('menu_foto') || $errors->has('menu_foto.*'))
+                            <div class="text-danger small mt-2">
+                                @foreach (array_merge($errors->get('menu_nama'), $errors->get('menu_nama.*'), $errors->get('menu_harga'), $errors->get('menu_harga.*'), $errors->get('menu_foto'), $errors->get('menu_foto.*')) as $messages)
+                                    @foreach ((array) $messages as $message)
+                                        <div>{{ $message }}</div>
+                                    @endforeach
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Foto Daftar Menu (Opsional)</label>
+                        <input type="file" name="menu_daftar_foto[]" class="form-control" accept="image/*" multiple>
+                        <small class="text-muted">Unggah satu atau lebih foto daftar menu, tanpa wajib isi data menu (nama/harga menu).</small>
+                        @if ($errors->has('menu_daftar_foto') || $errors->has('menu_daftar_foto.*'))
+                            <div class="text-danger small mt-2">
+                                @foreach (array_merge($errors->get('menu_daftar_foto'), $errors->get('menu_daftar_foto.*')) as $messages)
+                                    @foreach ((array) $messages as $message)
+                                        <div>{{ $message }}</div>
+                                    @endforeach
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
 
@@ -134,4 +203,60 @@
 
 @push('scripts')
     @vite('resources/js/location-picker.js')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuList = document.getElementById('submissionMenuList');
+            const addBtn = document.getElementById('addSubmissionMenuItem');
+            if (!menuList || !addBtn) return;
+
+            function bindRemoveAction(root) {
+                root.querySelectorAll('[data-remove-menu-item]').forEach((btn) => {
+                    btn.addEventListener('click', function() {
+                        const items = menuList.querySelectorAll('[data-menu-item]');
+                        if (items.length <= 1) {
+                            const row = this.closest('[data-menu-item]');
+                            row.querySelectorAll('input').forEach((input) => {
+                                input.value = '';
+                            });
+                            return;
+                        }
+
+                        this.closest('[data-menu-item]')?.remove();
+                    });
+                });
+            }
+
+            addBtn.addEventListener('click', function() {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'border rounded-3 p-2 submission-menu-item';
+                wrapper.setAttribute('data-menu-item', '1');
+                wrapper.innerHTML = `
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label small">Nama Menu</label>
+                            <input type="text" name="menu_nama[]" class="form-control form-control-sm" placeholder="Contoh: Ayam Bakar">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Harga</label>
+                            <input type="number" step="0.01" min="0" name="menu_harga[]" class="form-control form-control-sm" placeholder="Contoh: 25000">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Foto Menu</label>
+                            <input type="file" name="menu_foto[]" class="form-control form-control-sm" accept="image/*">
+                        </div>
+                        <div class="col-md-1 d-grid">
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-remove-menu-item title="Hapus menu">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                menuList.appendChild(wrapper);
+                bindRemoveAction(wrapper);
+            });
+
+            bindRemoveAction(menuList);
+        });
+    </script>
 @endpush
