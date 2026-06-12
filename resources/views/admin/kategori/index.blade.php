@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN KATEGORI - UMKM Kuliner')
+
 @section('admin-content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4>Daftar Kategori</h4>
@@ -13,14 +15,15 @@
         <i class="fas fa-info-circle me-2"></i>Belum ada kategori
     </div>
 @else
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead class="table-light">
+    <div class="admin-card">
+        <div class="table-responsive admin-table-wrapper">
+            <table class="table table-hover align-middle admin-table">
+            <thead>
                 <tr>
-                    <th style="width: 5%">ID</th>
-                    <th style="width: 40%">Nama Kategori</th>
-                    <th style="width: 20%">Kelompok</th>
-                    <th style="width: 15%">Aksi</th>
+                    <th class="w-5p">ID</th>
+                    <th class="w-40p">Nama Kategori</th>
+                    <th class="w-20p">Kelompok</th>
+                    <th class="w-15p">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,24 +39,27 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.kategori.show', $kategori) }}" class="btn btn-sm btn-info text-white" title="Lihat">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('admin.kategori.edit', $kategori) }}" class="btn btn-sm btn-warning text-white" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('admin.kategori.destroy', $kategori) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger" title="Hapus">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                            <div class="admin-actions">
+                                <a href="{{ route('admin.kategori.show', $kategori) }}" class="btn btn-sm btn-info text-white btn-icon" title="Lihat">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.kategori.edit', $kategori) }}" class="btn btn-sm btn-warning text-white btn-icon" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('admin.kategori.destroy', $kategori) }}" method="POST" class="d-inline-flex" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger btn-icon" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 
 <div class="d-flex flex-column flex-md-row justify-content-center align-items-center mt-3 mb-3">

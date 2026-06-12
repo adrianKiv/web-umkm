@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN LOKASI - UMKM Kuliner')
+
 @section('admin-content')
 <div class="row">
     <div class="col-md-6">
@@ -25,7 +27,7 @@
                             data-initial-longitude="{{ old('longitude', $lokasi->longitude) }}"
                             data-initial-zoom="16"
                         >
-                            <div id="adminLokasiEditMap" data-location-picker-map style="height: 360px; border-radius: 12px;"></div>
+                            <div id="adminLokasiEditMap" data-location-picker-map class="map-h-360 rounded-12"></div>
                             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mt-3">
                                 <small class="text-muted">Klik map atau geser marker untuk memperbarui koordinat.</small>
                                 <small class="fw-semibold">Koordinat: <span id="adminLokasiCoordinateReadout">-</span></small>

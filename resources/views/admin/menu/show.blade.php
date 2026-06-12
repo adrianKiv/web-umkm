@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN MENU - UMKM Kuliner')
+
 @section('admin-content')
 <div class="row">
     <div class="col-md-8">
@@ -12,9 +14,9 @@
                 <div class="row mb-3">
                     <div class="col-sm-3 fw-semibold">Foto Menu:</div>
                     <div class="col-sm-9">
-                        <img src="{{ $menu->foto_menu_url }}" alt="Foto {{ $menu->nama_menu }}"
-                             style="width: 220px; max-width: 100%; height: 140px; object-fit: cover; border-radius: 10px; border: 1px solid #dee2e6;"
-                             onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
+                            <img src="{{ $menu->foto_menu_url }}" alt="Foto {{ $menu->nama_menu }}"
+                                class="thumb-220x140"
+                                onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
                     </div>
                 </div>
 
@@ -44,7 +46,9 @@
                     <div class="col-sm-3 fw-semibold">UMKM:</div>
                     <div class="col-sm-9">
                         @if($menu->umkm)
-                            <a href="{{ route('admin.umkm.show', $menu->umkm) }}">{{ $menu->umkm->nama_umkm }}</a>
+                            <a href="{{ route('admin.umkm.show', $menu->umkm) }}" title="{{ $menu->umkm->nama_umkm }}">
+                                {{ \Illuminate\Support\Str::limit($menu->umkm->nama_umkm, 32) }}
+                            </a>
                         @else
                             <span class="text-muted">-</span>
                         @endif

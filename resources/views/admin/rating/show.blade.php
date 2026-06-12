@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN RATING - UMKM Kuliner')
+
 @section('admin-content')
 <div class="row">
     <div class="col-md-8">
@@ -22,21 +24,21 @@
                     <div class="col-sm-3 fw-semibold">Rating:</div>
                     <div class="col-sm-9">
                         <span class="badge bg-warning text-dark fs-6 py-2 px-3">
-                            <i class="fas fa-star"></i> {{ $rating->rating }}/5
+                            <i class="fas fa-star"></i> {{ $rating->nilai_rating }}/5
                         </span>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-sm-3 fw-semibold">Nama Reviewer:</div>
-                    <div class="col-sm-9">{{ $rating->nama_reviewer ?? 'Anonim' }}</div>
+                    <div class="col-sm-9">{{ $rating->nama_pengulas ?? 'Anonim' }}</div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-sm-3 fw-semibold">Ulasan:</div>
                     <div class="col-sm-9">
                         <div class="p-3 bg-light rounded">
-                            {{ $rating->ulasan ?? '-' }}
+                            {{ $rating->komentar ?? '-' }}
                         </div>
                     </div>
                 </div>

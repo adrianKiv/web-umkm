@@ -38,14 +38,21 @@ function setTrackingControlsVisible(isVisible) {
 	if (!wrapper) return;
 
 	wrapper.classList.toggle('d-none', !isVisible);
+
+	const floatingStatus = document.getElementById('liveTrackFloatingStatus');
+	if (floatingStatus) {
+		floatingStatus.classList.toggle('d-none', !isVisible);
+	}
 }
 
 function createUmkmMarkerIcon(isHighlighted = false) {
+	const iconSize = [32, 32];
+	const iconAnchor = [16, 30];
 	return L.divIcon({
 		html: `<div class="umkm-marker ${isHighlighted ? 'is-highlighted' : ''}"><i class="fas fa-utensils"></i></div>`,
 		className: 'custom-marker umkm-marker-wrapper',
-		iconSize: isHighlighted ? [38, 38] : [32, 32],
-		iconAnchor: isHighlighted ? [19, 35] : [16, 30],
+		iconSize,
+		iconAnchor,
 		popupAnchor: [0, -28],
 	});
 }
@@ -87,6 +94,59 @@ function readMapConfig() {
 		console.error('Invalid map page config:', error);
 		return null;
 	}
+}
+
+function getUmkmDetailUrl(umkmId) {
+	if (!umkmId) return null;
+	const template = window.mapPageConfig?.umkmDetailUrlTemplate;
+	if (template) {
+		return template.replace('__UMKM__', encodeURIComponent(String(umkmId)));
+	}
+
+	return `/umkm/${encodeURIComponent(String(umkmId))}/detail`;
+}
+
+function getUmkmTrackUrl(umkmId) {
+	if (!umkmId) return null;
+	const template = window.mapPageConfig?.umkmTrackUrlTemplate;
+	if (template) {
+		return template.replace('__UMKM__', encodeURIComponent(String(umkmId)));
+	}
+
+	return `/umkm/${encodeURIComponent(String(umkmId))}/track-activity`;
+}
+
+function trackUmkmActivity(umkmId) {
+	const url = getUmkmTrackUrl(umkmId);
+	if (!url) return;
+
+	const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+	fetch(url, {
+		method: 'POST',
+		headers: {
+			'X-CSRF-TOKEN': csrfToken || '',
+			'X-Requested-With': 'XMLHttpRequest',
+			Accept: 'application/json',
+		},
+	}).catch(() => {
+		// no-op: activity tracking should not block UI
+	});
+}
+
+function trackUmkmClick(umkmId) {
+	const url = getUmkmDetailUrl(umkmId);
+	if (!url) return;
+
+	fetch(url, {
+		headers: {
+			'X-Requested-With': 'XMLHttpRequest',
+			Accept: 'application/json',
+		},
+	}).catch(() => {
+		// no-op: click tracking should not block UI
+	});
+
+	trackUmkmActivity(umkmId);
 }
 
 function normalizeText(text) {
@@ -666,6 +726,8 @@ function showUmkmDetail(umkmId) {
 	const data = umkmData[umkmId];
 	if (!data) return;
 
+	trackUmkmClick(umkmId);
+
 	closeDetailPanel();
 
 	const panel = document.createElement('div');
@@ -732,6 +794,18 @@ function showUmkmDetail(umkmId) {
 	alamatText.className = 'mb-0';
 	alamatText.textContent = data.alamat_lengkap || '-';
 	content.appendChild(makeSection('fa-map-marker-alt', 'Alamat Lengkap', alamatText));
+
+	const phoneText = document.createElement('p');
+	phoneText.className = 'mb-0';
+	if (data.no_telfon) {
+		const phoneLink = document.createElement('a');
+		phoneLink.href = `tel:${String(data.no_telfon).replace(/\s+/g, '')}`;
+		phoneLink.textContent = data.no_telfon;
+		phoneText.appendChild(phoneLink);
+	} else {
+		phoneText.textContent = '-';
+	}
+	content.appendChild(makeSection('fa-phone', 'No telfon', phoneText));
 
 	const ratingWrap = document.createElement('div');
 	const ratingContainer = document.createElement('div');
@@ -826,7 +900,7 @@ function showUmkmDetail(umkmId) {
 	if (menuGalleryItems.length > 0) {
 		const galleryTitle = document.createElement('small');
 		galleryTitle.className = 'text-muted fw-semibold d-block mb-2';
-		galleryTitle.textContent = 'Ini foto daftar menu';
+		galleryTitle.textContent = 'Foto daftar menu *Harga sewaktu-waktu dapat berubah';
 
 		const galleryWrap = document.createElement('div');
 		galleryWrap.className = 'menu-gallery d-flex flex-wrap gap-2';
@@ -907,11 +981,6 @@ function showUmkmDetail(umkmId) {
 	row.appendChild(liveTrackCol);
 	actionsSection.appendChild(row);
 	content.appendChild(actionsSection);
-
-	const liveTrackStatus = document.createElement('div');
-	liveTrackStatus.className = 'live-track-status text-muted small mt-2 w-100';
-	liveTrackStatus.textContent = 'Live tracking belum dimulai.';
-	content.appendChild(liveTrackStatus);
 
 	panel.appendChild(header);
 	panel.appendChild(content);
@@ -1247,12 +1316,13 @@ function formatDuration(seconds) {
 	return `${hours} jam ${minutes} menit`;
 }
 
-function setLiveTrackStatus(message, tone = 'muted') {
-	document.querySelectorAll('.live-track-status').forEach((el) => {
-		el.classList.remove('text-muted', 'text-success', 'text-danger', 'text-primary');
-		el.classList.add(`text-${tone}`);
-		el.textContent = message;
-	});
+function setLiveTrackFloatingStatus(message, tone = 'muted') {
+	const floatingStatus = document.getElementById('liveTrackFloatingStatus');
+	if (!floatingStatus) return;
+
+	floatingStatus.classList.remove('text-muted', 'text-success', 'text-danger', 'text-primary');
+	floatingStatus.classList.add(`text-${tone}`);
+	floatingStatus.textContent = message || '';
 }
 
 async function fetchOsrmRoute(userPosition, destination) {
@@ -1321,7 +1391,7 @@ function stopLiveTracking(showMessage = false) {
 		liveTrackingDestinationMarker = null;
 	}
 
-	setLiveTrackStatus('Live tracking belum dimulai.', 'muted');
+	setLiveTrackFloatingStatus('');
 	setTrackingControlsVisible(false);
 
 	if (showMessage) {
@@ -1363,8 +1433,7 @@ function startLiveTrackingTo(latitude, longitude, umkmName = 'UMKM', skipPermiss
 
 	stopLiveTracking(false);
 	setTrackingControlsVisible(true);
-
-	setLiveTrackStatus('Mencari lokasi Anda...', 'primary');
+	setLiveTrackFloatingStatus('Mencari lokasi Anda...', 'primary');
 
 	liveTrackingDestinationMarker = L.circleMarker(destination, {
 		radius: 7,
@@ -1406,7 +1475,7 @@ function startLiveTrackingTo(latitude, longitude, umkmName = 'UMKM', skipPermiss
 			liveTrackingLastUserPosition = userPosition;
 			liveTrackingLastRouteFetchAt = now;
 
-			setLiveTrackStatus('Memuat rute jalan OSRM...', 'primary');
+			setLiveTrackFloatingStatus('Memuat rute jalan OSRM...', 'primary');
 
 			try {
 				const route = await fetchOsrmRoute(userPosition, destination);
@@ -1421,7 +1490,7 @@ function startLiveTrackingTo(latitude, longitude, umkmName = 'UMKM', skipPermiss
 					liveTrackingRouteLine.setLatLngs(route.latLngs);
 				}
 
-				setLiveTrackStatus(
+				setLiveTrackFloatingStatus(
 					`Rute ke ${umkmName}: ${formatDistance(route.distance)} (${formatDuration(route.duration)})`,
 					'success',
 				);
@@ -1436,7 +1505,7 @@ function startLiveTrackingTo(latitude, longitude, umkmName = 'UMKM', skipPermiss
 				}
 
 				console.error('OSRM error:', error);
-				setLiveTrackStatus('Gagal memuat rute jalan OSRM. Pastikan internet stabil.', 'danger');
+				setLiveTrackFloatingStatus('Gagal memuat rute jalan OSRM. Pastikan internet stabil.', 'danger');
 			}
 		},
 		(error) => {
@@ -1449,7 +1518,7 @@ function startLiveTrackingTo(latitude, longitude, umkmName = 'UMKM', skipPermiss
 				message = 'Permintaan lokasi timeout. Coba lagi.';
 			}
 
-			setLiveTrackStatus(message, 'danger');
+			setLiveTrackFloatingStatus(message, 'danger');
 			showAlert('error', message);
 			stopLiveTracking(false);
 		},
@@ -1470,7 +1539,7 @@ function startLiveTrackingTo(latitude, longitude, umkmName = 'UMKM', skipPermiss
 				message = 'Permintaan lokasi timeout. Coba lagi.';
 			}
 
-			setLiveTrackStatus(message, 'danger');
+			setLiveTrackFloatingStatus(message, 'danger');
 			showAlert('error', message);
 			setTrackingControlsVisible(false);
 		},
@@ -1490,12 +1559,27 @@ function openRatingModal(umkmId, umkmName) {
 		ratingModal = new bootstrap.Modal(modalEl);
 	}
 
+	if (typeof closeDetailPanel === 'function') {
+		closeDetailPanel();
+	}
+
+	modalEl.style.zIndex = '1115';
+
 	document.getElementById('ratingUmkmId').value = umkmId;
 	document.getElementById('umkmName').textContent = umkmName;
 	document.getElementById('ratingForm').reset();
 	document.getElementById('nilaiRating').value = '0';
 	document.getElementById('ratingText').textContent = 'Belum dipilih';
 	resetStars();
+
+	requestAnimationFrame(() => {
+		const backdrop = document.querySelector('.modal-backdrop.show:not([data-rating-modal-backdrop])');
+		if (backdrop) {
+			backdrop.dataset.ratingModalBackdrop = 'true';
+			backdrop.style.zIndex = '1110';
+		}
+	});
+
 	ratingModal.show();
 }
 
@@ -1507,10 +1591,24 @@ function openMenuSubmissionModal(umkmId, umkmName) {
 		menuSubmissionModal = new bootstrap.Modal(modalEl);
 	}
 
+	if (typeof closeDetailPanel === 'function') {
+		closeDetailPanel();
+	}
+
+	modalEl.style.zIndex = '1115';
+
 	const inputUmkmId = document.getElementById('menuSubmissionUmkmId');
 	const targetName = document.getElementById('menuSubmissionTargetName');
 	if (inputUmkmId) inputUmkmId.value = String(umkmId || '');
 	if (targetName) targetName.textContent = umkmName || '-';
+
+	requestAnimationFrame(() => {
+		const backdrop = document.querySelector('.modal-backdrop.show:not([data-menu-submission-backdrop])');
+		if (backdrop) {
+			backdrop.dataset.menuSubmissionBackdrop = 'true';
+			backdrop.style.zIndex = '1110';
+		}
+	});
 
 	menuSubmissionModal.show();
 }
@@ -1604,7 +1702,7 @@ function initMapFeature(config) {
 		umkmData[item.id] = data;
 
 		const marker = L.marker([item.latitude, item.longitude], {
-			icon: createUmkmMarkerIcon(false),
+			icon: createUmkmMarkerIcon(Boolean(item.is_recommended)),
 			zIndexOffset: 600,
 		}).addTo(map);
 		marker.bindPopup(createPopupElement(data), { maxWidth: 250, minWidth: 200 });
@@ -1763,7 +1861,10 @@ function initMapFeature(config) {
 
 		selectedMarker.setIcon(createUmkmMarkerIcon(true));
 
-		setTimeout(() => selectedMarker.setIcon(createUmkmMarkerIcon(false)), 1800);
+		setTimeout(() => {
+			const isRecommended = Boolean(umkmData[selected.id]?.is_recommended);
+			selectedMarker.setIcon(createUmkmMarkerIcon(isRecommended));
+		}, 1800);
 	} else if (locations.length > 0) {
 		map.fitBounds(locations, { padding: [30, 30] });
 	}

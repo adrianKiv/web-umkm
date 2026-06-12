@@ -7,7 +7,11 @@ use App\Models\lokasi;
 use App\Models\Kategori;
 use App\Models\Kelompok;
 use App\Models\Rating;
+use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DataUmkmController extends Controller
 {
@@ -53,22 +57,96 @@ class DataUmkmController extends Controller
         }
 
         $filteredQuery = clone $query;
-        $umkms = $query->paginate(12);
 
         // Filter options
         $kelompokList = Kelompok::orderBy('nama_kelompok')->get();
         $kategoriList = Kategori::with('kelompok')->orderBy('nama_kategori')->get();
 
-        // Get recommended UMKM from currently filtered result (top rated with at least 3 ratings)
         $allUmkms = $filteredQuery->get();
+        $preferredCategoryIds = collect($request->session()->get('umkm_preferred_categories', []))
+            ->map(fn($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
 
-        $recommendedUmkms = $allUmkms->filter(function($umkm) {
-            return $umkm->rating->count() >= 3;
-        })->sortByDesc(function($umkm) {
-            return $umkm->rating->avg('nilai_rating');
-        })->take(6);
+        $explicitScores = collect($preferredCategoryIds)
+            ->mapWithKeys(fn($id) => [(int) $id => 1.0])
+            ->all();
 
-        return view('landing', compact('umkms', 'recommendedUmkms', 'kelompokList', 'kategoriList'));
+        $userId = Auth::id();
+        $sessionId = $request->session()->getId();
+
+        $implicitRows = UserActivity::query()
+            ->select('id_kategori', DB::raw('COUNT(*) as total'))
+            ->where('interaction_type', 'detail_click')
+            ->when($userId, function ($query) use ($userId) {
+                $query->where('id_user', $userId);
+            }, function ($query) use ($sessionId) {
+                $query->where('id_session', $sessionId);
+            })
+            ->groupBy('id_kategori')
+            ->get();
+
+        $categoryScores = $explicitScores;
+        foreach ($implicitRows as $row) {
+            $categoryId = (int) $row->id_kategori;
+            $categoryScores[$categoryId] = ($categoryScores[$categoryId] ?? 0) + ((int) $row->total * 0.1);
+        }
+
+        $scoredUmkms = $allUmkms->map(function ($umkm) use ($categoryScores) {
+            $score = (float) ($categoryScores[(int) $umkm->id_kategori] ?? 0);
+            $umkm->setAttribute('recommendation_score', $score);
+            return $umkm;
+        });
+
+        // Determine top 3 categories by score to be used for recommendations
+        $topCategoryIds = collect($categoryScores)
+            ->mapWithKeys(fn($v, $k) => [(int) $k => (float) $v])
+            ->sortDesc()
+            ->keys()
+            ->take(3)
+            ->map(fn($id) => (int) $id)
+            ->values()
+            ->all();
+
+        // Recommend UMKMs only from the top categories
+        $recommendedUmkms = $scoredUmkms
+            ->filter(fn($umkm) => in_array((int) $umkm->id_kategori, $topCategoryIds, true))
+            ->sortByDesc(fn($umkm) => $umkm->recommendation_score)
+            ->take(6);
+
+        $allUmkms->each(function ($umkm) use ($topCategoryIds) {
+            $umkm->setAttribute('is_recommended', in_array((int) $umkm->id_kategori, $topCategoryIds, true));
+        });
+
+        $randomizedUmkms = $allUmkms->shuffle();
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 12;
+        $currentItems = $randomizedUmkms->slice(($page - 1) * $perPage, $perPage)->values();
+        $umkms = new LengthAwarePaginator(
+            $currentItems,
+            $randomizedUmkms->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()],
+        );
+
+        $shouldShowPreferenceModal = empty($preferredCategoryIds)
+            && !$request->session()->has('umkm_preference_prompted');
+
+        if ($shouldShowPreferenceModal) {
+            $request->session()->put('umkm_preference_prompted', true);
+        }
+
+        return view('landing', compact(
+            'umkms',
+            'recommendedUmkms',
+            'kelompokList',
+            'kategoriList',
+            'preferredCategoryIds',
+            'shouldShowPreferenceModal'
+        ));
     }
 
     /**
@@ -88,14 +166,125 @@ class DataUmkmController extends Controller
         $dataUmkms = Umkm::with(['lokasi', 'kategori.kelompok', 'rating', 'menu'])->get();
         $kategoriList = Kategori::orderBy('nama_kategori')->get();
 
-        // Check if specific UMKM is requested
-        $selectedUmkm = null;
-        if ($request->has('umkm') && $request->umkm) {
-            $selectedUmkm = Umkm::with(['lokasi', 'kategori.kelompok', 'rating', 'menu'])
-                               ->find($request->umkm);
+        $preferredCategoryIds = collect($request->session()->get('umkm_preferred_categories', []))
+            ->map(fn($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $explicitScores = collect($preferredCategoryIds)
+            ->mapWithKeys(fn($id) => [(int) $id => 1.0])
+            ->all();
+
+        $userId = Auth::id();
+        $sessionId = $request->session()->getId();
+
+        $implicitRows = UserActivity::query()
+            ->select('id_kategori', DB::raw('COUNT(*) as total'))
+            ->where('interaction_type', 'detail_click')
+            ->when($userId, function ($query) use ($userId) {
+                $query->where('id_user', $userId);
+            }, function ($query) use ($sessionId) {
+                $query->where('id_session', $sessionId);
+            })
+            ->groupBy('id_kategori')
+            ->get();
+
+        $categoryScores = $explicitScores;
+        foreach ($implicitRows as $row) {
+            $categoryId = (int) $row->id_kategori;
+            $categoryScores[$categoryId] = ($categoryScores[$categoryId] ?? 0) + ((int) $row->total * 0.1);
         }
 
-        return view('map', compact('dataUmkms', 'selectedUmkm', 'kategoriList'));
+        // Use top 3 categories as highlights on the map as well
+        $highlightCategoryIds = collect($categoryScores)
+            ->mapWithKeys(fn($v, $k) => [(int) $k => (float) $v])
+            ->sortDesc()
+            ->keys()
+            ->take(3)
+            ->map(fn($id) => (int) $id)
+            ->values()
+            ->all();
+
+        // Check if specific UMKM is requested
+        $selectedUmkm = null;
+        $selectedId = $request->input('umkm') ?: $request->input('umkm_id');
+        if ($selectedId) {
+            $selectedUmkm = Umkm::with(['lokasi', 'kategori.kelompok', 'rating', 'menu'])
+                               ->find($selectedId);
+        }
+
+        return view('map', compact('dataUmkms', 'selectedUmkm', 'kategoriList', 'highlightCategoryIds'));
+    }
+
+    /**
+     * Return UMKM detail for the landing page modal.
+     */
+    public function detail(Umkm $umkm)
+    {
+        Umkm::whereKey($umkm->getKey())
+            ->update(['total_klik' => DB::raw('COALESCE(total_klik, 0) + 1')]);
+
+        $umkm->load('kategori.kelompok');
+
+        return response()->json([
+            'id' => $umkm->id_umkm,
+            'nama_umkm' => $umkm->nama_umkm,
+            'foto_umkm_url' => $umkm->foto_umkm_url,
+            'jam_buka' => $umkm->jam_buka,
+            'alamat_lengkap' => $umkm->alamat_lengkap,
+            'no_telfon' => $umkm->no_telfon,
+            'kategori' => optional($umkm->kategori)->nama_kategori ?? 'Tidak dikategorikan',
+        ]);
+    }
+
+    /**
+     * Track implicit feedback for detail clicks.
+     */
+    public function trackActivity(Request $request, Umkm $umkm)
+    {
+        UserActivity::create([
+            'id_user' => Auth::id(),
+            'id_session' => $request->session()->getId(),
+            'id_kategori' => $umkm->id_kategori,
+            'interaction_type' => 'detail_click',
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Store user preference for content-based filtering.
+     */
+    public function storePreference(Request $request)
+    {
+        $validated = $request->validate([
+            'kategori_ids' => 'required|array|max:3',
+            'kategori_ids.*' => 'integer|exists:kategori,id_kategori',
+        ]);
+
+        $categoryIds = collect($validated['kategori_ids'])
+            ->map(fn($id) => (int) $id)
+            ->unique()
+            ->take(3)
+            ->values()
+            ->all();
+
+        if (count($categoryIds) === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pilih minimal satu kategori.',
+            ], 422);
+        }
+
+        $request->session()->put('umkm_preferred_categories', $categoryIds);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Preferensi tersimpan.',
+            'categories' => $categoryIds,
+        ]);
     }
 
     /**

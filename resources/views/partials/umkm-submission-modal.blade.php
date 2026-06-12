@@ -1,4 +1,4 @@
-<div class="modal fade" id="umkmSubmissionModal" tabindex="-1" aria-labelledby="umkmSubmissionModalLabel" aria-hidden="true">
+<div class="modal fade" id="umkmSubmissionModal" data-show-on-errors="{{ ($errors->any() && old('nama_umkm')) ? '1' : '0' }}" tabindex="-1" aria-labelledby="umkmSubmissionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
 
         {{-- PERBAIKAN: Form digabung menjadi satu dengan modal-content --}}
@@ -77,7 +77,7 @@
                             data-initial-longitude="{{ old('longitude', '107.59205888361987') }}"
                             data-initial-zoom="15"
                         >
-                            <div id="umkmSubmissionMap" data-location-picker-map style="height: 320px; border-radius: 12px;"></div>
+                            <div id="umkmSubmissionMap" data-location-picker-map class="location-picker-map map-h-320 rounded-12"></div>
                             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mt-3">
                                 <small class="text-muted">Geser marker atau klik map untuk menentukan koordinat.</small>
                                 <small class="fw-semibold">Koordinat: <span id="submissionCoordinateReadout">-</span></small>
@@ -182,81 +182,8 @@
     </div>
 </div>
 
-@if ($errors->any() && old('nama_umkm'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const modalEl = document.getElementById('umkmSubmissionModal');
-            if (!modalEl) return;
-            const modal = new bootstrap.Modal(modalEl);
-            modal.show();
-        });
-    </script>
-@endif
-
-@push('styles')
-    <style>
-        .location-picker-map {
-            min-height: 320px;
-        }
-    </style>
-@endpush
+{{-- modal init and behaviors moved to resources/js/refactor/umkm-submission-modal.js --}}
 
 @push('scripts')
-    @vite('resources/js/location-picker.js')
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuList = document.getElementById('submissionMenuList');
-            const addBtn = document.getElementById('addSubmissionMenuItem');
-            if (!menuList || !addBtn) return;
-
-            function bindRemoveAction(root) {
-                root.querySelectorAll('[data-remove-menu-item]').forEach((btn) => {
-                    btn.addEventListener('click', function() {
-                        const items = menuList.querySelectorAll('[data-menu-item]');
-                        if (items.length <= 1) {
-                            const row = this.closest('[data-menu-item]');
-                            row.querySelectorAll('input').forEach((input) => {
-                                input.value = '';
-                            });
-                            return;
-                        }
-
-                        this.closest('[data-menu-item]')?.remove();
-                    });
-                });
-            }
-
-            addBtn.addEventListener('click', function() {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'border rounded-3 p-2 submission-menu-item';
-                wrapper.setAttribute('data-menu-item', '1');
-                wrapper.innerHTML = `
-                    <div class="row g-2 align-items-end">
-                        <div class="col-md-5">
-                            <label class="form-label small">Nama Menu</label>
-                            <input type="text" name="menu_nama[]" class="form-control form-control-sm" placeholder="Contoh: Ayam Bakar">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small">Harga</label>
-                            <input type="number" step="0.01" min="0" name="menu_harga[]" class="form-control form-control-sm" placeholder="Contoh: 25000">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small">Foto Menu</label>
-                            <input type="file" name="menu_foto[]" class="form-control form-control-sm" accept="image/*">
-                        </div>
-                        <div class="col-md-1 d-grid">
-                            <button type="button" class="btn btn-sm btn-outline-danger" data-remove-menu-item title="Hapus menu">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                menuList.appendChild(wrapper);
-                bindRemoveAction(wrapper);
-            });
-
-            bindRemoveAction(menuList);
-        });
-    </script>
+    @vite(['resources/js/location-picker.js','resources/js/refactor/umkm-submission-modal.js'])
 @endpush

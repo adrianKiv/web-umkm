@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN LOKASI - UMKM Kuliner')
+
 @section('admin-content')
 <div class="row">
     <div class="col-md-8">
@@ -9,10 +11,18 @@
                 <small class="text-muted">ID: {{ $lokasi->id_lokasi }}</small>
             </div>
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-sm-3 fw-semibold">Nama Lokasi:</div>
-                    <div class="col-sm-9">{{ $lokasi->nama_lokasi ?? '-' }}</div>
-                </div>
+<div class="row mb-3">
+    <div class="col-sm-3 fw-semibold">UMKM terkait:</div>
+    <div class="col-sm-9">
+        @if ($lokasi->umkm)
+            <span class="fw-bold text-dark" title="{{ $lokasi->umkm->nama_umkm }}">
+                {{ \Illuminate\Support\Str::limit($lokasi->umkm->nama_umkm, 26) }}
+            </span>
+        @else
+            <span class="text-muted fst-italic small">Belum terhubung</span>
+        @endif
+    </div>
+</div>
 
                 <div class="row mb-3">
                     <div class="col-sm-3 fw-semibold">Latitude:</div>
@@ -38,9 +48,9 @@
                     </div>
                 </div>
 
-                <div class="mb-4">
+                    <div class="mb-4">
                     <label class="form-label fw-semibold">Peta Lokasi</label>
-                    <div id="adminLokasiDetailMap" style="height: 340px; border-radius: 12px; border: 1px solid #e5e7eb;"></div>
+                    <div id="adminLokasiDetailMap" class="map-h-340 rounded-12 border-light-200" data-latitude="{{ $lokasi->latitude }}" data-longitude="{{ $lokasi->longitude }}" data-lokasi-id="{{ $lokasi->id_lokasi }}"></div>
                 </div>
 {{--
                 <div class="row mb-3">
@@ -63,7 +73,9 @@
                     @foreach($lokasi->umkms as $umkm)
                         <a href="{{ route('admin.umkm.show', $umkm) }}" class="list-group-item list-group-item-action">
                             <div class="d-flex justify-content-between">
-                                <strong>{{ $umkm->nama_umkm }}</strong>
+                                <strong title="{{ $umkm->nama_umkm }}">
+                                    {{ \Illuminate\Support\Str::limit($umkm->nama_umkm, 30) }}
+                                </strong>
                                 <small class="text-muted">{{ $umkm->kategori?->nama_kategori }}</small>
                             </div>
                         </a>
@@ -93,22 +105,5 @@
 @endsection
 
 @push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        if (!window.L) return;
-
-        const lat = {{ (float) $lokasi->latitude }};
-        const lng = {{ (float) $lokasi->longitude }};
-        const mapEl = document.getElementById('adminLokasiDetailMap');
-        if (!mapEl) return;
-
-        const map = L.map(mapEl).setView([lat, lng], 17);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        }).addTo(map);
-
-        L.marker([lat, lng]).addTo(map).bindPopup('Lokasi ID {{ $lokasi->id_lokasi }}').openPopup();
-    });
-</script>
+    @vite('resources/js/refactor/admin-lokasi-map.js')
 @endpush

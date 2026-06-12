@@ -11,13 +11,30 @@ class RatingAdminController extends Controller
     /**
      * Display a listing of ratings
      */
-    public function index()
+    public function index(Request $request)
     {
-        $ratings = Rating::with('umkm')
+        $ratings = Rating::with(['umkm.kategori'])
             ->latest('created_at')
             ->paginate(20);
 
-        return view('admin.rating.index', compact('ratings'));
+            $search = trim((string) $request->query('search', ''));
+
+            $ratings = Rating::with(['umkm.kategori'])
+                ->when($search !== '', function ($query) use ($search) {
+                    $query->where(function ($sub) use ($search) {
+                        $sub->where('nama_pengulas', 'LIKE', "%{$search}%")
+                            ->orWhere('komentar', 'LIKE', "%{$search}%")
+                            ->orWhere('nilai_rating', 'LIKE', "%{$search}%")
+                            ->orWhereHas('umkm', function ($u) use ($search) {
+                                $u->where('nama_umkm', 'LIKE', "%{$search}%");
+                            });
+                    });
+                })
+                ->latest('created_at')
+                ->paginate(20)
+                ->withQueryString();
+
+            return view('admin.rating.index', compact('ratings', 'search'));
     }
 
     /**
@@ -25,7 +42,7 @@ class RatingAdminController extends Controller
      */
     public function show(Rating $rating)
     {
-        $rating->load('umkm');
+        $rating->load('umkm.kategori');
 
         return view('admin.rating.show', compact('rating'));
     }

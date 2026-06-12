@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN KELOMPOK - UMKM Kuliner')
+
 @section('admin-content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4>Daftar Kelompok</h4>
@@ -13,14 +15,15 @@
         <i class="fas fa-info-circle me-2"></i>Belum ada kelompok
     </div>
 @else
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead class="table-light">
+    <div class="admin-card">
+        <div class="table-responsive admin-table-wrapper">
+            <table class="table table-hover align-middle admin-table">
+            <thead>
                 <tr>
-                    <th style="width: 5%">ID</th>
-                    <th style="width: 60%">Nama Kelompok</th>
-                    <th style="width: 15%">Kategori</th>
-                    <th style="width: 20%">Aksi</th>
+                    <th class="w-5p">ID</th>
+                    <th class="w-60p">Nama Kelompok</th>
+                    <th class="w-15p">Kategori</th>
+                    <th class="w-20p">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,24 +35,27 @@
                             <span class="badge bg-secondary">{{ $kelompok->kategoris_count ?? 0 }}</span>
                         </td>
                         <td>
-                            <a href="{{ route('admin.kelompok.show', $kelompok) }}" class="btn btn-sm btn-info text-white" title="Lihat">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('admin.kelompok.edit', $kelompok) }}" class="btn btn-sm btn-warning text-white" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('admin.kelompok.destroy', $kelompok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                            <div class="admin-actions">
+                                <a href="{{ route('admin.kelompok.show', $kelompok) }}" class="btn btn-sm btn-info text-white btn-icon" title="Lihat">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.kelompok.edit', $kelompok) }}" class="btn btn-sm btn-warning text-white btn-icon" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('admin.kelompok.destroy', $kelompok) }}" method="POST" class="d-inline-flex" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 
 <div class="d-flex flex-column flex-md-row justify-content-center align-items-center mt-3 mb-3">

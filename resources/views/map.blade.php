@@ -5,25 +5,21 @@
 @section('contentmap')
 
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show"
-            style="position: absolute; top: 1rem; right: 1rem; z-index: 1200;">
+        <div class="alert alert-success alert-dismissible fade show abs-top-right" role="alert">
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show"
-            style="position: absolute; top: 1rem; right: 1rem; z-index: 1200;">
+        <div class="alert alert-danger alert-dismissible fade show abs-top-right" role="alert">
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
     @if ($dataUmkms->isEmpty())
-        <div class="alert alert-warning" style="position: absolute; top: 1rem; left: 1rem; z-index: 999;">Tidak ada data
-            UMKM.
-        </div>
+        <div class="alert alert-warning abs-top-left">Tidak ada data UMKM.</div>
     @endif
 
     <div class="map-controls" id="mapControls">
@@ -51,6 +47,7 @@
         </div>
 
         <button type="button" class="btn btn-primary btn-sm w-100 mt-2" data-bs-toggle="modal"
+            onclick="if (typeof closeDetailPanel === 'function') closeDetailPanel();"
             data-bs-target="#umkmSubmissionModal">
             <i class="fas fa-plus-circle me-1"></i>Daftarkan UMKM
         </button>
@@ -284,13 +281,13 @@
                             </div>
                         @endif
                     </div>
-                    <div class="live-track-status text-muted small mt-2 w-100">Live tracking belum dimulai.</div>
                 </div>
             </div>
         </div>
     @endif
 
     <div id="globalStopTrackingWrapper" class="global-stop-tracking d-none">
+        <div id="liveTrackFloatingStatus" class="live-track-floating d-none" aria-live="polite"></div>
         <button type="button" id="globalStopTrackingBtn" class="btn btn-danger btn-sm shadow">
             <i class="fas fa-stop-circle me-1"></i>Stop Live Tracking
         </button>
@@ -357,7 +354,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="menuSubmissionModal" tabindex="-1" aria-labelledby="menuSubmissionModalLabel" aria-hidden="true">
+{{-- rating modal behavior moved to resources/js/refactor/map-modals.js --}}
+
+<div class="modal fade" id="menuSubmissionModal" data-show-on-errors="{{ ($errors->any() && old('id_umkm') && (old('menu_nama') || $errors->has('menu_daftar_foto') || $errors->has('menu_daftar_foto.*'))) ? '1' : '0' }}" tabindex="-1" aria-labelledby="menuSubmissionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -475,6 +474,8 @@
     </div>
 </div>
 
+{{-- menu submission modal behavior moved to resources/js/refactor/map-modals.js --}}
+
 <div class="modal fade" id="imageLightboxModal" tabindex="-1" aria-labelledby="imageLightboxLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content border-0 bg-transparent shadow-none lightbox-modal-content">
@@ -503,15 +504,7 @@
 </div>
 
 @if ($errors->any() && old('id_umkm') && (old('menu_nama') || $errors->has('menu_daftar_foto') || $errors->has('menu_daftar_foto.*')))
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modalEl = document.getElementById('menuSubmissionModal');
-            if (!modalEl || typeof bootstrap === 'undefined') return;
-            const modal = new bootstrap.Modal(modalEl);
-            modal.show();
-        });
-    </script>
-@endif
+    @endif
 
 <a href="{{ url('/') }}" class="btn-back-landing">
     <i class="fas fa-arrow-left"></i>
@@ -526,13 +519,16 @@
 
 @push('scripts')
     @php
+        $highlightCategoryId = $highlightCategoryIds ?? [];
+
         $mapUmkms = $dataUmkms
             ->filter(fn($item) => optional($item->lokasi)->latitude && optional($item->lokasi)->longitude)
-            ->map(function ($item) {
+            ->map(function ($item) use ($highlightCategoryId) {
                 return [
                     'id' => $item->id_umkm,
                     'nama_umkm' => $item->nama_umkm,
                     'foto_umkm_url' => $item->foto_umkm_url,
+                    'no_telfon' => $item->no_telfon,
                     'kategori' => optional($item->kategori)->nama_kategori ?? 'Tidak dikategorikan',
                     'kelompok' => optional(optional($item->kategori)->kelompok)->nama_kelompok ?? 'Tanpa Kelompok',
                     'jam_buka' => $item->jam_buka,
@@ -564,6 +560,7 @@
                             ],
                         )
                         ->values(),
+                    'is_recommended' => in_array((int) $item->id_kategori, $highlightCategoryId, true),
                 ];
             })
             ->values();
@@ -582,6 +579,8 @@
         {!! json_encode([
         'landingUrl' => route('landing'),
         'ratingStoreUrl' => route('rating.store'),
+        'umkmDetailUrlTemplate' => route('umkm.detail', ['umkm' => '__UMKM__']),
+        'umkmTrackUrlTemplate' => route('umkm.track', ['umkm' => '__UMKM__']),
         'umkms' => $mapUmkms,
         'selectedUmkm' => $selectedPayload,
         'upiCenter' => [
@@ -592,80 +591,5 @@
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
     </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modalEl = document.getElementById('menuSubmissionModal');
-            const menuList = document.getElementById('menuSubmissionList');
-            const addBtn = document.getElementById('addMenuSubmissionItem');
-
-            if (menuList && addBtn) {
-                const bindRemoveButtons = (root) => {
-                    root.querySelectorAll('[data-remove-menu-item]').forEach((button) => {
-                        button.addEventListener('click', function() {
-                            const rows = menuList.querySelectorAll('[data-menu-item]');
-                            if (rows.length <= 1) {
-                                const row = this.closest('[data-menu-item]');
-                                row?.querySelectorAll('input').forEach((input) => {
-                                    input.value = '';
-                                });
-                                return;
-                            }
-
-                            this.closest('[data-menu-item]')?.remove();
-                        });
-                    });
-                };
-
-                const createMenuRow = () => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'border rounded-3 p-2 submission-menu-item';
-                    wrapper.setAttribute('data-menu-item', '1');
-                    wrapper.innerHTML = `
-                        <div class="row g-2 align-items-end">
-                            <div class="col-md-5">
-                                <label class="form-label small">Nama Menu</label>
-                                <input type="text" name="menu_nama[]" class="form-control form-control-sm" placeholder="Contoh: Ayam Bakar">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small">Harga</label>
-                                <input type="number" step="0.01" min="0" name="menu_harga[]" class="form-control form-control-sm" placeholder="Contoh: 25000">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small">Foto Menu</label>
-                                <input type="file" name="menu_foto[]" class="form-control form-control-sm" accept="image/*">
-                            </div>
-                            <div class="col-md-1 d-grid">
-                                <button type="button" class="btn btn-sm btn-outline-danger" data-remove-menu-item title="Hapus menu">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    menuList.appendChild(wrapper);
-                    bindRemoveButtons(wrapper);
-                };
-
-                addBtn.addEventListener('click', createMenuRow);
-                bindRemoveButtons(menuList);
-            }
-
-            if (modalEl && typeof bootstrap !== 'undefined' && menuList) {
-                modalEl.addEventListener('hidden.bs.modal', function() {
-                    const rows = menuList.querySelectorAll('[data-menu-item]');
-                    rows.forEach((row, index) => {
-                        if (index === 0) {
-                            row.querySelectorAll('input').forEach((input) => {
-                                input.value = '';
-                            });
-                            return;
-                        }
-
-                        row.remove();
-                    });
-                });
-            }
-        });
-    </script>
-
-    @vite('resources/js/map.js')
+    @vite(['resources/js/map.js','resources/js/refactor/map-modals.js'])
 @endpush

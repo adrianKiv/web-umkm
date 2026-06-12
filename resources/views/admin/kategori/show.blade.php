@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN KATEGORI - UMKM Kuliner')
+
 @section('admin-content')
 <div class="row">
     <div class="col-md-8">
@@ -50,7 +52,9 @@
                     @foreach($kategori->umkms as $umkm)
                         <a href="{{ route('admin.umkm.show', $umkm) }}" class="list-group-item list-group-item-action">
                             <div class="d-flex justify-content-between">
-                                <strong>{{ $umkm->nama_umkm }}</strong>
+                                <strong title="{{ $umkm->nama_umkm }}">
+                                    {{ \Illuminate\Support\Str::limit($umkm->nama_umkm, 30) }}
+                                </strong>
                                 <small class="text-muted">{{ $umkm->alamat_lengkap }}</small>
                             </div>
                         </a>

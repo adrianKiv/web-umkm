@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN KELOMPOK - UMKM Kuliner')
+
 @section('admin-content')
 <div class="row">
     <div class="col-md-8">

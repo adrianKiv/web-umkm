@@ -23,8 +23,9 @@ class Umkm extends Model
         'foto_umkm',
         'id_lokasi',
         'id_kategori',
-        'osm_id', // Tambahkan ini
-        'source'  // Tambahkan ini
+        'osm_id',
+        'source',
+        'total_klik'
     ];
 
     public function lokasi(){

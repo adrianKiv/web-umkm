@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN UMKM - UMKM Kuliner')
+
 @section('admin-content')
 <div class="row">
     <div class="col-md-8">
@@ -59,9 +61,9 @@
                         <input type="file" class="form-control @error('foto_umkm') is-invalid @enderror"
                                id="foto_umkm" name="foto_umkm" accept="image/*">
                         <small class="text-muted d-block mb-2">Kosongkan jika tidak ingin mengganti foto. Maksimal 2MB.</small>
-                        <img src="{{ $umkm->foto_umkm_url }}" alt="Foto {{ $umkm->nama_umkm }}"
-                             style="width: 140px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6;"
-                             onerror="this.onerror=null;this.src='{{ asset('images/default-umkm.svg') }}';">
+                            <img src="{{ $umkm->foto_umkm_url }}" alt="Foto {{ $umkm->nama_umkm }}"
+                                class="thumb-140x100"
+                                onerror="this.onerror=null;this.src='{{ asset('images/default-umkm.svg') }}';">
                         @error('foto_umkm')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
                     </div>
 
@@ -92,7 +94,7 @@
                             data-initial-longitude="{{ old('longitude', optional($umkm->lokasi)->longitude ?? '107.59205888361987') }}"
                             data-initial-zoom="16"
                         >
-                            <div id="adminUmkmEditMap" data-location-picker-map style="height: 340px; border-radius: 12px;"></div>
+                            <div id="adminUmkmEditMap" data-location-picker-map class="map-h-340 rounded-12"></div>
                             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mt-3">
                                 <small class="text-muted">Klik map atau geser marker untuk memperbarui koordinat lokasi UMKM.</small>
                                 <small class="fw-semibold">Koordinat: <span id="adminUmkmEditCoordinateReadout">-</span></small>
@@ -121,4 +123,7 @@
 
 @push('scripts')
     @vite('resources/js/location-picker.js')
+@endpush
+@push('styles')
+    @vite('resources/css/refactor.css')
 @endpush

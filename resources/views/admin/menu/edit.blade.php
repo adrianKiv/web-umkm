@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN MENU - UMKM Kuliner')
+
 @section('admin-content')
 <div class="row">
     <div class="col-md-8">
@@ -44,9 +46,9 @@
                         <input type="file" class="form-control @error('foto_menu') is-invalid @enderror"
                                id="foto_menu" name="foto_menu" accept="image/*">
                         <small class="text-muted d-block mb-2">Kosongkan jika tidak ingin mengganti foto.</small>
-                        <img src="{{ $menu->foto_menu_url }}" alt="Foto {{ $menu->nama_menu }}"
-                             style="width: 120px; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6;"
-                             onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
+                            <img src="{{ $menu->foto_menu_url }}" alt="Foto {{ $menu->nama_menu }}"
+                                class="thumb-120x90"
+                                onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
                         @error('foto_menu')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
                     </div>
 

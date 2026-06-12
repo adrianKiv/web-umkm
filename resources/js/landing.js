@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const openMobileFilterBtn = document.getElementById('openMobileFilterBtn');
     const mobileFilterApplyBtn = document.getElementById('mobileFilterApplyBtn');
     const mobileFilterResetBtn = document.getElementById('mobileFilterResetBtn');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
     const getDesktopFilterSelect = (name) => desktopForm?.querySelector(`select[name="${name}"]`) || null;
     const getMobileHidden = (name) => mobileForm?.querySelector(`input[type="hidden"][name="${name}"]`) || null;
@@ -142,6 +143,231 @@ document.addEventListener('DOMContentLoaded', function() {
         performLiveSearch('', true);
     });
 
+    const detailModalEl = document.getElementById('umkmDetailModal');
+    const detailModal = detailModalEl && typeof bootstrap !== 'undefined'
+        ? new bootstrap.Modal(detailModalEl)
+        : null;
+    const detailLoading = document.getElementById('umkmDetailLoading');
+    const detailError = document.getElementById('umkmDetailError');
+    const detailContent = document.getElementById('umkmDetailContent');
+    const detailImage = document.getElementById('umkmDetailImage');
+    const detailName = document.getElementById('umkmDetailName');
+    const detailCategory = document.getElementById('umkmDetailCategory');
+    const detailHours = document.getElementById('umkmDetailHours');
+    const detailMapLink = document.getElementById('umkmDetailMapLink');
+
+    const setDetailLoading = () => {
+        detailLoading?.classList.remove('d-none');
+        detailError?.classList.add('d-none');
+        detailContent?.classList.add('d-none');
+        if (detailName) detailName.textContent = '-';
+        if (detailCategory) detailCategory.textContent = '-';
+        if (detailHours) detailHours.textContent = '-';
+    };
+
+    const setDetailError = (message) => {
+        if (detailError) {
+            detailError.textContent = message || 'Gagal memuat detail UMKM.';
+            detailError.classList.remove('d-none');
+        }
+        detailLoading?.classList.add('d-none');
+        detailContent?.classList.add('d-none');
+    };
+
+    const setDetailContent = (data) => {
+        detailLoading?.classList.add('d-none');
+        detailError?.classList.add('d-none');
+        detailContent?.classList.remove('d-none');
+
+        if (detailName) detailName.textContent = data.nama_umkm || '-';
+        if (detailCategory) detailCategory.textContent = data.kategori || '-';
+        if (detailHours) detailHours.textContent = data.jam_buka || '-';
+
+        const defaultImage = detailModalEl?.dataset.defaultImage || '';
+        if (detailImage) {
+            detailImage.src = data.foto_umkm_url || defaultImage;
+            detailImage.onerror = function() {
+                this.onerror = null;
+                this.src = defaultImage;
+            };
+        }
+
+        if (detailMapLink) {
+            const mapUrl = detailModalEl?.dataset.mapUrl || '/map';
+            detailMapLink.href = `${mapUrl}?umkm_id=${data.id}`;
+        }
+    };
+
+    document.addEventListener('click', function(event) {
+        const trigger = event.target.closest('[data-umkm-detail]');
+        if (!trigger) return;
+        event.preventDefault();
+        if (!detailModal || !detailModalEl) return;
+
+        const detailUrl = trigger.dataset.detailUrl;
+        if (!detailUrl) return;
+
+        const trackUrl = trigger.dataset.trackUrl;
+        if (trackUrl) {
+            fetch(trackUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken || '',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    Accept: 'application/json',
+                },
+            }).catch(() => {});
+        }
+
+        setDetailLoading();
+        detailModal.show();
+
+        fetch(detailUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                Accept: 'application/json',
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Response not ok');
+                }
+                return response.json();
+            })
+            .then((data) => setDetailContent(data))
+            .catch(() => setDetailError('Gagal memuat detail UMKM. Silakan coba lagi.'));
+    });
+
+    const preferenceModalEl = document.getElementById('preferenceModal');
+    const preferenceModal = preferenceModalEl && typeof bootstrap !== 'undefined'
+        ? new bootstrap.Modal(preferenceModalEl)
+        : null;
+    const preferenceForm = document.getElementById('preferenceForm');
+    const preferenceError = document.getElementById('preferenceError');
+    const preferenceCount = document.getElementById('preferenceCount');
+    const preferenceSubmitButton = preferenceForm?.querySelector('button[type="submit"]');
+    const preferenceCheckboxes = preferenceForm
+        ? Array.from(preferenceForm.querySelectorAll('input[name="kategori_ids[]"]'))
+        : [];
+    const maxSelection = Number(preferenceModalEl?.dataset.maxSelection || 3);
+
+    const getSelectedPreferences = () => preferenceCheckboxes.filter((checkbox) => checkbox.checked);
+
+    const getPreferenceErrorMessage = () => {
+        const selectedCount = getSelectedPreferences().length;
+        if (selectedCount === 0) {
+            return 'Pilih minimal satu kategori.';
+        }
+        if (selectedCount > maxSelection) {
+            return `Maksimal ${maxSelection} kategori.`;
+        }
+        return '';
+    };
+
+    const setPreferenceError = (message) => {
+        if (!preferenceError) return;
+        if (message) {
+            preferenceError.textContent = message;
+            preferenceError.classList.remove('d-none');
+            return;
+        }
+        preferenceError.textContent = '';
+        preferenceError.classList.add('d-none');
+    };
+
+    const updatePreferenceState = () => {
+        const selected = getSelectedPreferences();
+        if (preferenceCount) {
+            preferenceCount.textContent = `${selected.length}/${maxSelection} dipilih`;
+        }
+
+        preferenceCheckboxes.forEach((checkbox) => {
+            checkbox.disabled = !checkbox.checked && selected.length >= maxSelection;
+        });
+
+        if (preferenceSubmitButton) {
+            preferenceSubmitButton.disabled = selected.length === 0 || selected.length > maxSelection;
+        }
+
+        if (!getPreferenceErrorMessage()) {
+            setPreferenceError('');
+        }
+    };
+
+    preferenceCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener('change', () => {
+            const selected = getSelectedPreferences();
+            if (selected.length > maxSelection) {
+                checkbox.checked = false;
+                setPreferenceError(`Maksimal ${maxSelection} kategori.`);
+            } else if (selected.length > 0) {
+                setPreferenceError('');
+            }
+
+            updatePreferenceState();
+        });
+    });
+
+    updatePreferenceState();
+
+    if (preferenceModal && preferenceModalEl?.dataset.autoShow === 'true') {
+        const delay = Number(preferenceModalEl?.dataset.autoShowDelay || 5000);
+        window.setTimeout(() => {
+            preferenceModal.show();
+        }, Number.isFinite(delay) ? delay : 5000);
+    }
+
+    preferenceModalEl?.addEventListener('hide.bs.modal', (event) => {
+        const errorMessage = getPreferenceErrorMessage();
+        if (!errorMessage) return;
+        event.preventDefault();
+        setPreferenceError(errorMessage);
+    });
+
+    preferenceForm?.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const selectedIds = getSelectedPreferences().map((checkbox) => checkbox.value);
+        const errorMessage = getPreferenceErrorMessage();
+        if (errorMessage) {
+            setPreferenceError(errorMessage);
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const formAction = preferenceForm.getAttribute('action');
+        if (!formAction) return;
+
+        try {
+            const response = await fetch(formAction, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken || '',
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ kategori_ids: selectedIds }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Response not ok');
+            }
+
+            setPreferenceError('');
+
+            preferenceModal?.hide();
+
+            const query = (mobileInput?.value || desktopInput?.value || '').trim();
+            syncInputValue(query, 'mobile');
+            performLiveSearch(query, true);
+        } catch (error) {
+            if (preferenceError) {
+                preferenceError.textContent = 'Gagal menyimpan preferensi. Silakan coba lagi.';
+                preferenceError.classList.remove('d-none');
+            }
+        }
+    });
+
     attachPaginationHandlers();
 });
 
@@ -200,6 +426,12 @@ function performLiveSearch(query, shouldScroll = false) { // Tambah parameter sh
                 currentRecommendedSection.innerHTML = newRecommendedSection.innerHTML;
             } else {
                 currentRecommendedSection.remove();
+            }
+        } else if (newRecommendedSection) {
+            const currentSection = document.querySelector('.umkm-section');
+            if (currentSection && currentSection.parentNode) {
+                const recommendedClone = newRecommendedSection.cloneNode(true);
+                currentSection.parentNode.insertBefore(recommendedClone, currentSection);
             }
         }
 

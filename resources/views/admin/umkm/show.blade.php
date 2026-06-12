@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN UMKM - UMKM Kuliner')
+
 @section('admin-content')
 <div class="row">
     <div class="col-md-8">
@@ -11,15 +13,17 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-sm-3 fw-semibold">Nama UMKM:</div>
-                    <div class="col-sm-9">{{ $umkm->nama_umkm }}</div>
+                    <div class="col-sm-9" title="{{ $umkm->nama_umkm }}">
+                        {{ \Illuminate\Support\Str::limit($umkm->nama_umkm, 48) }}
+                    </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-sm-3 fw-semibold">Foto UMKM:</div>
                     <div class="col-sm-9">
-                        <img src="{{ $umkm->foto_umkm_url }}" alt="Foto {{ $umkm->nama_umkm }}"
-                             style="width: 220px; max-width: 100%; height: 140px; object-fit: cover; border-radius: 10px; border: 1px solid #dee2e6;"
-                             onerror="this.onerror=null;this.src='{{ asset('images/default-umkm.svg') }}';">
+                            <img src="{{ $umkm->foto_umkm_url }}" alt="Foto {{ $umkm->nama_umkm }}"
+                                class="thumb-220x140"
+                                onerror="this.onerror=null;this.src='{{ asset('images/default-umkm.svg') }}';">
                     </div>
                 </div>
 
@@ -122,9 +126,9 @@
                 @if($umkm->menu->count() > 0)
                     @foreach($umkm->menu as $menu)
                         <div class="p-2 border rounded mb-2 d-flex align-items-center gap-2">
-                            <img src="{{ $menu->foto_menu_url }}" alt="Foto {{ $menu->nama_menu }}"
-                                 style="width: 56px; height: 56px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6;"
-                                 onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
+                               <img src="{{ $menu->foto_menu_url }}" alt="Foto {{ $menu->nama_menu }}"
+                                   class="thumb-56"
+                                   onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
                             <div>
                                 <div class="fw-semibold">{{ $menu->nama_menu }}</div>
                                 <small class="text-muted">Rp{{ number_format((float) $menu->harga_menu, 0, ',', '.') }}</small>

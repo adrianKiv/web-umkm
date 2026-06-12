@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN USER - UMKM Kuliner')
+
 @section('admin-content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4>Daftar Pengguna</h4>
@@ -13,15 +15,16 @@
         <i class="fas fa-info-circle me-2"></i>Belum ada pengguna
     </div>
 @else
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead class="table-light">
+    <div class="admin-card">
+        <div class="table-responsive admin-table-wrapper">
+            <table class="table table-hover align-middle admin-table">
+            <thead>
                 <tr>
-                    <th style="width: 5%">ID</th>
-                    <th style="width: 25%">Nama</th>
-                    <th style="width: 35%">Email</th>
-                    <th style="width: 20%">Tanggal Dibuat</th>
-                    <th style="width: 15%">Aksi</th>
+                    <th class="w-5p">ID</th>
+                    <th class="w-25p">Nama</th>
+                    <th class="w-35p">Email</th>
+                    <th class="w-20p">Tanggal Dibuat</th>
+                    <th class="w-15p">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,26 +39,29 @@
                             <small>{{ $user->created_at?->format('d M Y H:i') }}</small>
                         </td>
                         <td>
-                            <a href="{{ route('admin.user.show', $user) }}" class="btn btn-sm btn-info text-white" title="Lihat">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('admin.user.edit', $user) }}" class="btn btn-sm btn-warning text-white" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            @if(auth()->id() !== $user->id)
-                                <form action="{{ route('admin.user.destroy', $user) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            @endif
+                            <div class="admin-actions">
+                                <a href="{{ route('admin.user.show', $user) }}" class="btn btn-sm btn-info text-white btn-icon" title="Lihat">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.user.edit', $user) }}" class="btn btn-sm btn-warning text-white btn-icon" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                @if(auth()->id() !== $user->id)
+                                    <form action="{{ route('admin.user.destroy', $user) }}" method="POST" class="d-inline-flex" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 
     @if($users->hasPages())

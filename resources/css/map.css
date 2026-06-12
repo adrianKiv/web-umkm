@@ -268,7 +268,40 @@
     bottom: 24px;
     transform: translateX(-50%);
     z-index: 1105;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
 }
+
+.live-track-floating {
+    background: rgba(15, 23, 42, 0.7);
+    color: #ffffff;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+    backdrop-filter: blur(8px);
+    text-align: center;
+    max-width: min(90vw, 360px);
+}
+
+        #menuSubmissionModal {
+            z-index: 1115;
+        }
+
+        .modal-backdrop.show[data-menu-submission-backdrop="true"] {
+            z-index: 1110;
+        }
+
+        #umkmSubmissionModal {
+            z-index: 1115;
+        }
+
+        .modal-backdrop.show[data-umkm-submission-backdrop="true"] {
+            z-index: 1110;
+        }
 
 .global-stop-tracking .btn {
     border-radius: 999px;
@@ -764,6 +797,14 @@
             background: rgba(255, 255, 255, 0.16);
         }
 
+        #ratingModal {
+            z-index: 1115;
+        }
+
+        .modal-backdrop.show[data-rating-modal-backdrop="true"] {
+            z-index: 1110;
+        }
+
         .marker-popup {
             min-width: 180px;
             padding: 0.25rem;
@@ -810,14 +851,21 @@
             color: #fff;
             font-size: 14px;
             transform: translateY(-4px);
+            position: relative;
         }
 
         .umkm-marker.is-highlighted {
-            width: 38px;
-            height: 38px;
-            border-radius: 13px;
-            font-size: 16px;
-            animation: bounce 0.9s ease;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25), 0 0 24px rgba(59, 130, 246, 0.55), 0 10px 24px rgba(59, 130, 246, 0.25);
+            animation: pulseGlow 1.6s ease-in-out infinite;
+        }
+
+        .umkm-marker.is-highlighted::before {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0) 70%);
+            z-index: -1;
         }
 
         .user-live-marker {
@@ -868,6 +916,15 @@
             0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
             40% { transform: translateY(-10px); }
             60% { transform: translateY(-5px); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), 0 0 24px rgba(59, 130, 246, 0.45), 0 10px 24px rgba(59, 130, 246, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.35), 0 0 32px rgba(59, 130, 246, 0.65), 0 12px 28px rgba(59, 130, 246, 0.3);
+            }
         }
 
         @keyframes slideOutRight {

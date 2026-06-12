@@ -1,55 +1,50 @@
 @extends('layouts.app')
 
-@section('title', 'UMKM SEKITAR UPI - Temukan Usaha Terdekat')
+@section('title', 'UMKM SEKITAR UPI - Temukan Makanan dan Minuman')
 
 @section('content')
     @php
         $defaultUmkmImage = asset('images/default-umkm.svg');
+        $preferredCategoryIds = $preferredCategoryIds ?? [];
     @endphp
-    <div class="container-fluid p-0">
-        <!-- Hero Section with Search -->
-<section class="hero-section d-flex align-items-center position-relative py-4 py-md-5">
-    <div class="container" style="position: relative; z-index: 2;">
-        <div class="row justify-content-center">
-
-            {{-- Lebar kolom disesuaikan: Penuh di HP (col-12), sedikit mengecil di Tablet/PC --}}
-            <div class="col-12 col-md-10 col-lg-8">
-
-                {{-- KOTAK UTAMA (Efek Card Modern) --}}
-                <div class="text-center text-white rounded-4 p-4 p-md-5 shadow-lg mx-auto" style="background-color: #1a3547;">
-
-                    {{-- Judul: Menggunakan fs-1 agar otomatis menyesuaikan layar (tidak raksasa di HP) --}}
-                    <h1 class="fw-bold mb-3 fs-1">Temukan UMKM Terdekat</h1>
-
-                    <p class="mb-4 text-light" style="font-size: 1.1rem;">
-                        Jelajahi berbagai usaha mikro kecil menengah di sekitar Anda dengan mudah dan cepat
-                    </p>
-
-                    {{-- Tombol: Menggunakan Flexbox yang sudah diperbaiki --}}
-                    <div class="mt-4 d-flex flex-column flex-sm-row justify-content-center gap-3">
-
-                        {{-- Tombol 1 --}}
-                        <a href="{{ route('data-umkm.map') }}" class="btn btn-light btn-lg px-4 shadow-sm">
-                            <i class="fas fa-map-marked-alt me-2 text-primary"></i>Lihat Semua di Peta
-                        </a>
-
-                        {{-- Tombol 2 --}}
-                        <button type="button" class="btn btn-outline-light btn-lg px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#umkmSubmissionModal">
-                            <i class="fas fa-plus-circle me-2"></i>Daftarkan UMKM
-                        </button>
-
+    <div class="container-fluid p-0 landing-page">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container hero-inner">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-10 col-lg-8">
+                        <div class="hero-panel text-center">
+                            <div class="hero-badge">
+                                <i class="fas fa-utensils"></i>
+                                UMKM Kuliner
+                            </div>
+                            <h1 class="hero-title">Temukan UMKM Terdekat</h1>
+                            <p class="hero-subtitle">
+                                Jelajahi UMKM pilihan di sekitar Anda dengan rekomendasi yang relevan dan lokasi yang akurat.
+                            </p>
+                            <div class="hero-actions">
+                                <a href="{{ route('data-umkm.map') }}" class="btn btn-hero-primary">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                    Lihat Semua di Peta
+                                </a>
+                                <button type="button" class="btn btn-hero-ghost" data-bs-toggle="modal" data-bs-target="#umkmSubmissionModal">
+                                    <i class="fas fa-plus-circle"></i>
+                                    Daftarkan UMKM
+                                </button>
+                            </div>
+                            <div class="hero-chips">
+                                <span class="hero-chip"><i class="fas fa-map-marker-alt"></i> Lokasi akurat</span>
+                                <span class="hero-chip"><i class="fas fa-star"></i> Rekomendasi personal</span>
+                                <span class="hero-chip"><i class="fas fa-bolt"></i> Update cepat</span>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
-                {{-- Akhir Kotak Utama --}}
-
             </div>
-        </div>
-    </div>
-</section>
+        </section>
         <!-- Recommended UMKM Section -->
         @if ($recommendedUmkms->isNotEmpty())
-            <section class="recommended-section py-5 bg-light">
+            <section class="recommended-section py-5">
                 <div class="container">
                     <div class="row mb-4">
                         <div class="col-12 text-center">
@@ -120,11 +115,15 @@
                                     <!-- Card Footer with Action -->
                                     <div class="card-footer bg-transparent border-0 pt-0">
                                         <div class="d-grid">
-                                            <a href="{{ route('data-umkm.map') }}?umkm={{ $umkm->id_umkm }}"
-                                                class="btn btn-outline-primary btn-sm">
+                                            <button type="button"
+                                                class="btn btn-outline-primary btn-sm"
+                                                data-umkm-detail
+                                                data-umkm-id="{{ $umkm->id_umkm }}"
+                                                data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
+                                                data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
                                                 <i class="fas fa-external-link-alt me-1"></i>
                                                 Lihat Detail
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -163,10 +162,14 @@
                                     </div>
 
                                     <div class="card-footer bg-transparent border-0 pt-0 p-2">
-                                        <a href="{{ route('data-umkm.map') }}?umkm={{ $umkm->id_umkm }}"
-                                            class="btn btn-outline-primary btn-sm w-100">
+                                        <button type="button"
+                                            class="btn btn-outline-primary btn-sm w-100"
+                                            data-umkm-detail
+                                            data-umkm-id="{{ $umkm->id_umkm }}"
+                                            data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
+                                            data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
                                             Detail
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </article>
@@ -235,6 +238,9 @@
                     <!-- UMKM Grid -->
                     <div class="row g-4">
                         @foreach ($umkms as $umkm)
+                            @php
+                                $isRecommended = (bool) ($umkm->is_recommended ?? false);
+                            @endphp
                             <div class="col-xl-3 col-lg-4 col-md-6 col-6">
                                 <div class="umkm-card card h-100 border-0 shadow-sm">
                                     <!-- Image Placeholder -->
@@ -242,12 +248,19 @@
                                         <img src="{{ $umkm->foto_umkm_url }}" alt="Foto {{ $umkm->nama_umkm }}"
                                             class="umkm-image"
                                             onerror="this.onerror=null;this.src='{{ $defaultUmkmImage }}';">
+                                        @if ($isRecommended)
+                                            <span class="preference-badge">⭐ Rekomendasi</span>
+                                        @endif
                                         <div class="umkm-overlay">
-                                            <a href="{{ route('data-umkm.map') }}?umkm={{ $umkm->id_umkm }}"
-                                                class="btn btn-primary btn-sm">
+                                            <button type="button"
+                                                class="btn btn-primary btn-sm"
+                                                data-umkm-detail
+                                                data-umkm-id="{{ $umkm->id_umkm }}"
+                                                data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
+                                                data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
                                                 <i class="fas fa-map-marked-alt me-1"></i>
-                                                Lihat di Map
-                                            </a>
+                                                Lihat Detail & Lokasi
+                                            </button>
                                         </div>
                                     </div>
 
@@ -308,11 +321,15 @@
                                     <!-- Card Footer with Action -->
                                     <div class="card-footer bg-transparent border-0 pt-0">
                                         <div class="d-grid">
-                                            <a href="{{ route('data-umkm.map') }}?umkm={{ $umkm->id_umkm }}"
-                                                class="btn btn-outline-primary btn-sm">
+                                            <button type="button"
+                                                class="btn btn-outline-primary btn-sm"
+                                                data-umkm-detail
+                                                data-umkm-id="{{ $umkm->id_umkm }}"
+                                                data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
+                                                data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
                                                 <i class="fas fa-external-link-alt me-1"></i>
                                                 Detail & Lokasi
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -332,6 +349,93 @@
                 @endif
             </div>
         </section>
+    </div>
+
+    <!-- UMKM Detail Modal (Landing) -->
+    <div class="modal fade" id="umkmDetailModal" tabindex="-1" aria-labelledby="umkmDetailModalLabel" aria-hidden="true"
+        data-map-url="{{ route('data-umkm.map') }}" data-default-image="{{ $defaultUmkmImage }}">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="umkmDetailModalLabel">
+                        <i class="fas fa-store me-2 text-primary"></i>Detail UMKM
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="umkmDetailLoading" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <div class="small text-muted mt-2">Memuat detail...</div>
+                    </div>
+
+                    <div id="umkmDetailError" class="alert alert-danger d-none" role="alert">
+                        Gagal memuat detail UMKM. Silakan coba lagi.
+                    </div>
+
+                    <div id="umkmDetailContent" class="d-none">
+                        <div class="d-flex flex-column flex-md-row gap-3">
+                            <img id="umkmDetailImage" src="{{ $defaultUmkmImage }}" alt="Foto UMKM" class="umkm-detail-modal-image">
+                            <div>
+                                <h5 id="umkmDetailName" class="mb-2">-</h5>
+                                <p class="mb-2">
+                                    <i class="fas fa-tag me-2 text-primary"></i><span id="umkmDetailCategory">-</span>
+                                </p>
+                                <p class="mb-0">
+                                    <i class="fas fa-clock me-2 text-primary"></i><span id="umkmDetailHours">-</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <a id="umkmDetailMapLink" href="{{ route('data-umkm.map') }}" class="btn btn-primary">
+                        <i class="fas fa-map-marked-alt me-1"></i>Lihat Lokasi di Map
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preference Modal (Content-Based Filtering) -->
+    <div class="modal fade" id="preferenceModal" tabindex="-1" aria-labelledby="preferenceModalLabel" aria-hidden="true"
+        data-auto-show="{{ $shouldShowPreferenceModal ? 'true' : 'false' }}" data-auto-show-delay="15000" data-max-selection="3" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <form id="preferenceForm" class="modal-content" action="{{ route('landing.preference.store') }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="preferenceModalLabel">
+                        <i class="fas fa-bullseye me-2 text-warning"></i>Kamu suka apa?
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small mb-3">Pilih maksimal 3 kategori kuliner yang paling kamu sukai.</p>
+
+                    <div class="preference-category-list">
+                        @foreach ($kategoriList as $kategori)
+                            <label class="preference-option">
+                                <span class="preference-option__row">
+                                    <input type="checkbox" name="kategori_ids[]" value="{{ $kategori->id_kategori }}"
+                                        {{ in_array((int) $kategori->id_kategori, $preferredCategoryIds, true) ? 'checked' : '' }}>
+                                    <span class="fw-semibold">{{ $kategori->nama_kategori }}</span>
+                                </span>
+                                <small class="text-muted d-block">{{ optional($kategori->kelompok)->nama_kelompok ?? 'Tanpa Kelompok' }}</small>
+                            </label>
+                        @endforeach
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <small class="text-muted">Maksimal 3 kategori.</small>
+                        <small class="text-muted" id="preferenceCount">0/3 dipilih</small>
+                    </div>
+
+                    <div id="preferenceError" class="text-danger small mt-2 d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Lanjut</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     @include('partials.umkm-submission-modal')

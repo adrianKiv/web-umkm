@@ -154,6 +154,7 @@ html, body {
             }
         }
     </style>
+    @vite('resources/css/refactor.css')
     @stack('styles')
 </head>
 <body>
@@ -267,9 +268,42 @@ html, body {
                             <i class="fas fa-map-marked-alt me-1"></i>E-Map
                         </a>
                     </li>
-                    <li class="nav-item ms-lg-3">
-                        <a href="{{ url('/login') }}" class="btn btn-outline-primary btn-sm rounded-pill px-4">Login Admin</a>
-                    </li>
+                    @guest
+                        <li class="nav-item ms-lg-3">
+                            <a href="{{ url('/login') }}" class="btn btn-outline-primary btn-sm rounded-pill px-4">Login</a>
+                        </li>
+                    @endguest
+                    @auth
+                        <li class="nav-item dropdown ms-lg-3">
+                            <a class="btn btn-outline-primary btn-sm rounded-pill px-4 dropdown-toggle" href="#" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i>{{ auth()->user()->name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                        <i class="fas fa-user me-2"></i>Profil
+                                    </a>
+                                </li>
+                                @if (auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                            <i class="fas fa-chart-line me-2"></i>Masuk Dashboard Admin
+                                        </a>
+                                    </li>
+                                @endif
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @endauth
                 </ul>
             </div>
         </div>

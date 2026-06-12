@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'ADMIN MENU - UMKM Kuliner')
+
 @section('admin-content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Daftar Menu UMKM</h2>
@@ -8,10 +10,10 @@
         </a>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-0 pt-4 pb-0 d-flex justify-content-end">
+    <div class="admin-card">
+        <div class="admin-card-header d-flex justify-content-end">
             <form action="{{ route('admin.menu.index') }}" method="GET" class="m-0">
-                <div class="input-group" style="width: 320px;">
+                <div class="input-group input-width-320">
                     <input type="text" name="search" class="form-control" placeholder="Cari nama menu atau UMKM..."
                         value="{{ request('search') }}">
                     <button class="btn btn-primary" type="submit">
@@ -25,9 +27,9 @@
                 </div>
             </form>
         </div>
-        <div class="table-responsive mt-2">
-            <table class="table table-hover mb-0 align-middle">
-                <thead class="table-light">
+        <div class="table-responsive admin-table-wrapper">
+            <table class="table table-hover align-middle admin-table">
+                <thead>
                     <tr>
                         <th>No</th>
                         <th>Foto</th>
@@ -43,7 +45,7 @@
                             <td>{{ ($menus->currentPage() - 1) * $menus->perPage() + $loop->iteration }}</td>
                             <td>
                                 <img src="{{ $menu->foto_menu_url }}" alt="Foto {{ $menu->nama_menu }}"
-                                    style="width: 52px; height: 52px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6;"
+                                    class="thumb-52"
                                     onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
                             </td>
                             <td>
@@ -60,24 +62,30 @@
                                     Rp{{ number_format((float) $menu->harga_menu, 0, ',', '.') }}
                                 @endif
                             </td>
-                            <td>{{ $menu->umkm->nama_umkm ?? '-' }}</td>
                             <td>
-                                <a href="{{ route('admin.menu.show', $menu) }}" class="btn btn-sm btn-info text-white"
-                                    title="Lihat">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('admin.menu.edit', $menu) }}" class="btn btn-sm btn-warning text-white"
-                                    title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('admin.menu.destroy', $menu) }}" method="POST" class="d-inline"
-                                    onsubmit="return confirm('Yakin ingin menghapus menu ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                <span title="{{ $menu->umkm->nama_umkm ?? '-' }}">
+                                    {{ \Illuminate\Support\Str::limit($menu->umkm->nama_umkm ?? '-', 26) }}
+                                </span>
+                            </td>
+                            <td>
+                                    <div class="admin-actions">
+                                        <a href="{{ route('admin.menu.show', $menu) }}" class="btn btn-sm btn-info text-white btn-icon"
+                                            title="Lihat">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('admin.menu.edit', $menu) }}" class="btn btn-sm btn-warning text-white btn-icon"
+                                            title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('admin.menu.destroy', $menu) }}" method="POST" class="d-inline-flex"
+                                            onsubmit="return confirm('Yakin ingin menghapus menu ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger btn-icon" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                             </td>
                         </tr>
                     @empty
