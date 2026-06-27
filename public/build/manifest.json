@@ -1,4 +1,13 @@
 {
+  "resources/css/admin/dashboard.css": {
+    "file": "assets/dashboard-BTxAegk-.css",
+    "src": "resources/css/admin/dashboard.css",
+    "isEntry": true,
+    "name": "dashboard",
+    "names": [
+      "dashboard.css"
+    ]
+  },
   "resources/css/app.css": {
     "file": "assets/app-C2hcejLh.css",
     "src": "resources/css/app.css",
@@ -26,6 +35,15 @@
       "map.css"
     ]
   },
+  "resources/css/refactor.css": {
+    "file": "assets/refactor-OQEdOtJf.css",
+    "src": "resources/css/refactor.css",
+    "isEntry": true,
+    "name": "refactor",
+    "names": [
+      "refactor.css"
+    ]
+  },
   "resources/js/app.js": {
     "file": "assets/app-BjqOcoUn.js",
     "name": "app",
@@ -48,6 +66,36 @@
     "file": "assets/map-CYrleqPP.js",
     "name": "map",
     "src": "resources/js/map.js",
+    "isEntry": true
+  },
+  "resources/js/refactor/admin-charts.js": {
+    "file": "assets/admin-charts-D22hVm0u.js",
+    "name": "admin-charts",
+    "src": "resources/js/refactor/admin-charts.js",
+    "isEntry": true
+  },
+  "resources/js/refactor/admin-lokasi-map.js": {
+    "file": "assets/admin-lokasi-map-CotJT5Hu.js",
+    "name": "admin-lokasi-map",
+    "src": "resources/js/refactor/admin-lokasi-map.js",
+    "isEntry": true
+  },
+  "resources/js/refactor/admin-menu-list.js": {
+    "file": "assets/admin-menu-list-Clz4BZfD.js",
+    "name": "admin-menu-list",
+    "src": "resources/js/refactor/admin-menu-list.js",
+    "isEntry": true
+  },
+  "resources/js/refactor/map-modals.js": {
+    "file": "assets/map-modals-CEeGSpLZ.js",
+    "name": "map-modals",
+    "src": "resources/js/refactor/map-modals.js",
+    "isEntry": true
+  },
+  "resources/js/refactor/umkm-submission-modal.js": {
+    "file": "assets/umkm-submission-modal-BNTlEBlZ.js",
+    "name": "umkm-submission-modal",
+    "src": "resources/js/refactor/umkm-submission-modal.js",
     "isEntry": true
   }
 }
