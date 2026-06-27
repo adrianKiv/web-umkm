@@ -6,7 +6,9 @@ use App\Listeners\AttachUserActivitiesToLogin;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider;git
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
