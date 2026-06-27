@@ -1,0 +1,53 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-C2hcejLh.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/css/landing.css": {
+    "file": "assets/landing-D_XgfZXO.css",
+    "src": "resources/css/landing.css",
+    "isEntry": true,
+    "name": "landing",
+    "names": [
+      "landing.css"
+    ]
+  },
+  "resources/css/map.css": {
+    "file": "assets/map-BzcvV2Uu.css",
+    "src": "resources/css/map.css",
+    "isEntry": true,
+    "name": "map",
+    "names": [
+      "map.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BjqOcoUn.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/landing.js": {
+    "file": "assets/landing-CAwZmsx3.js",
+    "name": "landing",
+    "src": "resources/js/landing.js",
+    "isEntry": true
+  },
+  "resources/js/location-picker.js": {
+    "file": "assets/location-picker-BOno498I.js",
+    "name": "location-picker",
+    "src": "resources/js/location-picker.js",
+    "isEntry": true
+  },
+  "resources/js/map.js": {
+    "file": "assets/map-CYrleqPP.js",
+    "name": "map",
+    "src": "resources/js/map.js",
+    "isEntry": true
+  }
+}
