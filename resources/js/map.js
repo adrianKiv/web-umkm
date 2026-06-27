@@ -46,8 +46,8 @@ function setTrackingControlsVisible(isVisible) {
 }
 
 function createUmkmMarkerIcon(isHighlighted = false) {
-	const iconSize = [32, 32];
-	const iconAnchor = [16, 30];
+	const iconSize = [36, 36];
+	const iconAnchor = [18, 34];
 	return L.divIcon({
 		html: `<div class="umkm-marker ${isHighlighted ? 'is-highlighted' : ''}"><i class="fas fa-utensils"></i></div>`,
 		className: 'custom-marker umkm-marker-wrapper',

@@ -839,9 +839,9 @@
         }
 
         .umkm-marker {
-            width: 32px;
-            height: 32px;
-            border-radius: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50% 50% 50% 0;
             background: linear-gradient(135deg, #fb923c, #f97316);
             border: 2px solid #fff;
             box-shadow: 0 8px 18px rgba(249, 115, 22, 0.35);
@@ -850,8 +850,14 @@
             justify-content: center;
             color: #fff;
             font-size: 14px;
-            transform: translateY(-4px);
+            transform: rotate(-45deg) translateY(-4px);
             position: relative;
+        }
+
+        .umkm-marker i {
+            transform: rotate(45deg);
+            font-size: 13px;
+            line-height: 1;
         }
 
         .umkm-marker.is-highlighted {
