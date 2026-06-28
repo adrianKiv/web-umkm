@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Login::class, AttachUserActivitiesToLogin::class);
 
         //Registrasi driver 'azure' agar dikenali oleh Laravel
-        Storage::extend('azure', function ($app, $config) {
+        \Illuminate\Support\Facades\Storage::extend('azure', function ($app, $config) {
             $client = BlobRestProxy::createBlobService($config['connection_string']);
             $adapter = new AzureBlobStorageAdapter($client, $config['container']);
 
