@@ -20,6 +20,10 @@ let imageLightboxMode = 'desktop';
 let imageLightboxGestureCleanup = null;
 let imageLightboxTranslateX = 0;
 let imageLightboxTranslateY = 0;
+let markerClusterLayer = null;
+let mapDataAbortController = null;
+let loadVisibleUmkmsDebounced = null;
+let pendingSelectedUmkmId = null;
 const locationConsentKey = 'map_live_tracking_location_consent';
 const filterState = {
 	searchQuery: '',
@@ -64,6 +68,133 @@ function createUserMarkerIcon() {
 		iconSize: [30, 30],
 		iconAnchor: [15, 15],
 	});
+}
+
+function debounce(fn, delay = 300) {
+	let timerId = null;
+	return (...args) => {
+		window.clearTimeout(timerId);
+		timerId = window.setTimeout(() => fn(...args), delay);
+	};
+}
+
+function clearLoadedUmkmState() {
+	Object.keys(umkmData).forEach((key) => {
+		delete umkmData[key];
+	});
+
+	Object.keys(markerLookup).forEach((key) => {
+		delete markerLookup[key];
+	});
+
+	markerClusterLayer?.clearLayers();
+}
+
+function openPopupForMarker(marker, item) {
+	if (!marker || !item || !map) return;
+
+	const popup = L.popup({ maxWidth: 250, minWidth: 200, closeButton: true })
+		.setLatLng(marker.getLatLng())
+		.setContent(createPopupElement(item));
+
+	popup.openOn(map);
+}
+
+function buildMapBoundsQuery() {
+	if (!map) return null;
+
+	const bounds = map.getBounds();
+	if (!bounds || !bounds.isValid()) return null;
+
+	const params = new URLSearchParams({
+		north: bounds.getNorth().toString(),
+		south: bounds.getSouth().toString(),
+		east: bounds.getEast().toString(),
+		west: bounds.getWest().toString(),
+	});
+
+	return params;
+}
+
+function renderMapUmkms(items) {
+	if (!Array.isArray(items)) return;
+
+	clearLoadedUmkmState();
+
+	items.forEach((item) => {
+		const data = {
+			...item,
+			kategori_key: toCategoryKey(item.kategori),
+			kelompok_key: toCategoryKey(item.kelompok),
+		};
+
+		umkmData[item.id] = data;
+
+		const marker = L.marker([item.latitude, item.longitude], {
+			icon: createUmkmMarkerIcon(Boolean(item.is_recommended)),
+			zIndexOffset: 600,
+		});
+
+		marker.on('click', () => openPopupForMarker(marker, data));
+		markerLookup[item.id] = marker;
+		markerClusterLayer?.addLayer(marker);
+	});
+
+	renderCategoryChips();
+	renderGroupFilters();
+	syncFilterControls();
+	applyMapFilters(false);
+
+	if (pendingSelectedUmkmId && markerLookup[pendingSelectedUmkmId]) {
+		const selectedMarker = markerLookup[pendingSelectedUmkmId];
+		const selectedData = umkmData[pendingSelectedUmkmId];
+		openPopupForMarker(selectedMarker, selectedData);
+		selectedMarker.setIcon(createUmkmMarkerIcon(true));
+
+		setTimeout(() => {
+			const isRecommended = Boolean(umkmData[pendingSelectedUmkmId]?.is_recommended);
+			selectedMarker.setIcon(createUmkmMarkerIcon(isRecommended));
+		}, 1800);
+	}
+}
+
+async function loadVisibleUmkms() {
+	if (!window.mapPageConfig?.mapDataUrl || !map) return;
+
+	const params = buildMapBoundsQuery();
+	if (!params) return;
+
+	if (mapDataAbortController) {
+		mapDataAbortController.abort();
+	}
+
+	const controller = new AbortController();
+	mapDataAbortController = controller;
+
+	try {
+		const response = await fetch(`${window.mapPageConfig.mapDataUrl}?${params.toString()}`, {
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest',
+				Accept: 'application/json',
+			},
+			signal: controller.signal,
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to load UMKM data (${response.status})`);
+		}
+
+		const payload = await response.json();
+		renderMapUmkms(payload.data || []);
+	} catch (error) {
+		if (error.name !== 'AbortError') {
+			console.error('Failed to load visible UMKM data:', error);
+		}
+	} finally {
+		if (mapDataAbortController === controller) {
+			mapDataAbortController = null;
+		}
+	}
 }
 
 function hasStoredLocationConsent() {
@@ -677,12 +808,14 @@ function applyMapFilters(focusMap = false) {
 		const isVisible = matchesSearch && matchesCategory && matchesGroup && matchesRating && matchesOpenNow;
 
 		if (isVisible) {
-			if (!map.hasLayer(marker)) marker.addTo(map);
+			if (markerClusterLayer && !markerClusterLayer.hasLayer(marker)) {
+				markerClusterLayer.addLayer(marker);
+			}
 			visibleLatLngs.push(marker.getLatLng());
 			visibleCount += 1;
-		} else if (map.hasLayer(marker)) {
+		} else if (markerClusterLayer && markerClusterLayer.hasLayer(marker)) {
 			marker.closePopup();
-			map.removeLayer(marker);
+			markerClusterLayer.removeLayer(marker);
 		}
 	});
 
@@ -1666,19 +1799,25 @@ function initRatingFeature() {
 
 function initMapFeature(config) {
 	if (!window.L) return;
+	pendingSelectedUmkmId = config.selectedUmkm?.id || null;
 
 	const mapContainer = document.createElement('div');
 	mapContainer.id = 'map';
 	document.body.insertBefore(mapContainer, document.body.firstChild);
 
-	map = L.map('map', { zoomControl: false }).setView([0, 0], 2);
+	const upi = config.upiCenter || {};
+	const initialCenter = pendingSelectedUmkmId && config.selectedUmkm
+		? [config.selectedUmkm.latitude, config.selectedUmkm.longitude]
+		: [upi.latitude || -6.861082410263256, upi.longitude || 107.59205888361987];
+	const initialZoom = pendingSelectedUmkmId && config.selectedUmkm ? 18 : 16;
+
+	map = L.map('map', { zoomControl: false }).setView(initialCenter, initialZoom);
 	L.control.zoom({ position: 'bottomright' }).addTo(map);
 	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,
 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 	}).addTo(map);
 
-	const upi = config.upiCenter || {};
 	if (typeof upi.latitude === 'number' && typeof upi.longitude === 'number') {
 		const center = [upi.latitude, upi.longitude];
 		L.circle(center, {
@@ -1692,23 +1831,15 @@ function initMapFeature(config) {
 		L.marker(center).addTo(map).bindPopup('Pusat UPI (Universitas Pendidikan Indonesia)');
 	}
 
-	const locations = [];
-	(config.umkms || []).forEach((item) => {
-		const data = {
-			...item,
-			kategori_key: toCategoryKey(item.kategori),
-			kelompok_key: toCategoryKey(item.kelompok),
-		};
-		umkmData[item.id] = data;
-
-		const marker = L.marker([item.latitude, item.longitude], {
-			icon: createUmkmMarkerIcon(Boolean(item.is_recommended)),
-			zIndexOffset: 600,
-		}).addTo(map);
-		marker.bindPopup(createPopupElement(data), { maxWidth: 250, minWidth: 200 });
-		markerLookup[item.id] = marker;
-		locations.push([item.latitude, item.longitude]);
+	markerClusterLayer = L.markerClusterGroup({
+		showCoverageOnHover: false,
+		chunkedLoading: true,
+		removeOutsideVisibleBounds: true,
+		disableClusteringAtZoom: 18,
+		spiderfyOnMaxZoom: true,
 	});
+	map.addLayer(markerClusterLayer);
+	loadVisibleUmkmsDebounced = debounce(() => loadVisibleUmkms(), 300);
 
 	const mapSearchInput = document.getElementById('mapSearchInput');
 	const mapSearchBtn = document.getElementById('mapSearchBtn');
@@ -1802,6 +1933,9 @@ function initMapFeature(config) {
 	});
 	mobileFilterBackdrop?.addEventListener('click', closeMobileSheet);
 	window.addEventListener('resize', syncResponsiveFilterUI);
+	map.on('moveend zoomend', () => {
+		loadVisibleUmkmsDebounced?.();
+	});
 
 	document.getElementById('desktopApplyFilters')?.addEventListener('click', () => {
 		filterState.group = document.getElementById('desktopGroupFilter').value || 'all';
@@ -1841,8 +1975,6 @@ function initMapFeature(config) {
 		stopLiveTracking(true);
 	});
 
-	renderCategoryChips();
-	renderGroupFilters();
 	syncFilterControls();
 	initCategoryChipsInteraction();
 	syncResponsiveFilterUI();
@@ -1851,23 +1983,7 @@ function initMapFeature(config) {
 	if (filterState.searchQuery) {
 		showSearchFilters();
 	}
-	applyMapFilters(false);
-
-	const selected = config.selectedUmkm;
-	if (selected && markerLookup[selected.id]) {
-		map.setView([selected.latitude, selected.longitude], 18);
-		const selectedMarker = markerLookup[selected.id];
-		selectedMarker.openPopup();
-
-		selectedMarker.setIcon(createUmkmMarkerIcon(true));
-
-		setTimeout(() => {
-			const isRecommended = Boolean(umkmData[selected.id]?.is_recommended);
-			selectedMarker.setIcon(createUmkmMarkerIcon(isRecommended));
-		}, 1800);
-	} else if (locations.length > 0) {
-		map.fitBounds(locations, { padding: [30, 30] });
-	}
+	loadVisibleUmkms();
 
 	setTimeout(() => map.invalidateSize(), 300);
 }

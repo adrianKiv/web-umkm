@@ -7,9 +7,10 @@ use App\Models\Umkm;
 use App\Models\Kategori;
 use App\Models\Lokasi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\Support\WebpImageUploader;
+use App\Support\StorageFile;
 
 class UmkmAdminController extends Controller
 {
@@ -61,31 +62,36 @@ class UmkmAdminController extends Controller
             'longitude' => 'required|numeric|between:-180,180',
         ]);
 
-        $lokasi = Lokasi::create([
-            'latitude' => $validated['latitude'],
-            'longitude' => $validated['longitude'],
-        ]);
-
-        if (!$validated['slug_umkm']) {
-            $validated['slug_umkm'] = Str::slug($validated['nama_umkm']);
-        }
-
         $fotoUmkm = '-';
         if ($request->hasFile('foto_umkm')) {
             $fotoUmkm = WebpImageUploader::store($request->file('foto_umkm'), 'umkm', 'umkm');
         }
 
-        Umkm::create([
-            'nama_umkm' => $validated['nama_umkm'],
-            'slug_umkm' => $validated['slug_umkm'],
-            'jam_buka' => $validated['jam_buka'],
-            'no_telfon' => $validated['no_telfon'] ?? '-',
-            'alamat_lengkap' => $validated['alamat_lengkap'],
-            'deskripsi' => $validated['deskripsi'] ?? '-',
-            'foto_umkm' => $fotoUmkm,
-            'id_kategori' => $validated['id_kategori'],
-            'id_lokasi' => $lokasi->id_lokasi,
-        ]);
+        try {
+            DB::transaction(function () use ($validated, $fotoUmkm) {
+                $lokasi = Lokasi::create([
+                    'latitude' => $validated['latitude'],
+                    'longitude' => $validated['longitude'],
+                ]);
+
+                $slugUmkm = $validated['slug_umkm'] ?: Str::slug($validated['nama_umkm']);
+
+                Umkm::create([
+                    'nama_umkm' => $validated['nama_umkm'],
+                    'slug_umkm' => $slugUmkm,
+                    'jam_buka' => $validated['jam_buka'],
+                    'no_telfon' => $validated['no_telfon'] ?? '-',
+                    'alamat_lengkap' => $validated['alamat_lengkap'],
+                    'deskripsi' => $validated['deskripsi'] ?? '-',
+                    'foto_umkm' => $fotoUmkm,
+                    'id_kategori' => $validated['id_kategori'],
+                    'id_lokasi' => $lokasi->id_lokasi,
+                ]);
+            });
+        } catch (\Throwable $throwable) {
+            StorageFile::deleteIfExists($fotoUmkm);
+            throw $throwable;
+        }
 
         return redirect()->route('admin.umkm.index')
             ->with('success', 'UMKM berhasil ditambahkan');
@@ -129,42 +135,52 @@ class UmkmAdminController extends Controller
             'longitude' => 'required|numeric|between:-180,180',
         ]);
 
-        if ($umkm->lokasi) {
-            $umkm->lokasi->update([
-                'latitude' => $validated['latitude'],
-                'longitude' => $validated['longitude'],
-            ]);
-        } else {
-            $lokasi = Lokasi::create([
-                'latitude' => $validated['latitude'],
-                'longitude' => $validated['longitude'],
-            ]);
-            $umkm->id_lokasi = $lokasi->id_lokasi;
-        }
+        $oldFotoUmkm = $umkm->foto_umkm;
+        $newFotoUmkm = $oldFotoUmkm ?: '-';
 
-        if (!$validated['slug_umkm']) {
-            $validated['slug_umkm'] = Str::slug($validated['nama_umkm']);
-        }
-
-        $fotoUmkm = $umkm->foto_umkm ?: '-';
         if ($request->hasFile('foto_umkm')) {
-            if ($umkm->foto_umkm && $umkm->foto_umkm !== '-' && Storage::disk('public')->exists($umkm->foto_umkm)) {
-                Storage::disk('public')->delete($umkm->foto_umkm);
-            }
-            $fotoUmkm = WebpImageUploader::store($request->file('foto_umkm'), 'umkm', 'umkm');
+            $newFotoUmkm = WebpImageUploader::store($request->file('foto_umkm'), 'umkm', 'umkm');
         }
 
-        $umkm->update([
-            'nama_umkm' => $validated['nama_umkm'],
-            'slug_umkm' => $validated['slug_umkm'],
-            'jam_buka' => $validated['jam_buka'],
-            'no_telfon' => $validated['no_telfon'] ?? '-',
-            'alamat_lengkap' => $validated['alamat_lengkap'],
-            'deskripsi' => $validated['deskripsi'] ?? '-',
-            'foto_umkm' => $fotoUmkm,
-            'id_kategori' => $validated['id_kategori'],
-            'id_lokasi' => $umkm->id_lokasi,
-        ]);
+        try {
+            DB::transaction(function () use ($umkm, $validated, $newFotoUmkm) {
+                if ($umkm->lokasi) {
+                    $umkm->lokasi->update([
+                        'latitude' => $validated['latitude'],
+                        'longitude' => $validated['longitude'],
+                    ]);
+                } else {
+                    $lokasi = Lokasi::create([
+                        'latitude' => $validated['latitude'],
+                        'longitude' => $validated['longitude'],
+                    ]);
+                    $umkm->id_lokasi = $lokasi->id_lokasi;
+                }
+
+                $slugUmkm = $validated['slug_umkm'] ?: Str::slug($validated['nama_umkm']);
+
+                $umkm->update([
+                    'nama_umkm' => $validated['nama_umkm'],
+                    'slug_umkm' => $slugUmkm,
+                    'jam_buka' => $validated['jam_buka'],
+                    'no_telfon' => $validated['no_telfon'] ?? '-',
+                    'alamat_lengkap' => $validated['alamat_lengkap'],
+                    'deskripsi' => $validated['deskripsi'] ?? '-',
+                    'foto_umkm' => $newFotoUmkm,
+                    'id_kategori' => $validated['id_kategori'],
+                    'id_lokasi' => $umkm->id_lokasi,
+                ]);
+            });
+        } catch (\Throwable $throwable) {
+            if ($request->hasFile('foto_umkm')) {
+                StorageFile::deleteIfExists($newFotoUmkm);
+            }
+            throw $throwable;
+        }
+
+        if ($request->hasFile('foto_umkm')) {
+            StorageFile::deleteIfExists($oldFotoUmkm);
+        }
 
         return redirect()->route('admin.umkm.show', $umkm)
             ->with('success', 'UMKM berhasil diupdate');
@@ -178,15 +194,11 @@ class UmkmAdminController extends Controller
         $umkm->load('menu');
 
         foreach ($umkm->menu as $menu) {
-            if ($menu->foto_menu && $menu->foto_menu !== '-' && Storage::disk('public')->exists($menu->foto_menu)) {
-                Storage::disk('public')->delete($menu->foto_menu);
-            }
+            StorageFile::deleteIfExists($menu->foto_menu);
             $menu->delete();
         }
 
-        if ($umkm->foto_umkm && $umkm->foto_umkm !== '-' && Storage::disk('public')->exists($umkm->foto_umkm)) {
-            Storage::disk('public')->delete($umkm->foto_umkm);
-        }
+        StorageFile::deleteIfExists($umkm->foto_umkm);
 
         $umkm->delete();
 

@@ -9,10 +9,11 @@ use Intervention\Image\ImageManager;
 
 class WebpImageUploader
 {
-    public static function store(UploadedFile $file, string $directory, string $prefix, int $quality = 78, string $disk = 'public'): string
+    public static function store(UploadedFile $file, string $directory, string $prefix, int $quality = 78, ?string $disk = null): string
     {
         $manager = ImageManager::gd();
         $image = $manager->read($file->getRealPath());
+        $disk ??= config('filesystems.default', 'public');
 
         $safePrefix = trim($prefix, "-_ ");
         $filename = sprintf('%s-%s.webp', $safePrefix !== '' ? $safePrefix : 'image', Str::uuid()->toString());

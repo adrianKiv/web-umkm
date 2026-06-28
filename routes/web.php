@@ -20,6 +20,7 @@ Route::post('/landing/preference', [DataUmkmController::class, 'storePreference'
 Route::get('/umkm/{umkm}/detail', [DataUmkmController::class, 'detail'])->name('umkm.detail');
 Route::post('/umkm/{umkm}/track-activity', [DataUmkmController::class, 'trackActivity'])->name('umkm.track');
 Route::get('/map', [DataUmkmController::class, 'map'])->name('data-umkm.map');
+Route::get('/map/data', [DataUmkmController::class, 'mapData'])->name('data-umkm.map-data');
 Route::post('/rating', [DataUmkmController::class, 'storeRating'])->name('rating.store');
 Route::get('/data-umkm', [DataUmkmController::class, 'index'])->name('data-umkm.index');
 Route::post('/umkm-submissions', [PublicUmkmSubmissionController::class, 'store'])->name('umkm-submissions.store');

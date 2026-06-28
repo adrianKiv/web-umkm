@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\Umkm;
 use App\Support\WebpImageUploader;
+use App\Support\StorageFile;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class MenuAdminController extends Controller
 {
@@ -162,9 +162,7 @@ class MenuAdminController extends Controller
 
         $fotoMenu = $menu->foto_menu ?: '-';
         if ($request->hasFile('foto_menu')) {
-            if ($menu->foto_menu && $menu->foto_menu !== '-' && Storage::disk('public')->exists($menu->foto_menu)) {
-                Storage::disk('public')->delete($menu->foto_menu);
-            }
+            StorageFile::deleteIfExists($menu->foto_menu);
             $fotoMenu = WebpImageUploader::store($request->file('foto_menu'), 'menu', 'menu');
         }
 
@@ -184,9 +182,7 @@ class MenuAdminController extends Controller
      */
     public function destroy(Menu $menu)
     {
-        if ($menu->foto_menu && $menu->foto_menu !== '-' && Storage::disk('public')->exists($menu->foto_menu)) {
-            Storage::disk('public')->delete($menu->foto_menu);
-        }
+        StorageFile::deleteIfExists($menu->foto_menu);
 
         $menu->delete();
 

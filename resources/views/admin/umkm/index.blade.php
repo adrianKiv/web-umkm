@@ -100,8 +100,7 @@
         Menampilkan {{ $umkms->firstItem() ?? 0 }} - {{ $umkms->lastItem() ?? 0 }} dari {{ $umkms->total() }} UMKM
     </div>
     <div>
-        {{-- {{ $umkms->appends(request()->query())->links('layouts.custom') }} --}}
-        {{ $umkms->appends(request()->query()) }}
+        {{ $umkms->appends(request()->query())->links('layouts.custom') }}
     </div>
 </div>
 @endsection

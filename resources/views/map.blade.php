@@ -514,75 +514,24 @@
 @include('partials.umkm-submission-modal')
 
 @push('styles')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
     @vite('resources/css/map.css')
 @endpush
 
 @push('scripts')
-    @php
-        $highlightCategoryId = $highlightCategoryIds ?? [];
-
-        $mapUmkms = $dataUmkms
-            ->filter(fn($item) => optional($item->lokasi)->latitude && optional($item->lokasi)->longitude)
-            ->map(function ($item) use ($highlightCategoryId) {
-                return [
-                    'id' => $item->id_umkm,
-                    'nama_umkm' => $item->nama_umkm,
-                    'foto_umkm_url' => $item->foto_umkm_url,
-                    'no_telfon' => $item->no_telfon,
-                    'kategori' => optional($item->kategori)->nama_kategori ?? 'Tidak dikategorikan',
-                    'kelompok' => optional(optional($item->kategori)->kelompok)->nama_kelompok ?? 'Tanpa Kelompok',
-                    'jam_buka' => $item->jam_buka,
-                    'alamat_lengkap' => $item->alamat_lengkap,
-                    'deskripsi' => $item->deskripsi,
-                    'latitude' => (float) $item->lokasi->latitude,
-                    'longitude' => (float) $item->lokasi->longitude,
-                    'rating_avg' => (float) ($item->rating->avg('nilai_rating') ?? 0),
-                    'rating_count' => (int) $item->rating->count(),
-                    'ulasan' => $item->rating
-                        ->sortByDesc('created_at')
-                        ->map(
-                            fn($rating) => [
-                                'nama_pengulas' => $rating->nama_pengulas ?: 'Anonymous',
-                                'nilai_rating' => (int) $rating->nilai_rating,
-                                'komentar' => $rating->komentar,
-                                'tanggal' => optional($rating->created_at)->format('Y-m-d H:i:s'),
-                            ],
-                        )
-                        ->values(),
-                    'menu' => $item->menu
-                        ->map(
-                            fn($menu) => [
-                                'id' => $menu->id_menu,
-                                'nama_menu' => $menu->nama_menu,
-                                'harga_menu' => (float) $menu->harga_menu,
-                                'foto_menu_url' => $menu->foto_menu_url,
-                                'is_daftar_foto' => (bool) $menu->is_foto_daftar_menu,
-                            ],
-                        )
-                        ->values(),
-                    'is_recommended' => in_array((int) $item->id_kategori, $highlightCategoryId, true),
-                ];
-            })
-            ->values();
-
-        $selectedPayload = null;
-        if ($selectedUmkm && $selectedUmkm->lokasi) {
-            $selectedPayload = [
-                'id' => $selectedUmkm->id_umkm,
-                'latitude' => (float) $selectedUmkm->lokasi->latitude,
-                'longitude' => (float) $selectedUmkm->lokasi->longitude,
-            ];
-        }
-    @endphp
-
     <script id="mapPageConfig" type="application/json">
         {!! json_encode([
         'landingUrl' => route('landing'),
+        'mapDataUrl' => route('data-umkm.map-data'),
         'ratingStoreUrl' => route('rating.store'),
         'umkmDetailUrlTemplate' => route('umkm.detail', ['umkm' => '__UMKM__']),
         'umkmTrackUrlTemplate' => route('umkm.track', ['umkm' => '__UMKM__']),
-        'umkms' => $mapUmkms,
-        'selectedUmkm' => $selectedPayload,
+        'selectedUmkm' => $selectedUmkm && $selectedUmkm->lokasi ? [
+            'id' => $selectedUmkm->id_umkm,
+            'latitude' => (float) $selectedUmkm->lokasi->latitude,
+            'longitude' => (float) $selectedUmkm->lokasi->longitude,
+        ] : null,
         'upiCenter' => [
             'latitude' => -6.861082410263256,
             'longitude' => 107.59205888361987,
@@ -591,5 +540,6 @@
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
     </script>
 
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     @vite(['resources/js/map.js','resources/js/refactor/map-modals.js'])
 @endpush

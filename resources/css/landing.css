@@ -163,6 +163,49 @@ body {
     overflow: hidden;
 }
 
+.umkm-card .card-body {
+    min-width: 0;
+}
+
+.umkm-card .card-title,
+.umkm-card .umkm-address,
+.umkm-card .umkm-rating-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.umkm-card .card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+}
+
+.umkm-card .umkm-address {
+    display: block;
+    line-height: 1.35;
+    white-space: normal;
+    max-height: 2.7em;
+    word-break: break-word;
+}
+
+.umkm-card .umkm-rating-block {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.umkm-card .umkm-rating-block .stars {
+    flex: 0 0 auto;
+}
+
+.umkm-card .umkm-rating-meta {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+}
+
 .umkm-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 40px rgba(0,0,0,0.15);
@@ -733,5 +776,30 @@ body {
 
     .card-img-container {
         height: 165px;
+    }
+
+    .umkm-card .card-body {
+        padding: 0.7rem;
+    }
+
+    .umkm-card .card-title {
+        font-size: 0.92rem;
+        line-height: 1.3;
+    }
+
+    .umkm-card .umkm-address {
+        font-size: 0.8rem;
+        max-height: 2.4em;
+    }
+
+    .umkm-card .umkm-rating-block {
+        align-items: flex-start;
+    }
+
+    .umkm-card .umkm-rating-meta {
+        display: block;
+        margin-left: 0 !important;
+        white-space: normal;
+        line-height: 1.2;
     }
 }

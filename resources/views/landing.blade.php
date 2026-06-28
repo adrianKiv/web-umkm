@@ -20,14 +20,16 @@
                             </div>
                             <h1 class="hero-title">Temukan UMKM Terdekat</h1>
                             <p class="hero-subtitle">
-                                Jelajahi UMKM pilihan di sekitar Anda dengan rekomendasi yang relevan dan lokasi yang akurat.
+                                Jelajahi UMKM pilihan di sekitar Anda dengan rekomendasi yang relevan dan lokasi yang
+                                akurat.
                             </p>
                             <div class="hero-actions">
                                 <a href="{{ route('data-umkm.map') }}" class="btn btn-hero-primary">
                                     <i class="fas fa-map-marked-alt"></i>
                                     Lihat Semua di Peta
                                 </a>
-                                <button type="button" class="btn btn-hero-ghost" data-bs-toggle="modal" data-bs-target="#umkmSubmissionModal">
+                                <button type="button" class="btn btn-hero-ghost" data-bs-toggle="modal"
+                                    data-bs-target="#umkmSubmissionModal">
                                     <i class="fas fa-plus-circle"></i>
                                     Daftarkan UMKM
                                 </button>
@@ -105,7 +107,7 @@
 
                                         <!-- Address -->
                                         <div class="mb-3">
-                                            <small class="text-muted">
+                                            <small class="text-muted umkm-address">
                                                 <i class="fas fa-map-marker-alt me-1"></i>
                                                 {{ Str::limit($umkm->alamat_lengkap, 30) }}
                                             </small>
@@ -115,9 +117,7 @@
                                     <!-- Card Footer with Action -->
                                     <div class="card-footer bg-transparent border-0 pt-0">
                                         <div class="d-grid">
-                                            <button type="button"
-                                                class="btn btn-outline-primary btn-sm"
-                                                data-umkm-detail
+                                            <button type="button" class="btn btn-outline-primary btn-sm" data-umkm-detail
                                                 data-umkm-id="{{ $umkm->id_umkm }}"
                                                 data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
                                                 data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
@@ -162,9 +162,7 @@
                                     </div>
 
                                     <div class="card-footer bg-transparent border-0 pt-0 p-2">
-                                        <button type="button"
-                                            class="btn btn-outline-primary btn-sm w-100"
-                                            data-umkm-detail
+                                        <button type="button" class="btn btn-outline-primary btn-sm w-100" data-umkm-detail
                                             data-umkm-id="{{ $umkm->id_umkm }}"
                                             data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
                                             data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
@@ -252,9 +250,7 @@
                                             <span class="preference-badge">⭐ Rekomendasi</span>
                                         @endif
                                         <div class="umkm-overlay">
-                                            <button type="button"
-                                                class="btn btn-primary btn-sm"
-                                                data-umkm-detail
+                                            <button type="button" class="btn btn-primary btn-sm" data-umkm-detail
                                                 data-umkm-id="{{ $umkm->id_umkm }}"
                                                 data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
                                                 data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
@@ -294,7 +290,7 @@
                                         <!-- Rating -->
                                         <div class="mt-auto">
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <div class="rating">
+                                                <div class="rating umkm-rating-block">
                                                     @php
                                                         $avgRating = $umkm->rating->avg('nilai_rating') ?? 0;
                                                         $ratingCount = $umkm->rating->count();
@@ -310,7 +306,7 @@
                                                             @endif
                                                         @endfor
                                                     </div>
-                                                    <small class="text-muted ms-1">
+                                                    <small class="text-muted ms-1 umkm-rating-meta">
                                                         ({{ number_format($avgRating, 1) }} • {{ $ratingCount }} ulasan)
                                                     </small>
                                                 </div>
@@ -321,9 +317,7 @@
                                     <!-- Card Footer with Action -->
                                     <div class="card-footer bg-transparent border-0 pt-0">
                                         <div class="d-grid">
-                                            <button type="button"
-                                                class="btn btn-outline-primary btn-sm"
-                                                data-umkm-detail
+                                            <button type="button" class="btn btn-outline-primary btn-sm" data-umkm-detail
                                                 data-umkm-id="{{ $umkm->id_umkm }}"
                                                 data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
                                                 data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
@@ -336,13 +330,13 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="d-flex flex-column flex-md-row justify-content-center align-items-center mt-5">
+                    <!-- Pagination -->
+                    <div class="d-flex flex-column flex-md-row justify-content-center align-items-center mt-3 mb-3">
                         <div class="text-muted mb-2 mb-md-0">
                             Menampilkan {{ $umkms->firstItem() ?? 0 }} - {{ $umkms->lastItem() ?? 0 }} dari
                             {{ $umkms->total() }} UMKM
                         </div>
                         <div>
-                            {{-- Panggil custom view yang dibuat di Langkah 1 --}}
                             {{ $umkms->appends(request()->query())->links('layouts.custom') }}
                         </div>
                     </div>
@@ -352,8 +346,8 @@
     </div>
 
     <!-- UMKM Detail Modal (Landing) -->
-    <div class="modal fade" id="umkmDetailModal" tabindex="-1" aria-labelledby="umkmDetailModalLabel" aria-hidden="true"
-        data-map-url="{{ route('data-umkm.map') }}" data-default-image="{{ $defaultUmkmImage }}">
+    <div class="modal fade" id="umkmDetailModal" tabindex="-1" aria-labelledby="umkmDetailModalLabel"
+        aria-hidden="true" data-map-url="{{ route('data-umkm.map') }}" data-default-image="{{ $defaultUmkmImage }}">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -374,7 +368,8 @@
 
                     <div id="umkmDetailContent" class="d-none">
                         <div class="d-flex flex-column flex-md-row gap-3">
-                            <img id="umkmDetailImage" src="{{ $defaultUmkmImage }}" alt="Foto UMKM" class="umkm-detail-modal-image">
+                            <img id="umkmDetailImage" src="{{ $defaultUmkmImage }}" alt="Foto UMKM"
+                                class="umkm-detail-modal-image">
                             <div>
                                 <h5 id="umkmDetailName" class="mb-2">-</h5>
                                 <p class="mb-2">
@@ -398,10 +393,12 @@
     </div>
 
     <!-- Preference Modal (Content-Based Filtering) -->
-    <div class="modal fade" id="preferenceModal" tabindex="-1" aria-labelledby="preferenceModalLabel" aria-hidden="true"
-        data-auto-show="{{ $shouldShowPreferenceModal ? 'true' : 'false' }}" data-auto-show-delay="15000" data-max-selection="3" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal fade" id="preferenceModal" tabindex="-1" aria-labelledby="preferenceModalLabel"
+        aria-hidden="true" data-auto-show="{{ $shouldShowPreferenceModal ? 'true' : 'false' }}"
+        data-auto-show-delay="15000" data-max-selection="3" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
-            <form id="preferenceForm" class="modal-content" action="{{ route('landing.preference.store') }}" method="POST">
+            <form id="preferenceForm" class="modal-content" action="{{ route('landing.preference.store') }}"
+                method="POST">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="preferenceModalLabel">
@@ -419,7 +416,8 @@
                                         {{ in_array((int) $kategori->id_kategori, $preferredCategoryIds, true) ? 'checked' : '' }}>
                                     <span class="fw-semibold">{{ $kategori->nama_kategori }}</span>
                                 </span>
-                                <small class="text-muted d-block">{{ optional($kategori->kelompok)->nama_kelompok ?? 'Tanpa Kelompok' }}</small>
+                                <small
+                                    class="text-muted d-block">{{ optional($kategori->kelompok)->nama_kelompok ?? 'Tanpa Kelompok' }}</small>
                             </label>
                         @endforeach
                     </div>

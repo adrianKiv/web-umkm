@@ -9,6 +9,7 @@ use App\Models\Kelompok;
 use App\Models\Rating;
 use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -163,47 +164,13 @@ class DataUmkmController extends Controller
      */
     public function map(Request $request)
     {
-        $dataUmkms = Umkm::with(['lokasi', 'kategori.kelompok', 'rating', 'menu'])->get();
+        $dataUmkms = Umkm::select('id_umkm', 'nama_umkm')->orderBy('nama_umkm')->get();
         $kategoriList = Kategori::orderBy('nama_kategori')->get();
 
         $preferredCategoryIds = collect($request->session()->get('umkm_preferred_categories', []))
             ->map(fn($id) => (int) $id)
             ->filter()
             ->unique()
-            ->values()
-            ->all();
-
-        $explicitScores = collect($preferredCategoryIds)
-            ->mapWithKeys(fn($id) => [(int) $id => 1.0])
-            ->all();
-
-        $userId = Auth::id();
-        $sessionId = $request->session()->getId();
-
-        $implicitRows = UserActivity::query()
-            ->select('id_kategori', DB::raw('COUNT(*) as total'))
-            ->where('interaction_type', 'detail_click')
-            ->when($userId, function ($query) use ($userId) {
-                $query->where('id_user', $userId);
-            }, function ($query) use ($sessionId) {
-                $query->where('id_session', $sessionId);
-            })
-            ->groupBy('id_kategori')
-            ->get();
-
-        $categoryScores = $explicitScores;
-        foreach ($implicitRows as $row) {
-            $categoryId = (int) $row->id_kategori;
-            $categoryScores[$categoryId] = ($categoryScores[$categoryId] ?? 0) + ((int) $row->total * 0.1);
-        }
-
-        // Use top 3 categories as highlights on the map as well
-        $highlightCategoryIds = collect($categoryScores)
-            ->mapWithKeys(fn($v, $k) => [(int) $k => (float) $v])
-            ->sortDesc()
-            ->keys()
-            ->take(3)
-            ->map(fn($id) => (int) $id)
             ->values()
             ->all();
 
@@ -215,7 +182,36 @@ class DataUmkmController extends Controller
                                ->find($selectedId);
         }
 
-        return view('map', compact('dataUmkms', 'selectedUmkm', 'kategoriList', 'highlightCategoryIds'));
+        return view('map', compact('dataUmkms', 'selectedUmkm', 'kategoriList'));
+    }
+
+    /**
+     * Return UMKM that fall inside the current map bounding box.
+     */
+    public function mapData(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'north' => ['required', 'numeric'],
+            'south' => ['required', 'numeric'],
+            'east' => ['required', 'numeric'],
+            'west' => ['required', 'numeric'],
+        ]);
+
+        $highlightCategoryIds = $this->getHighlightCategoryIds($request);
+
+        $umkms = Umkm::with(['lokasi', 'kategori.kelompok', 'rating', 'menu'])
+            ->whereHas('lokasi', function ($query) use ($validated) {
+                $query->whereBetween('latitude', [(float) $validated['south'], (float) $validated['north']])
+                    ->whereBetween('longitude', [(float) $validated['west'], (float) $validated['east']]);
+            })
+            ->get()
+            ->map(fn ($item) => $this->buildMapPayload($item, $highlightCategoryIds))
+            ->values();
+
+        return response()->json([
+            'data' => $umkms,
+            'count' => $umkms->count(),
+        ]);
     }
 
     /**
@@ -285,6 +281,87 @@ class DataUmkmController extends Controller
             'message' => 'Preferensi tersimpan.',
             'categories' => $categoryIds,
         ]);
+    }
+
+    private function getHighlightCategoryIds(Request $request): array
+    {
+        $preferredCategoryIds = collect($request->session()->get('umkm_preferred_categories', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $explicitScores = collect($preferredCategoryIds)
+            ->mapWithKeys(fn ($id) => [(int) $id => 1.0])
+            ->all();
+
+        $userId = Auth::id();
+        $sessionId = $request->session()->getId();
+
+        $implicitRows = UserActivity::query()
+            ->select('id_kategori', DB::raw('COUNT(*) as total'))
+            ->where('interaction_type', 'detail_click')
+            ->when($userId, function ($query) use ($userId) {
+                $query->where('id_user', $userId);
+            }, function ($query) use ($sessionId) {
+                $query->where('id_session', $sessionId);
+            })
+            ->groupBy('id_kategori')
+            ->get();
+
+        $categoryScores = $explicitScores;
+        foreach ($implicitRows as $row) {
+            $categoryId = (int) $row->id_kategori;
+            $categoryScores[$categoryId] = ($categoryScores[$categoryId] ?? 0) + ((int) $row->total * 0.1);
+        }
+
+        return collect($categoryScores)
+            ->mapWithKeys(fn ($v, $k) => [(int) $k => (float) $v])
+            ->sortDesc()
+            ->keys()
+            ->take(3)
+            ->map(fn ($id) => (int) $id)
+            ->values()
+            ->all();
+    }
+
+    private function buildMapPayload(Umkm $item, array $highlightCategoryIds): array
+    {
+        return [
+            'id' => $item->id_umkm,
+            'nama_umkm' => $item->nama_umkm,
+            'foto_umkm_url' => $item->foto_umkm_url,
+            'no_telfon' => $item->no_telfon,
+            'kategori' => optional($item->kategori)->nama_kategori ?? 'Tidak dikategorikan',
+            'kelompok' => optional(optional($item->kategori)->kelompok)->nama_kelompok ?? 'Tanpa Kelompok',
+            'jam_buka' => $item->jam_buka,
+            'alamat_lengkap' => $item->alamat_lengkap,
+            'deskripsi' => $item->deskripsi,
+            'latitude' => (float) optional($item->lokasi)->latitude,
+            'longitude' => (float) optional($item->lokasi)->longitude,
+            'rating_avg' => (float) ($item->rating->avg('nilai_rating') ?? 0),
+            'rating_count' => (int) $item->rating->count(),
+            'ulasan' => $item->rating
+                ->sortByDesc('created_at')
+                ->map(fn ($rating) => [
+                    'nama_pengulas' => $rating->nama_pengulas ?: 'Anonymous',
+                    'nilai_rating' => (int) $rating->nilai_rating,
+                    'komentar' => $rating->komentar,
+                    'tanggal' => optional($rating->created_at)->format('Y-m-d H:i:s'),
+                ])
+                ->values(),
+            'menu' => $item->menu
+                ->map(fn ($menu) => [
+                    'id' => $menu->id_menu,
+                    'nama_menu' => $menu->nama_menu,
+                    'harga_menu' => (float) $menu->harga_menu,
+                    'foto_menu_url' => $menu->foto_menu_url,
+                    'is_daftar_foto' => (bool) $menu->is_foto_daftar_menu,
+                ])
+                ->values(),
+            'is_recommended' => in_array((int) $item->id_kategori, $highlightCategoryIds, true),
+        ];
     }
 
     /**
