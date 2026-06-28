@@ -485,9 +485,12 @@ function handlePaginationClick(e) {
     isSearching = true;
 
     fetch(url, {
+        method: 'GET',
         headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html'
+        },
+        credentials: 'include' // <-- WAJIB: Agar session cookie Laravel tetap terbaca saat AJAX
     })
     .then(response => response.text())
     .then(html => {
