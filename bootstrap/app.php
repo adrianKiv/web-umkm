@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\ForceWwwMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->prepend(\App\Http\Middleware/ForceWwwMiddleware::class);
+        $middleware->prepend(ForceWwwMiddleware::class);
         $middleware->trustProxies(at: '*');
         $middleware->alias([
             'role' => App\Http\Middleware\RoleMiddleware::class,
