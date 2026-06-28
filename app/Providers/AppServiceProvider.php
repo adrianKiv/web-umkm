@@ -12,10 +12,10 @@ use Illuminate\Support\Facades\URL;
 
 //Import library untuk Azure Blob Storage
 use Illuminate\Support\Facades\Storage;
-use League\Flysystem\AzureBlobStorage\AzureBlobStorageAdapter;
-use MicrosoftAzure\Storage\Blob\BlobRestProxy;
-use League\Flysystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
+use League\Flysystem\AzureBlobStorage\AzureBlobStorageAdapter;
+use League\Flysystem\Filesystem;
+use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 
 class AppServiceProvider extends ServiceProvider
 {

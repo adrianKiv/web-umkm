@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
+use App\Support\StorageUrl;
 
 class Umkm extends Model
 {
@@ -58,6 +58,6 @@ class Umkm extends Model
             return $this->foto_umkm;
         }
 
-        return Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($this->foto_umkm);
+        return StorageUrl::resolve($this->foto_umkm, 'images/default-umkm.svg');
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Support\StorageUrl;
 
 class UmkmSubmission extends Model
 {
@@ -62,6 +63,6 @@ class UmkmSubmission extends Model
             return $this->foto_umkm;
         }
 
-        return Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($this->foto_umkm);
+        return StorageUrl::resolve($this->foto_umkm, 'images/default-umkm.svg');
     }
 }

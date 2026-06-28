@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
+use App\Support\StorageUrl;
 
 class MenuSubmission extends Model
 {
@@ -69,6 +69,6 @@ class MenuSubmission extends Model
             return $this->foto_menu;
         }
 
-        return Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($this->foto_menu);
+        return StorageUrl::resolve($this->foto_menu, 'images/default-menu.svg');
     }
 }
