@@ -11,12 +11,13 @@ class ForceWwwMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Hanya lakukan redirect di env production dan jika domain tidak dimulai dengan www
+        // Jalankan hanya di environment production dan jika domain tidak diawali 'www.'
         if (config('app.env') === 'production' && !Str::startsWith($request->header('host'), 'www.')) {
-            $host = 'www.' . $request->header('host');
 
-            // Satukan skema HTTPS dengan host www dan request path saat ini
-            return redirect()->secure($request->path(), 301)->header('Host', $host);
+            // Mengambil full URL saat ini (termasuk parameter query) lalu menggantinya dengan www
+            $secureUrl = Str::replaceFirst('://', '://www.', $request->fullUrl());
+
+            return redirect()->to($secureUrl, 301);
         }
 
         return $next($request);
