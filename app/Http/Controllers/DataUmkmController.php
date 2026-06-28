@@ -132,10 +132,10 @@ class DataUmkmController extends Controller
             $allUmkms->count(),
             $perPage,
             $page,
-            ['path' => $request->url()],
+            ['path' => secure_url($request->path()), 'query' => $request->query()]
         );
         $umkms->appends($request->query());
-        
+
         $shouldShowPreferenceModal = empty($preferredCategoryIds)
             && !$request->session()->has('umkm_preference_prompted');
 

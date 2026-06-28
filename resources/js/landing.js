@@ -490,7 +490,7 @@ function handlePaginationClick(e) {
             'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'text/html'
         },
-        credentials: 'include' // <-- WAJIB: Agar session cookie Laravel tetap terbaca saat AJAX
+        credentials: 'include'
     })
     .then(response => response.text())
     .then(html => {
