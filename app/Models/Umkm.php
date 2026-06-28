@@ -58,6 +58,6 @@ class Umkm extends Model
             return $this->foto_umkm;
         }
 
-        return Storage::url($this->foto_umkm);
+        return Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($this->foto_umkm);
     }
 }

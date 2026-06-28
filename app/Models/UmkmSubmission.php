@@ -51,4 +51,17 @@ class UmkmSubmission extends Model
     {
         return $this->hasMany(MenuSubmission::class, 'umkm_submission_id');
     }
+
+    public function getFotoUmkmUrlAttribute(): string
+    {
+        if (!$this->foto_umkm || $this->foto_umkm === '-') {
+            return asset('images/default-umkm.svg');
+        }
+
+        if (str_starts_with($this->foto_umkm, 'http://') || str_starts_with($this->foto_umkm, 'https://')) {
+            return $this->foto_umkm;
+        }
+
+        return Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($this->foto_umkm);
+    }
 }

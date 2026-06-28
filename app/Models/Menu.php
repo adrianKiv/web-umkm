@@ -46,6 +46,6 @@ class Menu extends Model
             return $this->foto_menu;
         }
 
-        return Storage::url($this->foto_menu);
+        return Storage::disk(env('FILESYSTEM_DISK', 'public'))->url($this->foto_menu);
     }
 }
