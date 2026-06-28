@@ -251,12 +251,13 @@
 
             .auth-panel {
                 border-radius: 24px 24px 0 0;
-                order: 2;
+                order: 1;
             }
 
             .auth-form {
                 padding: 2rem;
-                order: 1;
+                border-radius: 0 0 24px 24px;
+                order: 2;
             }
         }
 

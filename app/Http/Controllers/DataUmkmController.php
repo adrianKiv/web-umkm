@@ -63,7 +63,10 @@ class DataUmkmController extends Controller
         $kelompokList = Kelompok::orderBy('nama_kelompok')->get();
         $kategoriList = Kategori::with('kelompok')->orderBy('nama_kategori')->get();
 
-        $allUmkms = $filteredQuery->get();
+        $allUmkms = $filteredQuery
+            ->orderBy('nama_umkm')
+            ->orderBy('id_umkm')
+            ->get();
         $preferredCategoryIds = collect($request->session()->get('umkm_preferred_categories', []))
             ->map(fn($id) => (int) $id)
             ->filter()
@@ -121,13 +124,12 @@ class DataUmkmController extends Controller
             $umkm->setAttribute('is_recommended', in_array((int) $umkm->id_kategori, $topCategoryIds, true));
         });
 
-        $randomizedUmkms = $allUmkms->shuffle();
         $page = LengthAwarePaginator::resolveCurrentPage();
         $perPage = 12;
-        $currentItems = $randomizedUmkms->slice(($page - 1) * $perPage, $perPage)->values();
+        $currentItems = $allUmkms->slice(($page - 1) * $perPage, $perPage)->values();
         $umkms = new LengthAwarePaginator(
             $currentItems,
-            $randomizedUmkms->count(),
+            $allUmkms->count(),
             $perPage,
             $page,
             ['path' => $request->url(), 'query' => $request->query()],
