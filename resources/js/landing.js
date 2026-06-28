@@ -154,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const detailName = document.getElementById('umkmDetailName');
     const detailCategory = document.getElementById('umkmDetailCategory');
     const detailHours = document.getElementById('umkmDetailHours');
+    const detailaddress = document.getElementById('umkmDetailAddress');
     const detailMapLink = document.getElementById('umkmDetailMapLink');
 
     const setDetailLoading = () => {
@@ -163,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (detailName) detailName.textContent = '-';
         if (detailCategory) detailCategory.textContent = '-';
         if (detailHours) detailHours.textContent = '-';
+        if (detailaddress) detailaddress.textContent = '-';
     };
 
     const setDetailError = (message) => {
@@ -182,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (detailName) detailName.textContent = data.nama_umkm || '-';
         if (detailCategory) detailCategory.textContent = data.kategori || '-';
         if (detailHours) detailHours.textContent = data.jam_buka || '-';
+        if (detailaddress) detailaddress.textContent = data.alamat_lengkap || '-';
 
         const defaultImage = detailModalEl?.dataset.defaultImage || '';
         if (detailImage) {

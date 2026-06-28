@@ -375,8 +375,11 @@
                                 <p class="mb-2">
                                     <i class="fas fa-tag me-2 text-primary"></i><span id="umkmDetailCategory">-</span>
                                 </p>
-                                <p class="mb-0">
+                                <p class="mb-2">
                                     <i class="fas fa-clock me-2 text-primary"></i><span id="umkmDetailHours">-</span>
+                                </p>
+                                <p class="mb-0">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i><span id="umkmDetailAddress">-</span>
                                 </p>
                             </div>
                         </div>
