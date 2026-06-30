@@ -312,8 +312,12 @@
 /* Khusus untuk layar HP (lebar maksimal 768px) */
 @media (max-width: 768px) {
     .leaflet-bottom.leaflet-right .leaflet-control-zoom {
-        margin-bottom: 50px !important; /* Menaikkan tombol agar tidak terpotong */
+        margin-bottom: 100px !important; /* Menaikkan tombol agar tidak terpotong */
         margin-right: 15px !important;  /* Menggeser tombol agak ke kiri */
+    }
+
+    .leaflet-control-attribution {
+        display: none !important; /* Menyembunyikan teks atribusi di HP */
     }
 }
 
@@ -684,7 +688,7 @@
 
         #map {
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             position: fixed;
             top: 0;
             bottom: 0;
