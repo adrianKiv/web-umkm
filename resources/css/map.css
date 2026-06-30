@@ -312,7 +312,7 @@
 /* Khusus untuk layar HP (lebar maksimal 768px) */
 @media (max-width: 768px) {
     .leaflet-bottom.leaflet-right .leaflet-control-zoom {
-        margin-bottom: 25px !important; /* Menaikkan tombol agar tidak terpotong */
+        margin-bottom: 50px !important; /* Menaikkan tombol agar tidak terpotong */
         margin-right: 15px !important;  /* Menggeser tombol agak ke kiri */
     }
 }
@@ -551,7 +551,7 @@
         /* Responsive */
         @media (max-width: 768px) {
             .map-controls {
-                top: 76px;
+                top: 16px;
                 left: 10px;
                 right: 10px;
                 width: auto;
@@ -956,7 +956,7 @@
 
         @media (max-width: 576px) {
             .map-controls {
-                top: 66px;
+                top: 16px;
                 width: calc(100vw - 16px);
                 left: 8px;
                 right: 8px;
