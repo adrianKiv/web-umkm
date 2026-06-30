@@ -8,7 +8,7 @@ function formatLatLng(latitude, longitude) {
 }
 
 function initLocationPicker(container) {
-    if (!window.L || !container || container.dataset.initialized === '1') {
+    if (!window.L || !container || container.dataset.initialized === "1") {
         return;
     }
 
@@ -18,11 +18,17 @@ function initLocationPicker(container) {
     const readoutId = container.dataset.readoutId;
 
     // Koordinat default (akan dipakai jika Geolocation gagal/ditolak)
-    const initialLatitude = toNumber(container.dataset.initialLatitude, -6.861082410263256);
-    const initialLongitude = toNumber(container.dataset.initialLongitude, 107.59205888361987);
-    const initialZoom = parseInt(container.dataset.initialZoom || '15', 10);
+    const initialLatitude = toNumber(
+        container.dataset.initialLatitude,
+        -6.861082410263256,
+    );
+    const initialLongitude = toNumber(
+        container.dataset.initialLongitude,
+        107.59205888361987,
+    );
+    const initialZoom = parseInt(container.dataset.initialZoom || "15", 10);
 
-    const mapElement = container.querySelector('[data-location-picker-map]');
+    const mapElement = container.querySelector("[data-location-picker-map]");
     const latitudeInput = document.getElementById(latitudeInputId);
     const longitudeInput = document.getElementById(longitudeInputId);
     const readout = document.getElementById(readoutId);
@@ -32,11 +38,15 @@ function initLocationPicker(container) {
     }
 
     // Inisialisasi peta dengan koordinat awal (default)
-    const map = L.map(mapElement, { zoomControl: true }).setView([initialLatitude, initialLongitude], initialZoom);
+    const map = L.map(mapElement, { zoomControl: true }).setView(
+        [initialLatitude, initialLongitude],
+        initialZoom,
+    );
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
 
     const marker = L.marker([initialLatitude, initialLongitude], {
@@ -57,12 +67,12 @@ function initLocationPicker(container) {
         updateFields(position.lat, position.lng);
     };
 
-    map.on('click', (event) => {
+    map.on("click", (event) => {
         marker.setLatLng(event.latlng);
         syncFromMarker();
     });
 
-    marker.on('dragend', syncFromMarker);
+    marker.on("dragend", syncFromMarker);
 
     // Set form dengan nilai awal
     updateFields(initialLatitude, initialLongitude);
@@ -72,7 +82,10 @@ function initLocationPicker(container) {
     // =========================================================
     // Hanya otomatis mencari lokasi JIKA di HTML tidak ada koordinat awal yang di-set
     // (misalnya saat tambah data baru, bukan saat edit data)
-    if (!container.dataset.initialLatitude || !container.dataset.initialLongitude) {
+    if (
+        !container.dataset.initialLatitude ||
+        !container.dataset.initialLongitude
+    ) {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -92,32 +105,32 @@ function initLocationPicker(container) {
                 },
                 {
                     enableHighAccuracy: true, // Minta akurasi tinggi (GPS)
-                    timeout: 10000 // Maksimal waktu tunggu 10 detik
-                }
+                    timeout: 10000, // Maksimal waktu tunggu 10 detik
+                },
             );
         }
     }
     // =========================================================
 
-    const modal = container.closest('.modal');
+    const modal = container.closest(".modal");
     if (modal) {
-        modal.addEventListener('shown.bs.modal', () => {
+        modal.addEventListener("shown.bs.modal", () => {
             map.invalidateSize();
         });
     }
 
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
         map.invalidateSize();
     });
 
-    container.dataset.initialized = '1';
-    container.dataset.mapInstanceId = mapId || '';
+    container.dataset.initialized = "1";
+    container.dataset.mapInstanceId = mapId || "";
 }
 
 function bootLocationPickers() {
-    document.querySelectorAll('[data-location-picker]').forEach((container) => {
+    document.querySelectorAll("[data-location-picker]").forEach((container) => {
         initLocationPicker(container);
     });
 }
 
-document.addEventListener('DOMContentLoaded', bootLocationPickers);
+document.addEventListener("DOMContentLoaded", bootLocationPickers);

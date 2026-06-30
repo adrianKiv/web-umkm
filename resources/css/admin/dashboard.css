@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
 
 .dashboard-shell {
     --dash-ink: #0f172a;
@@ -7,13 +7,22 @@
     --dash-border: #e7ecf3;
     --dash-soft: #eef2f7;
     --dash-surface: #f8fafc;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
     color: var(--dash-ink);
     position: relative;
     padding: 0.5rem 0.5rem 1.5rem;
     border-radius: 24px;
-    background: radial-gradient(900px 500px at 95% -10%, rgba(219, 234, 254, 0.9) 0%, rgba(219, 234, 254, 0) 70%),
-        radial-gradient(700px 420px at -10% 0%, rgba(255, 237, 213, 0.85) 0%, rgba(255, 237, 213, 0) 70%);
+    background:
+        radial-gradient(
+            900px 500px at 95% -10%,
+            rgba(219, 234, 254, 0.9) 0%,
+            rgba(219, 234, 254, 0) 70%
+        ),
+        radial-gradient(
+            700px 420px at -10% 0%,
+            rgba(255, 237, 213, 0.85) 0%,
+            rgba(255, 237, 213, 0) 70%
+        );
     animation: dashboardFade 0.6s ease;
 }
 
@@ -58,7 +67,7 @@
 }
 
 .dashboard-shell .stat-tile::after {
-    content: '';
+    content: "";
     position: absolute;
     right: -28px;
     top: -28px;
@@ -227,7 +236,9 @@
     border-radius: 10px;
 }
 
-.dashboard-shell .leaderboard-danger.list-group-numbered > .list-group-item::before {
+.dashboard-shell
+    .leaderboard-danger.list-group-numbered
+    > .list-group-item::before {
     background: #fee2e2;
     color: #b91c1c;
 }

@@ -1,27 +1,29 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const menuList = document.getElementById('adminMenuList');
-    const addBtn = document.getElementById('addAdminMenuItem');
+document.addEventListener("DOMContentLoaded", function () {
+    const menuList = document.getElementById("adminMenuList");
+    const addBtn = document.getElementById("addAdminMenuItem");
     if (!menuList || !addBtn) return;
 
     const bindRemoveButtons = (root) => {
-        root.querySelectorAll('[data-remove-menu-item]').forEach((button) => {
-            button.addEventListener('click', function () {
-                const rows = menuList.querySelectorAll('[data-menu-item]');
+        root.querySelectorAll("[data-remove-menu-item]").forEach((button) => {
+            button.addEventListener("click", function () {
+                const rows = menuList.querySelectorAll("[data-menu-item]");
                 if (rows.length <= 1) {
-                    const row = this.closest('[data-menu-item]');
-                    row?.querySelectorAll('input').forEach((input) => input.value = '');
+                    const row = this.closest("[data-menu-item]");
+                    row?.querySelectorAll("input").forEach(
+                        (input) => (input.value = ""),
+                    );
                     return;
                 }
 
-                this.closest('[data-menu-item]')?.remove();
+                this.closest("[data-menu-item]")?.remove();
             });
         });
     };
 
     const createMenuRow = () => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'border rounded-3 p-2 submission-menu-item';
-        wrapper.setAttribute('data-menu-item', '1');
+        const wrapper = document.createElement("div");
+        wrapper.className = "border rounded-3 p-2 submission-menu-item";
+        wrapper.setAttribute("data-menu-item", "1");
         wrapper.innerHTML = `
             <div class="row g-2 align-items-end">
                 <div class="col-md-5">
@@ -47,6 +49,6 @@ document.addEventListener('DOMContentLoaded', function () {
         bindRemoveButtons(wrapper);
     };
 
-    addBtn.addEventListener('click', createMenuRow);
+    addBtn.addEventListener("click", createMenuRow);
     bindRemoveButtons(menuList);
 });

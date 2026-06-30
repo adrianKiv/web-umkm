@@ -1,6 +1,6 @@
 (function () {
     function showModalIfNeeded(modalEl) {
-        const showOnErrors = modalEl?.dataset?.showOnErrors === '1';
+        const showOnErrors = modalEl?.dataset?.showOnErrors === "1";
         if (showOnErrors) {
             const modal = new bootstrap.Modal(modalEl);
             modal.show();
@@ -9,65 +9,71 @@
 
     function bindModalZIndex(modalEl) {
         if (!modalEl) return;
-        modalEl.addEventListener('show.bs.modal', function () {
-            if (typeof closeDetailPanel === 'function') {
+        modalEl.addEventListener("show.bs.modal", function () {
+            if (typeof closeDetailPanel === "function") {
                 closeDetailPanel();
             }
 
-            modalEl.style.zIndex = '1115';
+            modalEl.style.zIndex = "1115";
             requestAnimationFrame(() => {
-                const backdrop = document.querySelector('.modal-backdrop.show:not([data-umkm-submission-backdrop])');
+                const backdrop = document.querySelector(
+                    ".modal-backdrop.show:not([data-umkm-submission-backdrop])",
+                );
                 if (backdrop) {
-                    backdrop.dataset.umkmSubmissionBackdrop = 'true';
-                    backdrop.style.zIndex = '1110';
+                    backdrop.dataset.umkmSubmissionBackdrop = "true";
+                    backdrop.style.zIndex = "1110";
                 }
             });
         });
 
-        modalEl.addEventListener('shown.bs.modal', function () {
-            modalEl.style.zIndex = '1115';
-            const backdrop = document.querySelector('.modal-backdrop.show[data-umkm-submission-backdrop="true"]');
+        modalEl.addEventListener("shown.bs.modal", function () {
+            modalEl.style.zIndex = "1115";
+            const backdrop = document.querySelector(
+                '.modal-backdrop.show[data-umkm-submission-backdrop="true"]',
+            );
             if (backdrop) {
-                backdrop.style.zIndex = '1110';
+                backdrop.style.zIndex = "1110";
             }
         });
 
-        modalEl.addEventListener('hidden.bs.modal', function () {
-            modalEl.style.zIndex = '';
-            const backdrop = document.querySelector('.modal-backdrop.show[data-umkm-submission-backdrop="true"]');
+        modalEl.addEventListener("hidden.bs.modal", function () {
+            modalEl.style.zIndex = "";
+            const backdrop = document.querySelector(
+                '.modal-backdrop.show[data-umkm-submission-backdrop="true"]',
+            );
             if (backdrop) {
-                backdrop.style.zIndex = '';
+                backdrop.style.zIndex = "";
                 delete backdrop.dataset.umkmSubmissionBackdrop;
             }
         });
     }
 
     function bindMenuListActions() {
-        const menuList = document.getElementById('submissionMenuList');
-        const addBtn = document.getElementById('addSubmissionMenuItem');
+        const menuList = document.getElementById("submissionMenuList");
+        const addBtn = document.getElementById("addSubmissionMenuItem");
         if (!menuList || !addBtn) return;
 
         function bindRemoveAction(root) {
-            root.querySelectorAll('[data-remove-menu-item]').forEach((btn) => {
-                btn.addEventListener('click', function () {
-                    const items = menuList.querySelectorAll('[data-menu-item]');
+            root.querySelectorAll("[data-remove-menu-item]").forEach((btn) => {
+                btn.addEventListener("click", function () {
+                    const items = menuList.querySelectorAll("[data-menu-item]");
                     if (items.length <= 1) {
-                        const row = this.closest('[data-menu-item]');
-                        row.querySelectorAll('input').forEach((input) => {
-                            input.value = '';
+                        const row = this.closest("[data-menu-item]");
+                        row.querySelectorAll("input").forEach((input) => {
+                            input.value = "";
                         });
                         return;
                     }
 
-                    this.closest('[data-menu-item]')?.remove();
+                    this.closest("[data-menu-item]")?.remove();
                 });
             });
         }
 
-        addBtn.addEventListener('click', function () {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'border rounded-3 p-2 submission-menu-item';
-            wrapper.setAttribute('data-menu-item', '1');
+        addBtn.addEventListener("click", function () {
+            const wrapper = document.createElement("div");
+            wrapper.className = "border rounded-3 p-2 submission-menu-item";
+            wrapper.setAttribute("data-menu-item", "1");
             wrapper.innerHTML = `
                 <div class="row g-2 align-items-end">
                     <div class="col-md-5">
@@ -97,8 +103,8 @@
     }
 
     function init() {
-        document.addEventListener('DOMContentLoaded', function () {
-            const modalEl = document.getElementById('umkmSubmissionModal');
+        document.addEventListener("DOMContentLoaded", function () {
+            const modalEl = document.getElementById("umkmSubmissionModal");
             if (modalEl) {
                 bindModalZIndex(modalEl);
                 showModalIfNeeded(modalEl);
@@ -112,11 +118,11 @@
     window.UMKMSubmissionModal = {
         init: init,
         showOnErrors: function () {
-            const modalEl = document.getElementById('umkmSubmissionModal');
+            const modalEl = document.getElementById("umkmSubmissionModal");
             if (!modalEl) return;
             const modal = new bootstrap.Modal(modalEl);
             modal.show();
-        }
+        },
     };
 
     init();
