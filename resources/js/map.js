@@ -1373,53 +1373,70 @@ function resolveUmkmCoordinates(umkmDataItem) {
 }
 
 function ensureLocationPermissionModal() {
-	if (document.getElementById('locationPermissionModal')) {
-		if (!locationPermissionModal) {
-			locationPermissionModal = new bootstrap.Modal(document.getElementById('locationPermissionModal'));
-		}
-		return;
-	}
+    let modalElement = document.getElementById('locationPermissionModal');
 
-	const modal = document.createElement('div');
-	modal.className = 'modal fade';
-	modal.id = 'locationPermissionModal';
-	modal.tabIndex = -1;
-	modal.setAttribute('aria-hidden', 'true');
-	modal.innerHTML = `
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title"><i class="fas fa-location-dot me-2"></i>Izin Lokasi</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<p class="mb-2">Fitur Live Track membutuhkan akses lokasi Anda untuk menghitung rute jalan ke UMKM.</p>
-					<ul class="small text-muted mb-0 ps-3">
-						<li>Lokasi dipakai hanya saat tracking aktif.</li>
-						<li>Rute dihitung menggunakan OSRM.</li>
-					</ul>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-					<button type="button" class="btn btn-primary" id="confirmLocationPermissionBtn">Izinkan & Mulai</button>
-				</div>
-			</div>
-		</div>
-	`;
+    if (modalElement) {
+        if (!locationPermissionModal) {
+            locationPermissionModal = new bootstrap.Modal(modalElement);
+        }
+        return;
+    }
 
-	document.body.appendChild(modal);
-	locationPermissionModal = new bootstrap.Modal(modal);
+    // Buat elemen modal baru
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.id = 'locationPermissionModal';
+    // Catatan: Jika masih freeze, coba hapus tabIndex dan aria-hidden sementara waktu
+    modal.setAttribute('data-bs-backdrop', 'static'); // Opsional: mencegah tertutup jika klik luar
+    modal.setAttribute('data-bs-keyboard', 'false');
 
-	document.getElementById('confirmLocationPermissionBtn')?.addEventListener('click', () => {
-		if (!pendingLiveTrackingPayload) {
-			locationPermissionModal?.hide();
-			return;
-		}
+    modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-location-dot me-2"></i>Izin Lokasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2">Fitur Live Track membutuhkan akses lokasi Anda untuk menghitung rute jalan ke UMKM.</p>
+                    <ul class="small text-muted mb-0 ps-3">
+                        <li>Lokasi dipakai hanya saat tracking aktif.</li>
+                        <li>Rute dihitung menggunakan OSRM.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="confirmLocationPermissionBtn">Izinkan & Mulai</button>
+                </div>
+            </div>
+        </div>
+    `;
 
-		const { latitude, longitude, umkmName } = pendingLiveTrackingPayload;
-		locationPermissionModal?.hide();
-		startLiveTrackingTo(latitude, longitude, umkmName, true);
-	});
+    document.body.appendChild(modal);
+
+    // Inisialisasi modal Bootstrap
+    locationPermissionModal = new bootstrap.Modal(modal);
+
+    // Bersihkan backdrop secara paksa jika modal ditutup (Solusi Ampuh untuk Mobile Freeze)
+    modal.addEventListener('hidden.bs.modal', function () {
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    });
+
+    document.getElementById('confirmLocationPermissionBtn')?.addEventListener('click', () => {
+        if (!pendingLiveTrackingPayload) {
+            locationPermissionModal?.hide();
+            return;
+        }
+
+        const { latitude, longitude, umkmName } = pendingLiveTrackingPayload;
+        locationPermissionModal?.hide();
+        startLiveTrackingTo(latitude, longitude, umkmName, true);
+    });
 }
 
 function formatDistance(meters) {

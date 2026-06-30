@@ -309,6 +309,14 @@
     font-weight: 700;
 }
 
+/* Khusus untuk layar HP (lebar maksimal 768px) */
+@media (max-width: 768px) {
+    .leaflet-bottom.leaflet-right .leaflet-control-zoom {
+        margin-bottom: 25px !important; /* Menaikkan tombol agar tidak terpotong */
+        margin-right: 15px !important;  /* Menggeser tombol agak ke kiri */
+    }
+}
+
 /* Responsif untuk Layar HP */
 @media (max-width: 768px) {
     .btn-back-landing {
