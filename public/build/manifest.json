@@ -27,7 +27,7 @@
     ]
   },
   "resources/css/map.css": {
-    "file": "assets/map-C6NAc7q8.css",
+    "file": "assets/map-JuxXtsM5.css",
     "src": "resources/css/map.css",
     "isEntry": true,
     "name": "map",
@@ -63,7 +63,7 @@
     "isEntry": true
   },
   "resources/js/map.js": {
-    "file": "assets/map-CO2RMxlA.js",
+    "file": "assets/map-BLD4Y38_.js",
     "name": "map",
     "src": "resources/js/map.js",
     "isEntry": true
