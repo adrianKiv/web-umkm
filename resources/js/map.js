@@ -1555,7 +1555,10 @@ function ensureLocationPermissionModal() {
 
     if (modalElement) {
         if (!locationPermissionModal) {
-            locationPermissionModal = new bootstrap.Modal(modalElement);
+            locationPermissionModal = new bootstrap.Modal(modalElement, {
+                backdrop: false,
+                keyboard: true,
+            });
         }
         return;
     }
@@ -1564,8 +1567,6 @@ function ensureLocationPermissionModal() {
     const modal = document.createElement("div");
     modal.className = "modal fade";
     modal.id = "locationPermissionModal";
-
-    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
 
     modal.innerHTML = `
         <div class="modal-dialog modal-dialog-centered location-permission-modal-dialog">
@@ -1593,8 +1594,9 @@ function ensureLocationPermissionModal() {
 
     // Inisialisasi modal Bootstrap
     locationPermissionModal = new bootstrap.Modal(modal, {
-        backdrop: false, // Mencegah Bootstrap membuat div .modal-backdrop
-        keyboard: false});
+        backdrop: false,
+        keyboard: true,
+    });
 
     modal.addEventListener("shown.bs.modal", function () {
         document.body.classList.remove("sheet-open");
@@ -1612,8 +1614,7 @@ function ensureLocationPermissionModal() {
         document.body.style.paddingRight = "";
     });
 
-    document
-        .getElementById("confirmLocationPermissionBtn")
+    document.getElementById("confirmLocationPermissionBtn")
         ?.addEventListener("click", () => {
             if (!pendingLiveTrackingPayload) {
                 locationPermissionModal?.hide();
