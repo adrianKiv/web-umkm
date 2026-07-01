@@ -24,6 +24,7 @@ let markerClusterLayer = null;
 let mapDataAbortController = null;
 let loadVisibleUmkmsDebounced = null;
 let pendingSelectedUmkmId = null;
+let mapInteractionResetTimer = null;
 const locationConsentKey = "map_live_tracking_location_consent";
 const filterState = {
     searchQuery: "",
@@ -90,6 +91,28 @@ function clearLoadedUmkmState() {
     markerClusterLayer?.clearLayers();
 }
 
+function setMapControlsCompact(isCompact) {
+    const mapControlsEl = document.getElementById("mapControls");
+    if (!mapControlsEl) return;
+
+    mapControlsEl.classList.toggle("is-compact", Boolean(isCompact));
+    if (isCompact) {
+        desktopFilterPanel?.classList.add("d-none");
+        searchFilterDropdown?.classList.add("d-none");
+        syncSearchFilterToggleState(false);
+    }
+}
+
+function collapseMapInteractions() {
+    setMapControlsCompact(true);
+    closeDetailPanel();
+
+    window.clearTimeout(mapInteractionResetTimer);
+    mapInteractionResetTimer = window.setTimeout(() => {
+        mapInteractionResetTimer = null;
+    }, 150);
+}
+
 function openPopupForMarker(marker, item) {
     if (!marker || !item || !map) return;
 
@@ -133,6 +156,7 @@ function renderMapUmkms(items) {
         const marker = L.marker([item.latitude, item.longitude], {
             icon: createUmkmMarkerIcon(Boolean(item.is_recommended)),
             zIndexOffset: 600,
+            bubblingMouseEvents: false,
         });
 
         marker.on("click", () => openPopupForMarker(marker, data));
@@ -617,141 +641,141 @@ function initCategoryChipsInteraction() {
     });
 }
 
-function initMobileDetailBottomSheet(panel) {
-    if (!panel || typeof isMobileViewport !== 'function' || !isMobileViewport()) return null;
+// function initMobileDetailBottomSheet(panel) {
+//     if (!panel || typeof isMobileViewport !== 'function' || !isMobileViewport()) return null;
 
-    const header = panel.querySelector(".detail-header");
-    const content = panel.querySelector(".detail-content");
-    if (!header || !content) return null;
+//     const header = panel.querySelector(".detail-header");
+//     const content = panel.querySelector(".detail-content");
+//     if (!header || !content) return null;
 
-    panel.classList.add("umkm-bottom-sheet", "is-expanded");
-    panel.classList.remove("is-collapsed");
+//     panel.classList.add("umkm-bottom-sheet", "is-expanded");
+//     panel.classList.remove("is-collapsed");
 
-    // Pastikan handle ada
-    let sheetHandle = panel.querySelector(".detail-sheet-handle");
-    if (!sheetHandle) {
-        sheetHandle = document.createElement("div");
-        sheetHandle.className = "detail-sheet-handle";
-        panel.insertBefore(sheetHandle, header);
-    }
+//     // Pastikan handle ada
+//     let sheetHandle = panel.querySelector(".detail-sheet-handle");
+//     if (!sheetHandle) {
+//         sheetHandle = document.createElement("div");
+//         sheetHandle.className = "detail-sheet-handle";
+//         panel.insertBefore(sheetHandle, header);
+//     }
 
-    let startY = 0;
-    let startHeight = 0;
-    let currentHeight = 0;
-    let dragging = false;
+//     let startY = 0;
+//     let startHeight = 0;
+//     let currentHeight = 0;
+//     let dragging = false;
 
-    // Hitung tinggi header + handle sebagai batas bawah (collapsed)
-    const getCollapsedHeight = () => {
-        const handleHeight = sheetHandle.getBoundingClientRect().height || 0;
-        const headerHeight = header.getBoundingClientRect().height || 0;
-        // Tambahkan sedikit padding ekstra (misal 10px) agar rapi
-        return Math.ceil(handleHeight + headerHeight + 10);
-    };
+//     // Hitung tinggi header + handle sebagai batas bawah (collapsed)
+//     const getCollapsedHeight = () => {
+//         const handleHeight = sheetHandle.getBoundingClientRect().height || 0;
+//         const headerHeight = header.getBoundingClientRect().height || 0;
+//         // Tambahkan sedikit padding ekstra (misal 10px) agar rapi
+//         return Math.ceil(handleHeight + headerHeight + 10);
+//     };
 
-    const getExpandedHeight = () => {
-        // Maksimal tinggi adalah tinggi layar dikurangi margin atas (misal 12px)
-        return Math.floor(window.innerHeight - 12);
-    };
+//     const getExpandedHeight = () => {
+//         // Maksimal tinggi adalah tinggi layar dikurangi margin atas (misal 12px)
+//         return Math.floor(window.innerHeight - 12);
+//     };
 
-    const clampHeight = (value) => {
-        const min = getCollapsedHeight();
-        const max = getExpandedHeight();
-        return Math.min(Math.max(value, min), max);
-    };
+//     const clampHeight = (value) => {
+//         const min = getCollapsedHeight();
+//         const max = getExpandedHeight();
+//         return Math.min(Math.max(value, min), max);
+//     };
 
-    const applyHeight = (value, withTransition = false) => {
-        currentHeight = clampHeight(value);
-        panel.style.height = `${currentHeight}px`;
+//     const applyHeight = (value, withTransition = false) => {
+//         currentHeight = clampHeight(value);
+//         panel.style.height = `${currentHeight}px`;
 
-        // Update class berdasarkan threshold (toleransi 5px)
-        const isCollapsed = currentHeight <= getCollapsedHeight() + 5;
-        panel.classList.toggle("is-collapsed", isCollapsed);
-        panel.classList.toggle("is-expanded", !isCollapsed);
-        panel.classList.toggle("is-snapping", withTransition);
-    };
+//         // Update class berdasarkan threshold (toleransi 5px)
+//         const isCollapsed = currentHeight <= getCollapsedHeight() + 5;
+//         panel.classList.toggle("is-collapsed", isCollapsed);
+//         panel.classList.toggle("is-expanded", !isCollapsed);
+//         panel.classList.toggle("is-snapping", withTransition);
+//     };
 
-    const snapSheet = () => {
-        const collapsed = getCollapsedHeight();
-        const expanded = getExpandedHeight();
-        // Threshold: jika ditarik lebih dari 25% ke bawah, maka tutup. Jika tidak, buka penuh.
-        const threshold = collapsed + (expanded - collapsed) * 0.25;
-        const target = currentHeight <= threshold ? collapsed : expanded;
-        applyHeight(target, true);
-    };
+//     const snapSheet = () => {
+//         const collapsed = getCollapsedHeight();
+//         const expanded = getExpandedHeight();
+//         // Threshold: jika ditarik lebih dari 25% ke bawah, maka tutup. Jika tidak, buka penuh.
+//         const threshold = collapsed + (expanded - collapsed) * 0.25;
+//         const target = currentHeight <= threshold ? collapsed : expanded;
+//         applyHeight(target, true);
+//     };
 
-    const onPointerDown = (event) => {
-        if (event.pointerType === "mouse" && event.button !== 0) return;
+//     const onPointerDown = (event) => {
+//         if (event.pointerType === "mouse" && event.button !== 0) return;
 
-        // PERBAIKAN: Jangan drag jika yang diklik adalah tombol close
-        if (event.target.closest(".custom-btn-close")) return;
+//         // PERBAIKAN: Jangan drag jika yang diklik adalah tombol close
+//         if (event.target.closest(".custom-btn-close")) return;
 
-        // PERBAIKAN: Izinkan drag dari area Handle ATAU Header agar lebih mudah di sentuh HP
-        if (!event.target.closest(".detail-sheet-handle") && !event.target.closest(".detail-header")) return;
+//         // PERBAIKAN: Izinkan drag dari area Handle ATAU Header agar lebih mudah di sentuh HP
+//         if (!event.target.closest(".detail-sheet-handle") && !event.target.closest(".detail-header")) return;
 
-        dragging = true;
-        startY = event.clientY;
-        startHeight = currentHeight || panel.getBoundingClientRect().height;
+//         dragging = true;
+//         startY = event.clientY;
+//         startHeight = currentHeight || panel.getBoundingClientRect().height;
 
-        panel.classList.add("is-dragging");
-        panel.classList.remove("is-snapping");
+//         panel.classList.add("is-dragging");
+//         panel.classList.remove("is-snapping");
 
-        // Set pointer capture ke panel agar drag tidak lepas saat digeser cepat
-        if (typeof panel.setPointerCapture === "function") {
-            panel.setPointerCapture(event.pointerId);
-        }
+//         // Set pointer capture ke panel agar drag tidak lepas saat digeser cepat
+//         if (typeof panel.setPointerCapture === "function") {
+//             panel.setPointerCapture(event.pointerId);
+//         }
 
-        // Mencegah scroll halaman di background
-        event.preventDefault();
-    };
+//         // Mencegah scroll halaman di background
+//         event.preventDefault();
+//     };
 
-    const onPointerMove = (event) => {
-        if (!dragging) return;
-        // Mencegah scroll default pada browser
-        event.preventDefault();
+//     const onPointerMove = (event) => {
+//         if (!dragging) return;
+//         // Mencegah scroll default pada browser
+//         event.preventDefault();
 
-        const deltaY = startY - event.clientY;
-        applyHeight(startHeight + deltaY);
-    };
+//         const deltaY = startY - event.clientY;
+//         applyHeight(startHeight + deltaY);
+//     };
 
-    const onPointerUp = (event) => {
-        if (!dragging) return;
-        dragging = false;
-        panel.classList.remove("is-dragging");
+//     const onPointerUp = (event) => {
+//         if (!dragging) return;
+//         dragging = false;
+//         panel.classList.remove("is-dragging");
 
-        if (typeof panel.releasePointerCapture === "function") {
-            panel.releasePointerCapture(event.pointerId);
-        }
+//         if (typeof panel.releasePointerCapture === "function") {
+//             panel.releasePointerCapture(event.pointerId);
+//         }
 
-        snapSheet();
-    };
+//         snapSheet();
+//     };
 
-    const onResize = () => {
-        if (typeof isMobileViewport === 'function' && !isMobileViewport()) {
-            panel.classList.remove("umkm-bottom-sheet", "is-collapsed", "is-expanded", "is-dragging", "is-snapping");
-            panel.style.height = "";
-            return;
-        }
-        applyHeight(panel.classList.contains("is-collapsed") ? getCollapsedHeight() : getExpandedHeight());
-    };
+//     const onResize = () => {
+//         if (typeof isMobileViewport === 'function' && !isMobileViewport()) {
+//             panel.classList.remove("umkm-bottom-sheet", "is-collapsed", "is-expanded", "is-dragging", "is-snapping");
+//             panel.style.height = "";
+//             return;
+//         }
+//         applyHeight(panel.classList.contains("is-collapsed") ? getCollapsedHeight() : getExpandedHeight());
+//     };
 
-    // Event listener dipasang ke panel agar area tangkapan lebih luas
-    panel.addEventListener("pointerdown", onPointerDown, { passive: false });
-    window.addEventListener("pointermove", onPointerMove, { passive: false });
-    window.addEventListener("pointerup", onPointerUp);
-    window.addEventListener("resize", onResize);
+//     // Event listener dipasang ke panel agar area tangkapan lebih luas
+//     panel.addEventListener("pointerdown", onPointerDown, { passive: false });
+//     window.addEventListener("pointermove", onPointerMove, { passive: false });
+//     window.addEventListener("pointerup", onPointerUp);
+//     window.addEventListener("resize", onResize);
 
-    // Set tinggi awal
-    setTimeout(() => {
-        applyHeight(getExpandedHeight(), true);
-    }, 50);
+//     // Set tinggi awal
+//     setTimeout(() => {
+//         applyHeight(getExpandedHeight(), true);
+//     }, 50);
 
-    return () => {
-        panel.removeEventListener("pointerdown", onPointerDown);
-        window.removeEventListener("pointermove", onPointerMove);
-        window.removeEventListener("pointerup", onPointerUp);
-        window.removeEventListener("resize", onResize);
-    };
-}
+//     return () => {
+//         panel.removeEventListener("pointerdown", onPointerDown);
+//         window.removeEventListener("pointermove", onPointerMove);
+//         window.removeEventListener("pointerup", onPointerUp);
+//         window.removeEventListener("resize", onResize);
+//     };
+// }
 
 function prepareDetailPanel(panel) {
     if (!panel) return;
@@ -761,7 +785,7 @@ function prepareDetailPanel(panel) {
         activeBottomSheetCleanup = null;
     }
 
-    activeBottomSheetCleanup = initMobileDetailBottomSheet(panel);
+    // activeBottomSheetCleanup = initMobileDetailBottomSheet(panel);
 }
 
 function toggleUlasan(containerId, triggerBtn = null) {
@@ -2122,7 +2146,6 @@ function initMapFeature(config) {
     const searchFilterDropdown = document.getElementById(
         "searchFilterDropdown",
     );
-    const mapControls = document.getElementById("mapControls");
     const desktopFilterPanel = document.getElementById("desktopFilterPanel");
     const mobileFilterSheet = document.getElementById("mobileFilterSheet");
     const mobileFilterBackdrop = document.getElementById(
@@ -2130,6 +2153,7 @@ function initMapFeature(config) {
     );
 
     const showSearchFilters = () => {
+        setMapControlsCompact(false);
         searchFilterDropdown?.classList.remove("d-none");
         syncSearchFilterToggleState(true);
     };
@@ -2166,12 +2190,14 @@ function initMapFeature(config) {
     }
 
     mapSearchBtn?.addEventListener("click", () => {
+        setMapControlsCompact(false);
         showSearchFilters();
         filterState.searchQuery = normalizeText(mapSearchInput?.value || "");
         applyMapFilters(true);
     });
 
     toggleSearchFiltersBtn?.addEventListener("click", () => {
+        setMapControlsCompact(false);
         const isHidden = searchFilterDropdown?.classList.toggle("d-none");
         syncSearchFilterToggleState(!isHidden);
     });
@@ -2196,6 +2222,7 @@ function initMapFeature(config) {
     };
 
     toggleMoreFiltersBtn?.addEventListener("click", () => {
+        setMapControlsCompact(false);
         syncFilterControls();
         if (window.innerWidth <= 768) {
             mobileFilterSheet?.classList.remove("d-none");
@@ -2213,6 +2240,12 @@ function initMapFeature(config) {
         });
     mobileFilterBackdrop?.addEventListener("click", closeMobileSheet);
     window.addEventListener("resize", syncResponsiveFilterUI);
+    if (map) {
+        map.on("movestart zoomstart dragstart click", collapseMapInteractions);
+        map.getContainer()?.addEventListener("touchstart", collapseMapInteractions, {
+            passive: true,
+        });
+    }
     map.on("moveend zoomend", () => {
         loadVisibleUmkmsDebounced?.();
     });
@@ -2276,6 +2309,7 @@ function initMapFeature(config) {
     syncFilterControls();
     initCategoryChipsInteraction();
     syncResponsiveFilterUI();
+    setMapControlsCompact(false);
     prepareDetailPanel(document.getElementById("umkm-detail-panel"));
     syncSearchFilterToggleState(
         !searchFilterDropdown?.classList.contains("d-none"),

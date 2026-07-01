@@ -1,5 +1,23 @@
 let isSearching = false;
 let searchTimeout;
+let lastWindowScrollY = 0;
+
+function closeNavbarMenusOnScroll() {
+    const navbarCollapse = document.getElementById("navbarNav");
+    if (navbarCollapse?.classList.contains("show") && window.bootstrap?.Collapse) {
+        window.bootstrap.Collapse.getOrCreateInstance(navbarCollapse, {
+            toggle: false,
+        }).hide();
+    }
+
+    document
+        .querySelectorAll(".navbar .dropdown-toggle[aria-expanded='true']")
+        .forEach((toggle) => {
+            if (window.bootstrap?.Dropdown) {
+                window.bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
+            }
+        });
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     const desktopInput = document.querySelector("#headerSearchInput");
@@ -165,6 +183,17 @@ document.addEventListener("DOMContentLoaded", function () {
         mobileFilterModal?.hide();
         performLiveSearch("", true);
     });
+
+    const handleNavbarAutoClose = () => {
+        const currentScrollY = window.scrollY || window.pageYOffset || 0;
+        if (currentScrollY > lastWindowScrollY + 8) {
+            closeNavbarMenusOnScroll();
+        }
+        lastWindowScrollY = Math.max(currentScrollY, 0);
+    };
+
+    lastWindowScrollY = window.scrollY || window.pageYOffset || 0;
+    window.addEventListener("scroll", handleNavbarAutoClose, { passive: true });
 
     const detailModalEl = document.getElementById("umkmDetailModal");
     const detailModal =
@@ -562,7 +591,7 @@ let url = e.currentTarget.getAttribute('href');
     else {
         url = url.replace('http://', 'https://');
     }
-    
+
     isSearching = true;
 
     fetch(url, {

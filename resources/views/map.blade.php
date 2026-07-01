@@ -121,7 +121,7 @@
     <!-- UMKM Detail Panel -->
     @if ($selectedUmkm)
         <div id="umkm-detail-panel" class="umkm-detail-panel">
-            <div class="detail-sheet-handle"></div>
+            {{-- <div class="detail-sheet-handle"></div> --}}
             <div class="detail-header">
                 <h4 class="mb-0">{{ $selectedUmkm->nama_umkm }}</h4>
                 <button type="button" class="custom-btn-close" onclick="closeDetailPanel()">
@@ -295,7 +295,7 @@
 @endsection
 
 <!-- Rating Modal -->
-<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
