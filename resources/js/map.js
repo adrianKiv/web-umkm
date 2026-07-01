@@ -1590,7 +1590,7 @@ function ensureLocationPermissionModal() {
     document.body.appendChild(modal);
 
     // Inisialisasi modal Bootstrap
-    locationPermissionModal = new bootstrap.Modal(modal);
+    locationPermissionModal = new bootstrap.Modal(modal, {container: modal});
 
     modal.addEventListener("shown.bs.modal", function () {
         document.body.classList.remove("sheet-open");
