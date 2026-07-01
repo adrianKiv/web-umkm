@@ -346,20 +346,6 @@ body.sheet-open {
     } */
 }
 
-/* Pastikan dialog modal dinamis selalu berada di depan backdrop */
-#locationPermissionModal {
-    z-index: 1115 !important; /* Menaikkan level modal */
-}
-
-#locationPermissionModal .modal-backdrop {
-    z-index: 1110 !important; /* Memastikan backdrop tetap di belakang */
-}
-
-/* Solusi darurat jika area bodi modal masih terhalang klik
-.modal-open {
-    pointer-events: auto !important;
-} */
-
 /* .detail-header .btn-close {
             background: none;
             border: none;

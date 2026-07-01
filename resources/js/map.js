@@ -1565,6 +1565,8 @@ function ensureLocationPermissionModal() {
     modal.className = "modal fade";
     modal.id = "locationPermissionModal";
 
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+
     modal.innerHTML = `
         <div class="modal-dialog modal-dialog-centered location-permission-modal-dialog">
             <div class="modal-content location-permission-modal-content">
@@ -1590,7 +1592,9 @@ function ensureLocationPermissionModal() {
     document.body.appendChild(modal);
 
     // Inisialisasi modal Bootstrap
-    locationPermissionModal = new bootstrap.Modal(modal, {container: modal});
+    locationPermissionModal = new bootstrap.Modal(modal, {
+        backdrop: false, // Mencegah Bootstrap membuat div .modal-backdrop
+        keyboard: false});
 
     modal.addEventListener("shown.bs.modal", function () {
         document.body.classList.remove("sheet-open");
