@@ -1566,7 +1566,7 @@ function ensureLocationPermissionModal() {
     modal.id = "locationPermissionModal";
 
     modal.innerHTML = `
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down location-permission-modal-dialog">
+        <div class="modal-dialog modal-dialog-centered location-permission-modal-dialog">
             <div class="modal-content location-permission-modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-location-dot me-2"></i>Izin Lokasi</h5>

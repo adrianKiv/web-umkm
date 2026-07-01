@@ -318,22 +318,28 @@ body.sheet-open {
 }
 
 .location-permission-modal-dialog {
-    max-width: 460px;
+    max-width: 420px;
+    width: calc(100vw - 2rem);
 }
 
 .location-permission-modal-content {
     border-radius: 18px;
+    overflow: hidden;
+    max-height: calc(100vh - 2rem);
+}
+
+.location-permission-modal-content .modal-body {
+    overflow-y: auto;
 }
 
 @media (max-width: 576px) {
     .location-permission-modal-dialog {
-        max-width: 100%;
-        margin: 0;
+        max-width: 420px;
+        margin: 1rem auto;
     }
 
     .location-permission-modal-content {
-        border-radius: 0;
-        min-height: 100vh;
+        border-radius: 16px;
     }
 }
 
