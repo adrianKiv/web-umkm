@@ -341,10 +341,24 @@ body.sheet-open {
     .location-permission-modal-content {
         border-radius: 16px;
     }
-    .location-permission-modal .modal-backdrop {
-        z-index: 1040 !important;
-    }
+    /* .location-permission-modal .modal-backdrop {
+        z-index: 1110 !important;
+    } */
 }
+
+/* Pastikan dialog modal dinamis selalu berada di depan backdrop */
+#locationPermissionModal {
+    z-index: 1115 !important; /* Menaikkan level modal */
+}
+
+#locationPermissionModal .modal-backdrop {
+    z-index: 1110 !important; /* Memastikan backdrop tetap di belakang */
+}
+
+/* Solusi darurat jika area bodi modal masih terhalang klik
+.modal-open {
+    pointer-events: auto !important;
+} */
 
 /* .detail-header .btn-close {
             background: none;
