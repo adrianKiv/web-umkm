@@ -1564,13 +1564,10 @@ function ensureLocationPermissionModal() {
     const modal = document.createElement("div");
     modal.className = "modal fade";
     modal.id = "locationPermissionModal";
-    // Catatan: Jika masih freeze, coba hapus tabIndex dan aria-hidden sementara waktu
-    modal.setAttribute("data-bs-backdrop", "static"); // Opsional: mencegah tertutup jika klik luar
-    modal.setAttribute("data-bs-keyboard", "false");
 
     modal.innerHTML = `
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down location-permission-modal-dialog">
+            <div class="modal-content location-permission-modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-location-dot me-2"></i>Izin Lokasi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -1594,6 +1591,12 @@ function ensureLocationPermissionModal() {
 
     // Inisialisasi modal Bootstrap
     locationPermissionModal = new bootstrap.Modal(modal);
+
+    modal.addEventListener("shown.bs.modal", function () {
+        document.body.classList.remove("sheet-open");
+        document.body.style.overflow = "";
+        document.body.style.paddingRight = "";
+    });
 
     // Bersihkan backdrop secara paksa jika modal ditutup (Solusi Ampuh untuk Mobile Freeze)
     modal.addEventListener("hidden.bs.modal", function () {
@@ -1750,6 +1753,9 @@ function startLiveTrackingTo(
     if (!skipPermissionDialog) {
         if (isMobileViewport()) {
             closeDetailPanel();
+            document.body.classList.remove("sheet-open");
+            document.body.style.overflow = "";
+            document.body.style.paddingRight = "";
         }
 
         if (hasStoredLocationConsent()) {

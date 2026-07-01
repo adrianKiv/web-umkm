@@ -428,7 +428,7 @@ html, body {
                     <p class="small text-muted mb-0">&copy; {{ date('Y') }} Tesis R&D - Kawasan UPI Bandung.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <p class="small text-muted mb-0">Developed with <i class="fas fa-heart text-danger"></i> for MSMEs</p>
+                    <p class="small text-muted mb-0">Developed denagn <i class="fas fa-heart text-danger"></i> untuk UMKM</p>
                 </div>
             </div>
         </div>

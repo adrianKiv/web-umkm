@@ -317,6 +317,26 @@ body.sheet-open {
     font-weight: 700;
 }
 
+.location-permission-modal-dialog {
+    max-width: 460px;
+}
+
+.location-permission-modal-content {
+    border-radius: 18px;
+}
+
+@media (max-width: 576px) {
+    .location-permission-modal-dialog {
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .location-permission-modal-content {
+        border-radius: 0;
+        min-height: 100vh;
+    }
+}
+
 /* .detail-header .btn-close {
             background: none;
             border: none;
