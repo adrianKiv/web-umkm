@@ -17,6 +17,7 @@
             max-width: 980px !important;
             width: min(980px, 100%);
             border-radius: 24px !important;
+            margin: 0 auto;
             border: 1px solid rgba(148, 163, 184, 0.3) !important;
             box-shadow: 0 28px 60px rgba(15, 23, 42, 0.15) !important;
             padding: 0 !important;
@@ -27,6 +28,10 @@
         .auth-register {
             font-family: 'Space Grotesk', sans-serif;
             color: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
 
         .auth-card__inner {
@@ -280,93 +285,95 @@
         Register - UMKM Kuliner
     </x-slot>
     <div class="auth-register">
-        <div class="auth-card__inner">
-            <section class="auth-panel">
-                <div class="auth-panel__badge">
-                    <i class="fas fa-user-plus"></i>Akun Baru
-                </div>
-                <h1>Buat akun untuk mulai jelajahi UMKM favoritmu.</h1>
-                <p>Registrasi cepat, simpan preferensi, dan dapatkan rekomendasi yang relevan.</p>
-
-                <div class="auth-panel__list">
-                    <div class="auth-panel__item">
-                        <i class="fas fa-check-circle"></i>Daftar rekomendasi personal
+        <div class="auth-card">
+            <div class="auth-card__inner">
+                <section class="auth-panel">
+                    <div class="auth-panel__badge">
+                        <i class="fas fa-user-plus"></i>Akun Baru
                     </div>
-                    <div class="auth-panel__item">
-                        <i class="fas fa-check-circle"></i>Simpan preferensi kategori
-                    </div>
-                    <div class="auth-panel__item">
-                        <i class="fas fa-check-circle"></i>Update promo terbaru
-                    </div>
-                </div>
+                    <h1>Buat akun untuk mulai jelajahi UMKM favoritmu.</h1>
+                    <p>Registrasi cepat, simpan preferensi, dan dapatkan rekomendasi yang relevan.</p>
 
-                <div class="auth-panel__meta">
-                    <span class="auth-pill">Mudah</span>
-                    <span class="auth-pill">Cepat</span>
-                    <span class="auth-pill">Gratis</span>
-                </div>
-            </section>
-
-            <section class="auth-form">
-                <div class="auth-form__header">
-                    <h2>Register Akun</h2>
-                    <p>Isi data dasar untuk membuat akun baru.</p>
-                </div>
-
-                <form method="POST" action="{{ route('register') }}">
-                    @csrf
-
-                    <div class="auth-field">
-                        <label for="name" class="auth-label">Nama Lengkap</label>
-                        <div class="auth-input">
-                            <i class="fas fa-user"></i>
-                            <input id="name" type="text" name="name" value="{{ old('name') }}" required
-                                autofocus autocomplete="name" placeholder="Nama lengkap" />
+                    <div class="auth-panel__list">
+                        <div class="auth-panel__item">
+                            <i class="fas fa-check-circle"></i>Daftar rekomendasi personal
                         </div>
-                        <x-input-error :messages="$errors->get('name')" class="mt-1" />
-                    </div>
-
-                    <div class="auth-field">
-                        <label for="email" class="auth-label">Email</label>
-                        <div class="auth-input">
-                            <i class="fas fa-envelope"></i>
-                            <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                                autocomplete="username" placeholder="contoh@email.com" />
+                        <div class="auth-panel__item">
+                            <i class="fas fa-check-circle"></i>Simpan preferensi kategori
                         </div>
-                        <x-input-error :messages="$errors->get('email')" class="mt-1" />
-                    </div>
-
-                    <div class="auth-field">
-                        <label for="password" class="auth-label">Password</label>
-                        <div class="auth-input">
-                            <i class="fas fa-lock"></i>
-                            <input id="password" type="password" name="password" required autocomplete="new-password"
-                                placeholder="Minimal 8 karakter" />
+                        <div class="auth-panel__item">
+                            <i class="fas fa-check-circle"></i>Update promo terbaru
                         </div>
-                        <x-input-error :messages="$errors->get('password')" class="mt-1" />
                     </div>
 
-                    <div class="auth-field">
-                        <label for="password_confirmation" class="auth-label">Konfirmasi Password</label>
-                        <div class="auth-input">
-                            <i class="fas fa-lock"></i>
-                            <input id="password_confirmation" type="password" name="password_confirmation" required
-                                autocomplete="new-password" placeholder="Ulangi password" />
+                    <div class="auth-panel__meta">
+                        <span class="auth-pill">Mudah</span>
+                        <span class="auth-pill">Cepat</span>
+                        <span class="auth-pill">Gratis</span>
+                    </div>
+                </section>
+
+                <section class="auth-form">
+                    <div class="auth-form__header">
+                        <h2>Register Akun</h2>
+                        <p>Isi data dasar untuk membuat akun baru.</p>
+                    </div>
+
+                    <form method="POST" action="{{ route('register') }}">
+                        @csrf
+
+                        <div class="auth-field">
+                            <label for="name" class="auth-label">Nama Lengkap</label>
+                            <div class="auth-input">
+                                <i class="fas fa-user"></i>
+                                <input id="name" type="text" name="name" value="{{ old('name') }}" required
+                                    autofocus autocomplete="name" placeholder="Nama lengkap" />
+                            </div>
+                            <x-input-error :messages="$errors->get('name')" class="mt-1" />
                         </div>
-                        <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
-                    </div>
 
-                    <button class="auth-submit" type="submit">Buat Akun</button>
+                        <div class="auth-field">
+                            <label for="email" class="auth-label">Email</label>
+                            <div class="auth-input">
+                                <i class="fas fa-envelope"></i>
+                                <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                                    autocomplete="username" placeholder="contoh@email.com" />
+                            </div>
+                            <x-input-error :messages="$errors->get('email')" class="mt-1" />
+                        </div>
 
-                    <a class="auth-back-btn" href="{{ url('/') }}">
-                        <i class="fas fa-arrow-left"></i>Kembali
-                    </a>
+                        <div class="auth-field">
+                            <label for="password" class="auth-label">Password</label>
+                            <div class="auth-input">
+                                <i class="fas fa-lock"></i>
+                                <input id="password" type="password" name="password" required
+                                    autocomplete="new-password" placeholder="Minimal 8 karakter" />
+                            </div>
+                            <x-input-error :messages="$errors->get('password')" class="mt-1" />
+                        </div>
 
-                    <div class="auth-footer">
-                        Sudah punya akun? <a class="auth-link" href="{{ route('login') }}">Login</a>
-                    </div>
-                </form>
-            </section>
+                        <div class="auth-field">
+                            <label for="password_confirmation" class="auth-label">Konfirmasi Password</label>
+                            <div class="auth-input">
+                                <i class="fas fa-lock"></i>
+                                <input id="password_confirmation" type="password" name="password_confirmation" required
+                                    autocomplete="new-password" placeholder="Ulangi password" />
+                            </div>
+                            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
+                        </div>
+
+                        <button class="auth-submit" type="submit">Buat Akun</button>
+
+                        <a class="auth-back-btn" href="{{ url('/') }}">
+                            <i class="fas fa-arrow-left"></i>Kembali
+                        </a>
+
+                        <div class="auth-footer">
+                            Sudah punya akun? <a class="auth-link" href="{{ route('login') }}">Login</a>
+                        </div>
+                    </form>
+                </section>
+            </div>
         </div>
     </div>
 </x-guest-layout>

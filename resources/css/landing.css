@@ -177,8 +177,8 @@ body {
     min-width: 0;
 }
 
+/* .umkm-card .umkm-address, */
 .umkm-card .card-title,
-.umkm-card .umkm-address,
 .umkm-card .umkm-rating-meta {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -191,19 +191,23 @@ body {
     white-space: normal;
 }
 
-.umkm-card .umkm-address {
+.badge-umkm {
+    font-size: 0.85rem; /* Sesuaikan dengan ukuran desktop Anda */
+    padding: 0.5rem 0.75rem;
+}
+
+/* .umkm-card .umkm-address {
     display: block;
     line-height: 1.35;
     white-space: normal;
     max-height: 2.7em;
     word-break: break-word;
-}
+} */
 
 .umkm-card .umkm-rating-block {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.35rem;
+    flex-direction: column; /* Memaksa elemen di dalamnya berbaris atas-bawah */
+    align-items: flex-start;
+    gap: 2px; /* Memberi sedikit jarak antara bintang dan teks */
 }
 
 .umkm-card .umkm-rating-block .stars {
@@ -211,9 +215,9 @@ body {
 }
 
 .umkm-card .umkm-rating-meta {
-    display: inline-block;
-    max-width: 100%;
-    white-space: nowrap;
+    margin-left: 0 !important;
+    white-space: nowrap; /* Mencegah teks terpotong-potong menjadi banyak baris */
+    display: block;
 }
 
 .umkm-card:hover {
@@ -223,7 +227,7 @@ body {
 
 .card-img-container {
     position: relative;
-    height: 200px;
+    height: 120px;
     overflow: hidden;
 }
 
@@ -411,44 +415,7 @@ body {
     min-width: 108px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .hero-section {
-        min-height: 50vh;
-        padding: 2rem 0;
-    }
-
-    .display-4 {
-        font-size: 2rem;
-        line-height: 1.2;
-    }
-
-    .hero-section .lead {
-        font-size: 1rem;
-        margin-bottom: 1.25rem !important;
-    }
-
-    .hero-section .btn {
-        width: 100%;
-        max-width: 320px;
-    }
-
-    .umkm-card {
-        margin-bottom: 1rem;
-    }
-
-    .recommended-card {
-        margin-bottom: 1rem;
-    }
-
-    .umkm-section .d-flex.justify-content-between.align-items-center {
-        flex-direction: column;
-        align-items: flex-start !important;
-        gap: 0.5rem;
-    }
-}
-
-@media (max-width: 576px) {
+/* @media (max-width: 576px) {
     .hero-section {
         min-height: 44vh;
     }
@@ -506,7 +473,7 @@ body {
         font-size: 0.72rem;
         padding: 0.3rem 0.4rem;
     }
-}
+} */
 
 .navbar-custom {
     background: rgba(15, 23, 42, 0.85);
@@ -745,10 +712,6 @@ body {
     box-shadow: 0 26px 48px rgba(15, 23, 42, 0.12);
 }
 
-.card-img-container {
-    height: 210px;
-}
-
 .umkm-overlay {
     background: linear-gradient(
         135deg,
@@ -768,6 +731,10 @@ body {
     border: 1px dashed #e2e8f0;
 }
 
+.title-umkm {
+    margin-bottom: 0.45rem;
+}
+
 @keyframes heroFadeUp {
     from {
         opacity: 0;
@@ -776,6 +743,50 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 50vh;
+        padding: 2rem 0;
+    }
+
+    .display-4 {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+
+    .hero-section .lead {
+        font-size: 1rem;
+        margin-bottom: 1.25rem !important;
+    }
+
+    .hero-section .btn {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .umkm-card {
+        margin-bottom: 1rem;
+    }
+
+    .recommended-card {
+        margin-bottom: 1rem;
+    }
+
+    .umkm-section .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+    }
+    .badge-umkm {
+        font-size: 0.45rem;
+        padding: 0.4rem 0.6rem;
+    }
+    .title-umkm {
+        margin-bottom: 1px;
     }
 }
 
@@ -794,50 +805,94 @@ body {
 }
 
 @media (max-width: 576px) {
+    /* --- HERO SECTION --- */
+    .hero-section {
+        min-height: 44vh;
+    }
+    .hero-section .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
     .hero-panel {
         padding: 2rem 1.6rem;
     }
-
     .hero-title {
         font-size: 1.85rem;
     }
-
     .hero-actions {
         flex-direction: column;
     }
-
     .btn-hero-primary,
     .btn-hero-ghost {
         width: 100%;
         justify-content: center;
     }
 
+    /* --- SEARCH FORM --- */
+    .search-form .input-group {
+        flex-direction: column;
+    }
+    .search-form .form-control {
+        border-radius: 25px 25px 0 0;
+        border-bottom: none;
+    }
+    .search-form .btn {
+        border-radius: 0 0 25px 25px;
+    }
+
+    /* --- SECTIONS PADDING --- */
+    .recommended-section,
+    .umkm-section {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+
+    /* --- CARDS & IMAGES --- */
     .card-img-container {
-        height: 165px;
+        height: 92px; /* Menggunakan ukuran dari blok kedua */
     }
-
+    .recommended-image {
+        height: 86px;
+    }
     .umkm-card .card-body {
-        padding: 0.7rem;
+        padding: 0.7rem; /* Menggunakan ukuran dari blok kedua */
     }
-
     .umkm-card .card-title {
-        font-size: 0.92rem;
+        font-size: 0.92rem; /* Menggunakan ukuran dari blok kedua */
         line-height: 1.3;
     }
-
-    .umkm-card .umkm-address {
+    .umkm-card .card-footer {
+        padding: 0.5rem 0.75rem 0.75rem;
+    }
+    /* .umkm-card .umkm-address {
         font-size: 0.8rem;
         max-height: 2.4em;
-    }
-
+    } */
     .umkm-card .umkm-rating-block {
         align-items: flex-start;
     }
-
     .umkm-card .umkm-rating-meta {
         display: block;
         margin-left: 0 !important;
         white-space: normal;
         line-height: 1.2;
+    }
+
+    /* --- RECOMMENDED MOBILE ITEMS --- */
+    .recommended-mobile-item .card-title {
+        font-size: 0.78rem;
+    }
+    .recommended-mobile-item .btn {
+        font-size: 0.72rem;
+        padding: 0.3rem 0.4rem;
+    }
+
+    .badge-umkm {
+        font-size: 0.5rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .title-umkm {
+        margin-bottom: 1px;
     }
 }

@@ -18,7 +18,7 @@
     ]
   },
   "resources/css/landing.css": {
-    "file": "assets/landing-BWw2aEXj.css",
+    "file": "assets/landing-S4qzz2Y1.css",
     "src": "resources/css/landing.css",
     "isEntry": true,
     "name": "landing",
@@ -51,7 +51,7 @@
     "isEntry": true
   },
   "resources/js/landing.js": {
-    "file": "assets/landing-BFvBtK25.js",
+    "file": "assets/landing-Ce1RJire.js",
     "name": "landing",
     "src": "resources/js/landing.js",
     "isEntry": true

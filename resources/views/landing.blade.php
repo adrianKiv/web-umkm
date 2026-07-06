@@ -84,34 +84,45 @@
                                         </div>
 
                                         <!-- Rating -->
-                                        <div class="mb-2">
-                                            <div class="stars justify-content-center">
+                                        <div class="mt-auto w-100">
+                                            <!-- Block Rating: Dipaksa berbaris ke bawah (flex-column) dan rata tengah -->
+                                            <div class="d-flex flex-column justify-content-center align-items-center mb-3">
                                                 @php
                                                     $avgRating = $umkm->rating->avg('nilai_rating') ?? 0;
                                                     $ratingCount = $umkm->rating->count();
                                                 @endphp
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    @if ($i <= floor($avgRating))
-                                                        <i class="fas fa-star text-warning"></i>
-                                                    @elseif($i - 0.5 <= $avgRating)
-                                                        <i class="fas fa-star-half-alt text-warning"></i>
-                                                    @else
-                                                        <i class="far fa-star text-warning"></i>
-                                                    @endif
-                                                @endfor
-                                                <small class="text-muted d-block">
-                                                    {{ number_format($avgRating, 1) }} ({{ $ratingCount }} ulasan)
+
+                                                <!-- Baris Atas: Bintang & Angka -->
+                                                <div class="d-flex justify-content-center align-items-center mb-1">
+                                                    <div class="stars me-2">
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            @if ($i <= floor($avgRating))
+                                                                <i class="fas fa-star text-warning"></i>
+                                                            @elseif($i - 0.5 <= $avgRating)
+                                                                <i class="fas fa-star-half-alt text-warning"></i>
+                                                            @else
+                                                                <i class="far fa-star text-warning"></i>
+                                                            @endif
+                                                        @endfor
+                                                    </div>
+                                                    <span
+                                                        class="fw-bold text-dark">{{ number_format($avgRating, 1) }}</span>
+                                                </div>
+
+                                                <!-- Baris Bawah: Teks Ulasan -->
+                                                <small class="text-muted text-center" style="font-size: 0.85rem;">
+                                                    ({{ $ratingCount }} ulasan)
                                                 </small>
                                             </div>
                                         </div>
 
                                         <!-- Address -->
-                                        <div class="mb-3">
+                                        {{-- <div class="mb-3">
                                             <small class="text-muted umkm-address">
                                                 <i class="fas fa-map-marker-alt me-1"></i>
                                                 {{ Str::limit($umkm->alamat_lengkap, 30) }}
                                             </small>
-                                        </div>
+                                        </div> --}}
                                     </div>
 
                                     <!-- Card Footer with Action -->
@@ -147,17 +158,43 @@
                                     <div class="card-body d-flex flex-column text-center p-2">
                                         <h6 class="card-title mb-1">{{ Str::limit($umkm->nama_umkm, 18) }}</h6>
 
-                                        <div class="mb-2">
-                                            <small class="badge bg-primary">
-                                                {{ Str::limit(optional($umkm->kategori)->nama_kategori ?? 'Kategori', 12) }}
+                                        <div class="d-flex justify-content-center">
+                                            <small class="badge bg-primary"
+                                                style="font-size: 0.45rem; padding: 0.4rem 0.6rem;">
+                                                <i class="fas fa-tag me-1"></i>
+                                                {{ optional($umkm->kategori)->nama_kategori ?? 'Tidak dikategorikan' }}
                                             </small>
                                         </div>
 
                                         @php
                                             $avgRating = $umkm->rating->avg('nilai_rating') ?? 0;
+                                            $ratingCount = $umkm->rating->count();
                                         @endphp
-                                        <div class="mb-2">
-                                            <small class="text-muted">{{ number_format($avgRating, 1) }} ★</small>
+
+                                        <div
+                                            class="mt-auto d-flex flex-column justify-content-center align-items-center mb-1">
+                                            <div class="d-flex justify-content-center align-items-center mb-1">
+                                                <div class="stars me-1">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @if ($i <= floor($avgRating))
+                                                            <i class="fas fa-star text-warning"
+                                                                style="font-size: 0.75rem;"></i>
+                                                        @elseif($i - 0.5 <= $avgRating)
+                                                            <i class="fas fa-star-half-alt text-warning"
+                                                                style="font-size: 0.75rem;"></i>
+                                                        @else
+                                                            <i class="far fa-star text-warning"
+                                                                style="font-size: 0.75rem;"></i>
+                                                        @endif
+                                                    @endfor
+                                                </div>
+                                                <span class="fw-bold text-dark"
+                                                    style="font-size: 0.85rem;">{{ number_format($avgRating, 1) }}</span>
+                                            </div>
+
+                                            <small class="text-muted text-center" style="font-size: 0.75rem;">
+                                                ({{ $ratingCount }} ulasan)
+                                            </small>
                                         </div>
                                     </div>
 
@@ -261,34 +298,34 @@
                                     </div>
 
                                     <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title mb-2">{{ $umkm->nama_umkm }}</h5>
+                                        <h5 class="card-title title-umkm">{{ $umkm->nama_umkm }}</h5>
 
                                         <!-- Category Badge -->
-                                        <div class="mb-2">
-                                            <span class="badge bg-primary">
+                                        <div class="mb-0">
+                                            <span class="badge bg-primary badge-umkm">
                                                 <i class="fas fa-tag me-1"></i>
                                                 {{ optional($umkm->kategori)->nama_kategori ?? 'Tidak dikategorikan' }}
                                             </span>
                                         </div>
 
                                         <!-- Operating Hours -->
-                                        <div class="mb-2">
+                                        {{-- <div class="mb-2">
                                             <small class="text-muted">
                                                 <i class="fas fa-clock me-1"></i>
                                                 {{ $umkm->jam_buka }}
                                             </small>
-                                        </div>
+                                        </div> --}}
 
                                         <!-- Address -->
-                                        <div class="mb-3">
+                                        {{-- <div class="mb-3">
                                             <small class="text-muted">
                                                 <i class="fas fa-map-marker-alt me-1"></i>
                                                 {{ Str::limit($umkm->alamat_lengkap, 60) }}
                                             </small>
-                                        </div>
+                                        </div> --}}
 
                                         <!-- Rating -->
-                                        <div class="mt-auto">
+                                        <div class="mt-3">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="rating umkm-rating-block">
                                                     @php
@@ -331,8 +368,8 @@
                         @endforeach
                     </div>
                     <!-- Pagination -->
-                    <div class="d-flex flex-column flex-md-row justify-content-center align-items-center mt-3 mb-3">
-                        <div class="text-muted mb-2 mb-md-0">
+                    <div class="d-flex flex-column justify-content-center align-items-center mt-3 mb-3">
+                        <div class="text-muted mb-2">
                             Menampilkan {{ $umkms->firstItem() ?? 0 }} - {{ $umkms->lastItem() ?? 0 }} dari
                             {{ $umkms->total() }} UMKM
                         </div>
@@ -379,8 +416,22 @@
                                     <i class="fas fa-clock me-2 text-primary"></i><span id="umkmDetailHours">-</span>
                                 </p>
                                 <p class="mb-0">
-                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i><span id="umkmDetailAddress">-</span>
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i><span
+                                        id="umkmDetailAddress">-</span>
                                 </p>
+                                <div class="mt-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="rating umkm-rating-block">
+                                            <div id="umkmDetailRatingStars" class="stars text-warning"
+                                                style="font-size: 0.9rem;">
+                                            </div>
+
+                                            <small id="umkmDetailRatingText"
+                                                class="text-muted umkm-rating-meta mt-1 d-block">
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

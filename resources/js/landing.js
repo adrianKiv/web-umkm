@@ -4,7 +4,10 @@ let lastWindowScrollY = 0;
 
 function closeNavbarMenusOnScroll() {
     const navbarCollapse = document.getElementById("navbarNav");
-    if (navbarCollapse?.classList.contains("show") && window.bootstrap?.Collapse) {
+    if (
+        navbarCollapse?.classList.contains("show") &&
+        window.bootstrap?.Collapse
+    ) {
         window.bootstrap.Collapse.getOrCreateInstance(navbarCollapse, {
             toggle: false,
         }).hide();
@@ -209,6 +212,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const detailHours = document.getElementById("umkmDetailHours");
     const detailaddress = document.getElementById("umkmDetailAddress");
     const detailMapLink = document.getElementById("umkmDetailMapLink");
+    const modalElement = document.getElementById("umkmDetailModal");
+    const detailRatingStars = document.getElementById("umkmDetailRatingStars");
+    const detailRatingText = document.getElementById("umkmDetailRatingText");
+
+    if (modalElement) {
+        modalElement.addEventListener("hide.bs.modal", function () {
+            // Lepaskan fokus dari elemen apapun (seperti tombol Tutup) di dalam modal
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+        });
+    }
 
     const setDetailLoading = () => {
         detailLoading?.classList.remove("d-none");
@@ -218,6 +233,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (detailCategory) detailCategory.textContent = "-";
         if (detailHours) detailHours.textContent = "-";
         if (detailaddress) detailaddress.textContent = "-";
+
+        // Reset rating saat loading
+        if (detailRatingStars) detailRatingStars.innerHTML = "";
+        if (detailRatingText) detailRatingText.textContent = "-";
     };
 
     const setDetailError = (message) => {
@@ -239,6 +258,28 @@ document.addEventListener("DOMContentLoaded", function () {
         if (detailHours) detailHours.textContent = data.jam_buka || "-";
         if (detailaddress)
             detailaddress.textContent = data.alamat_lengkap || "-";
+
+        // 2. TAMBAHKAN INI: Logika pembuat bintang dan teks ulasan
+        const avgRating = parseFloat(data.avg_rating) || 0;
+        const ratingCount = parseInt(data.rating_count) || 0;
+
+        if (detailRatingText) {
+            detailRatingText.textContent = `(${avgRating.toFixed(1)} • ${ratingCount} ulasan)`;
+        }
+
+        if (detailRatingStars) {
+            let starsHtml = "";
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.floor(avgRating)) {
+                    starsHtml += '<i class="fas fa-star"></i> ';
+                } else if (i - 0.5 <= avgRating) {
+                    starsHtml += '<i class="fas fa-star-half-alt"></i> ';
+                } else {
+                    starsHtml += '<i class="far fa-star"></i> ';
+                }
+            }
+            detailRatingStars.innerHTML = starsHtml;
+        }
 
         const defaultImage = detailModalEl?.dataset.defaultImage || "";
         if (detailImage) {
@@ -582,14 +623,16 @@ function handlePaginationClick(e) {
     e.preventDefault();
     if (isSearching) return;
 
-let url = e.currentTarget.getAttribute('href');
+    let url = e.currentTarget.getAttribute("href");
     if (!url) return;
 
-    if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
-        url = url.replace('https://', 'http://');
-    }
-    else {
-        url = url.replace('http://', 'https://');
+    if (
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname === "localhost"
+    ) {
+        url = url.replace("https://", "http://");
+    } else {
+        url = url.replace("http://", "https://");
     }
 
     isSearching = true;

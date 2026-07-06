@@ -235,6 +235,8 @@ class DataUmkmController extends Controller
             'alamat_lengkap' => $umkm->alamat_lengkap,
             'no_telfon' => $umkm->no_telfon,
             'kategori' => optional($umkm->kategori)->nama_kategori ?? 'Tidak dikategorikan',
+            'avg_rating' => (float) ($umkm->rating->avg('nilai_rating') ?? 0),
+            'rating_count' => (int) $umkm->rating->count(),
         ]);
     }
 

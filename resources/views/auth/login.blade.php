@@ -16,6 +16,7 @@
         .auth-card {
             max-width: 960px !important;
             width: min(960px, 100%);
+            margin: 0 auto;
             border-radius: 24px !important;
             border: 1px solid rgba(148, 163, 184, 0.3) !important;
             box-shadow: 0 28px 60px rgba(15, 23, 42, 0.15) !important;
@@ -27,6 +28,10 @@
         .auth-login {
             font-family: 'Space Grotesk', sans-serif;
             color: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
 
         .auth-card__inner {
@@ -302,88 +307,90 @@
         Login - UMKM Kuliner
     </x-slot>
     <div class="auth-login">
-        <div class="auth-card__inner">
-            <section class="auth-panel">
-                <div class="auth-panel__badge">
-                    <i class="fas fa-utensils"></i>UMKM Kuliner
-                </div>
-                <h1>Masuk untuk rekomendasi kuliner yang lebih tepat.</h1>
-                <p>Kelola preferensi, simpan rekomendasi, dan bantu kami mengenal rasa favoritmu.</p>
-
-                <div class="auth-panel__list">
-                    <div class="auth-panel__item">
-                        <i class="fas fa-check-circle"></i>Rekomendasi UMKM personal
+        <div class="auth-card">
+            <div class="auth-card__inner">
+                <section class="auth-panel">
+                    <div class="auth-panel__badge">
+                        <i class="fas fa-utensils"></i>UMKM Kuliner
                     </div>
-                    <div class="auth-panel__item">
-                        <i class="fas fa-check-circle"></i>Riwayat preferensi tersimpan
-                    </div>
-                    <div class="auth-panel__item">
-                        <i class="fas fa-check-circle"></i>Detail UMKM lebih cepat
-                    </div>
-                </div>
+                    <h1>Masuk untuk rekomendasi kuliner yang lebih tepat.</h1>
+                    <p>Kelola preferensi, simpan rekomendasi, dan bantu kami mengenal rasa favoritmu.</p>
 
-                <div class="auth-panel__meta">
-                    <span class="auth-pill">Aman</span>
-                    <span class="auth-pill">Responsif</span>
-                    <span class="auth-pill">Modern</span>
-                </div>
-            </section>
-
-            <section class="auth-form">
-
-                <div class="auth-form__header">
-                    <h2>Login Akun</h2>
-                    <p>Masukkan email dan password yang terdaftar.</p>
-                </div>
-
-                <x-auth-session-status class="mb-4" :status="session('status')" />
-
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-
-                    <div class="auth-field">
-                        <label for="email" class="auth-label">Email</label>
-                        <div class="auth-input">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" name="email" id="email" value="{{ old('email') }}" required
-                                autofocus autocomplete="username" placeholder="contoh@email.com" />
+                    <div class="auth-panel__list">
+                        <div class="auth-panel__item">
+                            <i class="fas fa-check-circle"></i>Rekomendasi UMKM personal
                         </div>
-                        <x-input-error :messages="$errors->get('email')" class="mt-1" />
-                    </div>
-
-                    <div class="auth-field">
-                        <label for="password" class="auth-label">Password</label>
-                        <div class="auth-input">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" name="password" id="password" required
-                                autocomplete="current-password" placeholder="Masukkan password" />
+                        <div class="auth-panel__item">
+                            <i class="fas fa-check-circle"></i>Riwayat preferensi tersimpan
                         </div>
-                        <x-input-error :messages="$errors->get('password')" class="mt-1" />
+                        <div class="auth-panel__item">
+                            <i class="fas fa-check-circle"></i>Detail UMKM lebih cepat
+                        </div>
                     </div>
 
-                    <div class="auth-actions">
-                        <label class="auth-check" for="remember_me">
-                            <input id="remember_me" type="checkbox" name="remember">
-                            Ingat saya
-                        </label>
-                        @if (Route::has('password.request'))
-                            <a href="{{ route('password.request') }}" class="auth-link">Lupa password?</a>
+                    <div class="auth-panel__meta">
+                        <span class="auth-pill">Aman</span>
+                        <span class="auth-pill">Responsif</span>
+                        <span class="auth-pill">Modern</span>
+                    </div>
+                </section>
+
+                <section class="auth-form">
+
+                    <div class="auth-form__header">
+                        <h2>Login Akun</h2>
+                        <p>Masukkan email dan password yang terdaftar.</p>
+                    </div>
+
+                    <x-auth-session-status class="mb-4" :status="session('status')" />
+
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+
+                        <div class="auth-field">
+                            <label for="email" class="auth-label">Email</label>
+                            <div class="auth-input">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" name="email" id="email" value="{{ old('email') }}" required
+                                    autofocus autocomplete="username" placeholder="contoh@email.com" />
+                            </div>
+                            <x-input-error :messages="$errors->get('email')" class="mt-1" />
+                        </div>
+
+                        <div class="auth-field">
+                            <label for="password" class="auth-label">Password</label>
+                            <div class="auth-input">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" name="password" id="password" required
+                                    autocomplete="current-password" placeholder="Masukkan password" />
+                            </div>
+                            <x-input-error :messages="$errors->get('password')" class="mt-1" />
+                        </div>
+
+                        <div class="auth-actions">
+                            <label class="auth-check" for="remember_me">
+                                <input id="remember_me" type="checkbox" name="remember">
+                                Ingat saya
+                            </label>
+                            @if (Route::has('password.request'))
+                                <a href="{{ route('password.request') }}" class="auth-link">Lupa password?</a>
+                            @endif
+                        </div>
+
+                        <button class="auth-submit" type="submit">Masuk</button>
+
+                        <a class="auth-back-btn" href="{{ url('/') }}">
+                            <i class="fas fa-arrow-left"></i>Kembali
+                        </a>
+
+                        @if (Route::has('register'))
+                            <div class="auth-footer">
+                                Belum punya akun? <a class="auth-link" href="{{ route('register') }}">Daftar</a>
+                            </div>
                         @endif
-                    </div>
-
-                    <button class="auth-submit" type="submit">Masuk</button>
-
-                    <a class="auth-back-btn" href="{{ url('/') }}">
-                        <i class="fas fa-arrow-left"></i>Kembali
-                    </a>
-
-                    @if (Route::has('register'))
-                        <div class="auth-footer">
-                            Belum punya akun? <a class="auth-link" href="{{ route('register') }}">Daftar</a>
-                        </div>
-                    @endif
-                </form>
-            </section>
+                    </form>
+                </section>
+            </div>
         </div>
     </div>
 </x-guest-layout>
