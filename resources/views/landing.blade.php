@@ -44,6 +44,97 @@
                 </div>
             </div>
         </section>
+
+        <!-- top 10 UMKM Section -->
+        <section class="top-umkm-section py-5">
+            <div class="container">
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <h2 class="h3 mb-3 text-dark">
+                            <i class="fas fa-trophy text-warning me-2"></i>
+                            Top 10 UMKM Terpopuler
+                        </h2>
+                        <p class="text-muted">Papan peringkat UMKM yang paling banyak dilihat oleh pelanggan</p>
+                    </div>
+                </div>
+
+                @if ($topClicks->isEmpty())
+                    <div class="text-muted text-center py-5 empty-state">Belum ada data klik UMKM saat ini.</div>
+                @else
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
+                            <div class="leaderboard-wrapper">
+                                @foreach ($topClicks as $umkm)
+                                    <div class="leaderboard-row">
+                                        <div class="lb-rank">
+                                            {{ $loop->iteration }}
+                                        </div>
+
+                                        <img src="{{ $umkm->foto_umkm_url }}" alt="Foto {{ $umkm->nama_umkm }}"
+                                            class="lb-image"
+                                            onerror="this.onerror=null;this.src='{{ $defaultUmkmImage }}';">
+
+                                        <div class="lb-details">
+                                            <div class="lb-name">
+                                                {{ Str::limit($umkm->nama_umkm, 35) }}
+                                            </div>
+                                            <div class="lb-meta">
+                                                <span class="badge bg-light text-dark shadow-sm">
+                                                    <i class="fas fa-tag me-1"></i>
+                                                    {{ optional($umkm->kategori)->nama_kategori ?? 'Umum' }}
+                                                </span>
+
+                                                @php
+                                                    $avgRating = $umkm->rating->avg('nilai_rating') ?? 0;
+                                                    $ratingCount = $umkm->rating->count();
+                                                @endphp
+
+                                                <div class="d-flex align-items-center">
+                                                    <div class="lb-stars me-1">
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            @if ($i <= floor($avgRating))
+                                                                <i class="fas fa-star"></i>
+                                                            @elseif($i - 0.5 <= $avgRating)
+                                                                <i class="fas fa-star-half-alt"></i>
+                                                            @else
+                                                                <i class="far fa-star"></i>
+                                                            @endif
+                                                        @endfor
+                                                    </div>
+                                                    <span class="fw-bold ms-1"
+                                                        style="font-size: 0.9rem;">{{ number_format($avgRating, 1) }}</span>
+                                                    <span class="ms-1"
+                                                        style="font-size: 0.8rem; opacity: 0.8;">({{ $ratingCount }})
+                                                        ulasan</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="lb-score-action">
+                                            <div class="lb-score">
+                                                <i class="fas fa-fire me-1"></i>
+                                                @if ((int) $umkm->total_klik >= 1000000)
+                                                    {{ floor((int) $umkm->total_klik / 1000000) }}jt+ Dilihat
+                                                @else
+                                                    {{ number_format((int) $umkm->total_klik, 0, ',', '.') }}x Dilihat
+                                                @endif
+                                            </div>
+                                            <button type="button" class="btn btn-light btn-sm fw-bold shadow-sm"
+                                                data-umkm-detail data-umkm-id="{{ $umkm->id_umkm }}"
+                                                data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
+                                                data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
+                                                Detail <i class="fas fa-chevron-right ms-1" style="font-size: 0.7rem;"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </section>
+
         <!-- Recommended UMKM Section -->
         @if ($recommendedUmkms->isNotEmpty())
             <section class="recommended-section py-5">
@@ -116,13 +207,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Address -->
-                                        {{-- <div class="mb-3">
-                                            <small class="text-muted umkm-address">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                {{ Str::limit($umkm->alamat_lengkap, 30) }}
-                                            </small>
-                                        </div> --}}
                                     </div>
 
                                     <!-- Card Footer with Action -->
@@ -199,8 +283,8 @@
                                     </div>
 
                                     <div class="card-footer bg-transparent border-0 pt-0 p-2">
-                                        <button type="button" class="btn btn-outline-primary btn-sm w-100" data-umkm-detail
-                                            data-umkm-id="{{ $umkm->id_umkm }}"
+                                        <button type="button" class="btn btn-outline-primary btn-sm w-100"
+                                            data-umkm-detail data-umkm-id="{{ $umkm->id_umkm }}"
                                             data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
                                             data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
                                             Detail

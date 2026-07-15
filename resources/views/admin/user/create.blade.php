@@ -27,6 +27,22 @@
                         @error('email')<span class="invalid-feedback">{{ $message }}</span>@enderror
                     </div>
 
+<div class="mb-3">
+    <label for="id_role" class="form-label">Role Pengguna <span class="text-danger">*</span></label>
+    <select class="form-select @error('id_role') is-invalid @enderror" id="id_role" name="id_role" required>
+        <option value="" disabled {{ old('id_role') ? '' : 'selected' }}>Pilih Role...</option>
+
+        <option value="1" {{ old('id_role') == 1 ? 'selected' : '' }}>User</option>
+
+        <option value="2" {{ old('id_role') == 2 ? 'selected' : '' }}>Admin</option>
+
+        @if(Auth::user()->isSuperAdmin())
+            <option value="3" {{ old('id_role') == 3 ? 'selected' : '' }}>Super Admin</option>
+        @endif
+    </select>
+    @error('id_role')<span class="invalid-feedback">{{ $message }}</span>@enderror
+</div>
+
                     <div class="mb-3">
                         <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
                         <input type="password" class="form-control @error('password') is-invalid @enderror"

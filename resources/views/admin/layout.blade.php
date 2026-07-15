@@ -41,19 +41,24 @@
         </div>
     </nav>
 
-    <div class="row g-3">
+<div class="row g-3">
         <div class="col-12 col-lg-2 mb-2 mb-lg-4">
             <div class="admin-sidebar sticky-top">
                 <div class="sidebar-head">
-                    <div class="sidebar-title">Navigation</div>
+                    <div class="sidebar-title">Navigasi</div>
                     <div class="sidebar-subtitle">Kelola seluruh data</div>
                 </div>
+
                 <div class="list-group">
                     <a href="{{ route('admin.dashboard') }}"
                         class="list-group-item list-group-item-action sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <i class="fas fa-home"></i>
                         <span>Dashboard</span>
                     </a>
+
+                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        Data Direktori
+                    </div>
                     <a href="{{ route('admin.umkm.index') }}"
                         class="list-group-item list-group-item-action sidebar-link {{ request()->routeIs('admin.umkm.*') ? 'active' : '' }}">
                         <i class="fas fa-store"></i>
@@ -64,34 +69,46 @@
                         <i class="fas fa-utensils"></i>
                         <span>Menu</span>
                     </a>
-                    <a href="{{ route('admin.kategori.index') }}"
-                        class="list-group-item list-group-item-action sidebar-link {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}">
-                        <i class="fas fa-tag"></i>
-                        <span>Kategori</span>
-                    </a>
-                    <a href="{{ route('admin.kelompok.index') }}"
-                        class="list-group-item list-group-item-action sidebar-link {{ request()->routeIs('admin.kelompok.*') ? 'active' : '' }}">
-                        <i class="fas fa-layer-group"></i>
-                        <span>Kelompok</span>
-                    </a>
                     <a href="{{ route('admin.lokasi.index') }}"
                         class="list-group-item list-group-item-action sidebar-link {{ request()->routeIs('admin.lokasi.*') ? 'active' : '' }}">
                         <i class="fas fa-map-marker-alt"></i>
                         <span>Lokasi</span>
                     </a>
+
+                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        Parameter CBF
+                    </div>
+                    <a href="{{ route('admin.kelompok.index') }}"
+                        class="list-group-item list-group-item-action sidebar-link {{ request()->routeIs('admin.kelompok.*') ? 'active' : '' }}">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Kelompok</span>
+                    </a>
+                    <a href="{{ route('admin.kategori.index') }}"
+                        class="list-group-item list-group-item-action sidebar-link {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}">
+                        <i class="fas fa-tag"></i>
+                        <span>Kategori</span>
+                    </a>
+
+                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        Data Ulasan
+                    </div>
                     <a href="{{ route('admin.rating.index') }}"
                         class="list-group-item list-group-item-action sidebar-link {{ request()->routeIs('admin.rating.*') ? 'active' : '' }}">
                         <i class="fas fa-star"></i>
                         <span>Rating</span>
                     </a>
+
+                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        Data Pengguna
+                    </div>
                     <a href="{{ route('admin.user.index') }}"
                         class="list-group-item list-group-item-action sidebar-link {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
-                        <i class="fas fa-users"></i>
-                        <span>User</span>
+                        <i class="fas fa-users-cog"></i>
+                        <span>Manajemen User & Role</span>
                     </a>
                     <a href="{{ route('admin.activities.index') }}"
                         class="list-group-item list-group-item-action sidebar-link {{ request()->routeIs('admin.activities.*') ? 'active' : '' }}">
-                        <i class="fas fa-list"></i>
+                        <i class="fas fa-history"></i>
                         <span>Log Activities</span>
                     </a>
                 </div>
