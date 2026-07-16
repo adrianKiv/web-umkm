@@ -102,9 +102,9 @@
                                                         @endfor
                                                     </div>
                                                     <span class="fw-bold ms-1"
-                                                        style="font-size: 0.9rem;">{{ number_format($avgRating, 1) }}</span>
+                                                        style="font-size: 0.65rem;">{{ number_format($avgRating, 1) }}</span>
                                                     <span class="ms-1"
-                                                        style="font-size: 0.8rem; opacity: 0.8;">({{ $ratingCount }})
+                                                        style="font-size: 0.65rem; opacity: 0.8;">({{ $ratingCount }})
                                                         ulasan</span>
                                                 </div>
                                             </div>

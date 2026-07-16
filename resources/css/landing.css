@@ -948,11 +948,15 @@ body {
 }
 
 .lb-name {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-    letter-spacing: 0.5px;
-}
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+
+        /* KUNCI FIX: Mengubah jadi 1 baris dengan titik-titik */
+        display: block;                /* Mereset display dari webkit-box sebelumnya */
+        white-space: nowrap !important; /* Memaksa teks memanjang ke samping, pantang turun baris */
+        overflow: hidden;              /* Menyembunyikan teks yang kelebihan/menembus batas */
+        text-overflow: ellipsis;       /* Menambahkan ... di akhir teks yang terpotong */
+    }
 
 .lb-meta {
     display: flex;
@@ -993,31 +997,68 @@ body {
 @media (max-width: 768px) {
     .leaderboard-row {
         flex-wrap: wrap;
-        padding: 15px;
+        padding: 5px;
     }
     .lb-rank {
-        font-size: 1.6rem;
+        font-size: 1.1rem;
         width: 30px;
         margin-right: 10px;
     }
     .lb-image {
         width: 50px;
         height: 50px;
-        margin-right: 15px;
+        margin-right: 10px;
     }
     .lb-details {
         width: calc(100% - 105px); /* Sisa ruang setelah rank dan gambar */
     }
+    .lb-meta {
+        display: flex;
+        flex-direction: column;  /* Memaksa elemen tersusun ke bawah */
+        gap: 0px !important;     /* KUNCI FIX: Menghilangkan celah bawaan flexbox */
+        align-items: flex-start; /* Memastikan semua elemen rata kiri */
+        margin-top: 2px;
+    }
+    .lb-meta .badge {
+        font-size: 0.6rem !important;  /* Teks kategori dibuat lebih kecil */
+        padding: 2px 6px !important;   /* Menipiskan bantalan/kotak badge */
+        margin-bottom: 3px !important; /* Memberi sedikit ruang napas ke baris rating (bisa diubah ke 0 jika ingin benar-benar menempel) */
+        line-height: 1.2;
+        font-weight: 500;
+    }
     .lb-name {
-        font-size: 1.1rem;
+        font-size: 0.8rem;
+    }
+    .lb-score {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+    .lb-stars i {
+    color: #fbc531;
+    font-size: 0.55rem;
+    padding-bottom: 12px; /* Menambahkan sedikit padding atas agar bintang lebih sejajar dengan teks */
     }
     .lb-score-action {
         width: 100%;
+        min-height: 30px;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        margin-top: 12px;
-        padding-top: 12px;
+        margin-top: 5px;
+        padding-top: 5px;
         border-top: 1px dashed rgba(255, 255, 255, 0.2);
+    }
+    .lb-score-action button {
+        font-size: 0.7rem;          /* Mengecilkan ukuran teks tombol */
+        padding: 2px 8px !important; /* KUNCI FIX: Memangkas padding atas-bawah jadi sangat tipis (2px) */
+        line-height: 1.2;           /* Mengurangi jarak spasi kosong di atas/bawah teks */
+        height: fit-content;        /* Memastikan tombol hanya setinggi isinya */
+        display: flex;
+        align-items: center;
+        gap: 4px;                   /* Jarak teks dengan icon chevron (>) */
     }
 }
