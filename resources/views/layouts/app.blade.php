@@ -14,6 +14,7 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+    <link rel="icon" type="image/png" href="{{ asset('images/logo1.png') }}">
     <style>
 html, body {
     font-family: 'Inter', sans-serif;
@@ -167,10 +168,12 @@ html, body {
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">
-                <i class="fas fa-utensils me-2"></i>KULINER UPI
+            <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
+                <img src="{{ asset('images/logodark.png') }}" alt="Logo Kuliner UPI" class="me-2" style="height: 50px; width: auto; object-fit: contain;">
+
+                <span class="fw-bold">KULINER UPI</span>    
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
