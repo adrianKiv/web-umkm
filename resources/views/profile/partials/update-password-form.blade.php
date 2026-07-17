@@ -4,7 +4,7 @@
         <header>
             <h4 class="h5 fw-bold text-dark mb-1">{{ __('Update Password') }}</h4>
             <p class="text-muted small mb-0">
-                {{ __('Ensure your account is using a long, random password to stay secure.') }}
+                {{ __('Pastikan akun Anda menggunakan kata sandi yang panjang dan acak agar tetap aman.') }}
             </p>
         </header>
         <button class="btn btn-light rounded-circle shadow-sm" type="button" aria-label="Toggle">
