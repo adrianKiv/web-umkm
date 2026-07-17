@@ -54,6 +54,11 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'id_role');
     }
 
+    public function activities()
+    {
+        return $this->hasMany(UserActivity::class, 'id_user');
+    }
+
     public function isAdmin(): bool
     {
         return $this->role?->nama_role === 'admin';

@@ -169,156 +169,168 @@ html, body {
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-                <img src="{{ asset('images/logodark.png') }}" alt="Logo Kuliner UPI" class="me-2" style="height: 50px; width: auto; object-fit: contain;">
+    <div class="container flex-wrap">
 
-                <span class="fw-bold">KULINER UPI</span>    
-            </a>
+        <!-- 1. KIRI: Brand Logo -->
+        <a class="navbar-brand d-flex align-items-center order-1" href="{{ url('/') }}">
+            <img src="{{ asset('images/logodark.png') }}" alt="Logo Kuliner UPI" class="me-2" style="height: 50px; width: auto; object-fit: contain;">
+            <span class="fw-bold">KULINER UPI</span>
+        </a>
 
+        <!-- 2. KANAN: Tombol Auth & Toggler (Muncul di luar collapse) -->
+        <div class="d-flex align-items-center gap-2 order-2 order-lg-3 ms-auto ms-lg-0">
+
+            <!-- Kondisi Belum Login -->
+            @guest
+                <a href="{{ url('/login') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                    Register / Login
+                </a>
+            @endguest
+
+            <!-- Kondisi Sudah Login (Dropdown Profil) -->
+            @auth
+                <div class="dropdown">
+                    <a class="btn btn-outline-primary btn-sm rounded-pill px-3 dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-1"></i>
+                        <!-- Nama user disembunyikan di layar super kecil agar tidak menabrak logo -->
+                        <span class="d-none d-sm-inline">{{ auth()->user()->name }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm position-absolute">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                <i class="fas fa-user me-2"></i>Profil
+                            </a>
+                        </li>
+                        @if (auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())
+                            <li>
+                                <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                    <i class="fas fa-chart-line me-2"></i>Masuk Dashboard Admin
+                                </a>
+                            </li>
+                        @endif
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            @endauth
+
+            <!-- Toggler Garis Tiga -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+        </div>
 
-            @if (Route::currentRouteName() === 'landing')
-                <form action="{{ route('landing') }}" method="GET" id="mobileHeaderSearchForm"
-                    class="mobile-live-search d-flex gap-2 d-lg-none w-100">
-                    <input type="text" name="search" id="mobileHeaderSearchInput" class="form-control"
-                        placeholder="Cari UMKM..." value="{{ request('search') }}">
-                    @if (request()->filled('id_kelompok'))
-                        <input type="hidden" name="id_kelompok" value="{{ request('id_kelompok') }}">
-                    @endif
-                    @if (request()->filled('id_kategori'))
-                        <input type="hidden" name="id_kategori" value="{{ request('id_kategori') }}">
-                    @endif
-                    @if (request()->filled('min_rating'))
-                        <input type="hidden" name="min_rating" value="{{ request('min_rating') }}">
-                    @endif
-                    <button class="btn btn-primary px-3" type="submit" aria-label="Cari">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary px-3" type="button" id="openMobileFilterBtn" aria-label="Buka filter">
-                        <i class="fas fa-sliders-h"></i>
-                    </button>
-                </form>
-            @endif
+        <!-- 3. BAWAH (Mobile): Search Form -->
+        @if (Route::currentRouteName() === 'landing')
+            <form action="{{ route('landing') }}" method="GET" id="mobileHeaderSearchForm"
+                class="mobile-live-search d-flex gap-2 d-lg-none w-100 order-3 mt-3">
+                <input type="text" name="search" id="mobileHeaderSearchInput" class="form-control"
+                    placeholder="Cari UMKM..." value="{{ request('search') }}">
+                @if (request()->filled('id_kelompok'))
+                    <input type="hidden" name="id_kelompok" value="{{ request('id_kelompok') }}">
+                @endif
+                @if (request()->filled('id_kategori'))
+                    <input type="hidden" name="id_kategori" value="{{ request('id_kategori') }}">
+                @endif
+                @if (request()->filled('min_rating'))
+                    <input type="hidden" name="min_rating" value="{{ request('min_rating') }}">
+                @endif
+                <button class="btn btn-primary px-3" type="submit" aria-label="Cari">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="btn btn-outline-secondary px-3" type="button" id="openMobileFilterBtn" aria-label="Buka filter">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
+            </form>
+        @endif
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="mx-auto search-container d-none d-lg-block">
-                    @if (Route::currentRouteName() === 'landing')
-                        <form action="{{ route('landing') }}" method="GET" id="headerSearchForm" class="d-flex align-items-center gap-2">
-                            <input type="text" name="search" id="headerSearchInput" class="form-control"
-                                placeholder="Cari seblak, kopi, atau warteg..." value="{{ request('search') }}">
+        <!-- 4. TENGAH (Desktop) & BAWAH (Mobile): Menu Navigasi -->
+        <div class="collapse navbar-collapse order-4 order-lg-2" id="navbarNav">
 
-                            <div class="dropdown navbar-filter-dropdown" data-bs-auto-close="outside">
-                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-sliders-h me-1"></i>Filter
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-end shadow-sm">
-                                    <div class="mb-2">
-                                        <label class="form-label small mb-1">Kelompok</label>
-                                        <select name="id_kelompok" class="form-select form-select-sm navbar-filter-select">
-                                            <option value="">Semua Kelompok</option>
-                                            @foreach (($kelompokList ?? collect()) as $kelompok)
-                                                <option value="{{ $kelompok->id_kelompok }}"
-                                                    {{ (string) request('id_kelompok') === (string) $kelompok->id_kelompok ? 'selected' : '' }}>
-                                                    {{ $kelompok->nama_kelompok }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+            <div class="mx-auto search-container d-none d-lg-block">
+                @if (Route::currentRouteName() === 'landing')
+                    <form action="{{ route('landing') }}" method="GET" id="headerSearchForm" class="d-flex align-items-center gap-2">
+                        <input type="text" name="search" id="headerSearchInput" class="form-control"
+                            placeholder="Cari seblak, kopi, atau warteg..." value="{{ request('search') }}">
 
-                                    <div class="mb-3">
-                                        <label class="form-label small mb-1">Kategori</label>
-                                        <select name="id_kategori" class="form-select form-select-sm navbar-filter-select">
-                                            <option value="">Semua Kategori</option>
-                                            @foreach (($kategoriList ?? collect()) as $kategori)
-                                                <option value="{{ $kategori->id_kategori }}"
-                                                    {{ (string) request('id_kategori') === (string) $kategori->id_kategori ? 'selected' : '' }}>
-                                                    {{ $kategori->nama_kategori }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                        <!-- Dropdown Filter Desktop -->
+                        <div class="dropdown navbar-filter-dropdown" data-bs-auto-close="outside">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-sliders-h me-1"></i>Filter
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end shadow-sm">
+                                <div class="mb-2">
+                                    <label class="form-label small mb-1">Kelompok</label>
+                                    <select name="id_kelompok" class="form-select form-select-sm navbar-filter-select">
+                                        <option value="">Semua Kelompok</option>
+                                        @foreach (($kelompokList ?? collect()) as $kelompok)
+                                            <option value="{{ $kelompok->id_kelompok }}" {{ (string) request('id_kelompok') === (string) $kelompok->id_kelompok ? 'selected' : '' }}>
+                                                {{ $kelompok->nama_kelompok }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label small mb-1">Rating Minimal</label>
-                                        <select name="min_rating" class="form-select form-select-sm navbar-filter-select">
-                                            <option value="">Semua Rating</option>
-                                            <option value="1" {{ (string) request('min_rating') === '1' ? 'selected' : '' }}>1.0 ke atas</option>
-                                            <option value="2" {{ (string) request('min_rating') === '2' ? 'selected' : '' }}>2.0 ke atas</option>
-                                            <option value="3" {{ (string) request('min_rating') === '3' ? 'selected' : '' }}>3.0 ke atas</option>
-                                            <option value="4" {{ (string) request('min_rating') === '4' ? 'selected' : '' }}>4.0 ke atas</option>
-                                            <option value="4.5" {{ (string) request('min_rating') === '4.5' ? 'selected' : '' }}>4.5 ke atas</option>
-                                        </select>
-                                    </div>
+                                <div class="mb-3">
+                                    <label class="form-label small mb-1">Kategori</label>
+                                    <select name="id_kategori" class="form-select form-select-sm navbar-filter-select">
+                                        <option value="">Semua Kategori</option>
+                                        @foreach (($kategoriList ?? collect()) as $kategori)
+                                            <option value="{{ $kategori->id_kategori }}" {{ (string) request('id_kategori') === (string) $kategori->id_kategori ? 'selected' : '' }}>
+                                                {{ $kategori->nama_kategori }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                                    <div class="navbar-filter-actions">
-                                        <button class="btn btn-primary btn-sm" type="submit">
-                                            Terapkan
-                                        </button>
-                                        <a href="{{ route('landing') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
-                                    </div>
+                                <div class="mb-3">
+                                    <label class="form-label small mb-1">Rating Minimal</label>
+                                    <select name="min_rating" class="form-select form-select-sm navbar-filter-select">
+                                        <option value="">Semua Rating</option>
+                                        <option value="1" {{ (string) request('min_rating') === '1' ? 'selected' : '' }}>1.0 ke atas</option>
+                                        <option value="2" {{ (string) request('min_rating') === '2' ? 'selected' : '' }}>2.0 ke atas</option>
+                                        <option value="3" {{ (string) request('min_rating') === '3' ? 'selected' : '' }}>3.0 ke atas</option>
+                                        <option value="4" {{ (string) request('min_rating') === '4' ? 'selected' : '' }}>4.0 ke atas</option>
+                                        <option value="4.5" {{ (string) request('min_rating') === '4.5' ? 'selected' : '' }}>4.5 ke atas</option>
+                                    </select>
+                                </div>
+
+                                <div class="navbar-filter-actions">
+                                    <button class="btn btn-primary btn-sm" type="submit">Terapkan</button>
+                                    <a href="{{ route('landing') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
                                 </div>
                             </div>
+                        </div>
 
-                            <button class="btn btn-primary px-3" type="submit" aria-label="Cari">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </form>
-                    @endif
-                </div>
-
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="{{ url('/') }}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="{{ route('data-umkm.map') }}">
-                            <i class="fas fa-map-marked-alt me-1"></i>E-Map
-                        </a>
-                    </li>
-                    @guest
-                        <li class="nav-item ms-lg-3">
-                            <a href="{{ url('/login') }}" class="btn btn-outline-primary btn-sm rounded-pill px-4">Login</a>
-                        </li>
-                    @endguest
-                    @auth
-                        <li class="nav-item dropdown ms-lg-3">
-                            <a class="btn btn-outline-primary btn-sm rounded-pill px-4 dropdown-toggle" href="#" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i>{{ auth()->user()->name }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                        <i class="fas fa-user me-2"></i>Profil
-                                    </a>
-                                </li>
-                                @if (auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
-                                            <i class="fas fa-chart-line me-2"></i>Masuk Dashboard Admin
-                                        </a>
-                                    </li>
-                                @endif
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    @endauth
-                </ul>
+                        <button class="btn btn-primary px-3" type="submit" aria-label="Cari">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                @endif
             </div>
+
+            <!-- Tautan Halaman (Home, E-Map) -->
+            <ul class="navbar-nav ms-auto align-items-center mt-3 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link px-3" href="{{ url('/') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-3" href="{{ route('data-umkm.map') }}">
+                        <i class="fas fa-map-marked-alt me-1"></i>E-Map
+                    </a>
+                </li>
+            </ul>
         </div>
-    </nav>
+
+    </div>
+</nav>
 
     @if (Route::currentRouteName() === 'landing')
         <div class="modal fade" id="mobileLandingFilterModal" tabindex="-1" aria-labelledby="mobileLandingFilterModalLabel" aria-hidden="true">
