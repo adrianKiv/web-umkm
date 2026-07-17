@@ -56,10 +56,10 @@
                             <span class="meta-label">Role</span>
                             <span class="meta-value">{{ $roleLabel }}</span>
                         </div>
-                        <div class="meta-card">
+                        {{-- <div class="meta-card">
                             <span class="meta-label">Status Email</span>
                             <span class="badge text-bg-{{ $emailStatusClass }} rounded-pill">{{ $emailStatus }}</span>
-                        </div>
+                        </div> --}}
                         <div class="meta-card">
                             <span class="meta-label">Bergabung</span>
                             <span class="meta-value">{{ $joinedAt }}</span>

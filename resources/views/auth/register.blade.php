@@ -1,4 +1,8 @@
-<x-guest-layout>
+@extends('auth.authlayouts')
+
+@section('contentauth')
+
+@section('title', 'Daftar - UMKM Kuliner')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
@@ -337,7 +341,7 @@
                             <div class="auth-input">
                                 <i class="fas fa-envelope"></i>
                                 <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                                    autocomplete="username" placeholder="contoh@email.com" />
+                                    autocomplete="username" placeholder="contoh: namasaya@email.com" />
                             </div>
                             <x-input-error :messages="$errors->get('email')" class="mt-1" />
                         </div>
@@ -376,4 +380,5 @@
             </div>
         </div>
     </div>
-</x-guest-layout>
+@endsection
+

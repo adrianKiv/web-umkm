@@ -187,48 +187,60 @@
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <a href="#" class="footer-logo">DIREKTORI UMKM</a>
-                    <p class="text-muted small">Pemberdayaan UMKM Kuliner melalui digitalisasi di kawasan Universitas
-                        Pendidikan Indonesia.</p>
-                    <div class="d-flex gap-3 mt-3">
-                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
-                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
-                        <a href="#" class="text-muted"><i class="fab fa-whatsapp fa-lg"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-2 ms-lg-auto">
-                    <h6 class="fw-bold mb-3">Navigasi</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ url('/') }}" class="footer-link">Beranda</a></li>
-                        <li><a href="{{ route('data-umkm.map') }}" class="footer-link">Peta Lokasi</a></li>
-                        <li><a href="#" class="footer-link">Daftar UMKM</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2">
-                    <h6 class="fw-bold mb-3">Bantuan</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="footer-link">Kontak Kami</a></li>
-                        <li><a href="#" class="footer-link">Tentang Project</a></li>
-                        <li><a href="#" class="footer-link">Syarat & Ketentuan</a></li>
-                    </ul>
+<footer class="py-5 mt-auto">
+    <div class="container pb-3">
+        <div class="row g-4">
+
+            <!-- Kolom 1: Brand & Deskripsi -->
+            <div class="col-12 col-lg-5 mb-2 mb-lg-0">
+                <a href="#" class="footer-logo d-inline-block fw-bold fs-4 text-dark text-decoration-none mb-3">DIREKTORI UMKM</a>
+                <p class="text-muted pe-lg-5 mb-4" style="font-size: 0.9rem; line-height: 1.6;">
+                    Pemberdayaan UMKM Kuliner melalui digitalisasi di kawasan Universitas Pendidikan Indonesia.
+                </p>
+                <div class="d-flex gap-4 mt-2">
+                    <a href="#" class="text-muted text-decoration-none"><i class="fab fa-instagram fa-xl"></i></a>
+                    <a href="#" class="text-muted text-decoration-none"><i class="fab fa-facebook fa-xl"></i></a>
+                    <a href="#" class="text-muted text-decoration-none"><i class="fab fa-whatsapp fa-xl"></i></a>
                 </div>
             </div>
-            <hr class="my-4 text-muted">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="small text-muted mb-0">&copy; {{ date('Y') }} Tesis R&D - Kawasan UPI Bandung.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <p class="small text-muted mb-0">Developed denagn <i class="fas fa-heart text-danger"></i> untuk
-                        UMKM</p>
-                </div>
+
+            <!-- Kolom 2: Navigasi (Samping Kiri di Mobile) -->
+            <div class="col-6 col-lg-2 ms-lg-auto">
+                <h6 class="fw-bold mb-3 text-dark">Navigasi</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="{{ url('/') }}" class="footer-link text-muted text-decoration-none" style="font-size: 0.9rem;">Beranda</a></li>
+                    <li class="mb-2"><a href="{{ route('data-umkm.map') }}" class="footer-link text-muted text-decoration-none" style="font-size: 0.9rem;">Peta Lokasi</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link text-muted text-decoration-none" style="font-size: 0.9rem;">Daftar UMKM</a></li>
+                </ul>
+            </div>
+
+            <!-- Kolom 3: Bantuan (Samping Kanan di Mobile) -->
+            <div class="col-6 col-lg-2">
+                <h6 class="fw-bold mb-3 text-dark">Bantuan</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#" class="footer-link text-muted text-decoration-none" style="font-size: 0.9rem;">Kontak Kami</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link text-muted text-decoration-none" style="font-size: 0.9rem;">Tentang Project</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link text-muted text-decoration-none" style="font-size: 0.9rem;">Syarat & Ketentuan</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Garis Pembatas -->
+        <hr class="my-4 text-muted opacity-25">
+
+        <!-- Baris Bawah: Copyright & Credits -->
+        <div class="row align-items-center flex-column-reverse flex-md-row text-center text-md-start gap-3 gap-md-0">
+            <div class="col-md-6">
+                <p class="small text-muted mb-0">&copy; {{ date('Y') }} Tesis R&D - Kawasan UPI Bandung.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="small text-muted mb-0">Developed dengan <i class="fas fa-heart text-danger mx-1"></i> untuk UMKM</p>
             </div>
         </div>
-    </footer>
+
+    </div>
+</footer>
 
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> --}}
 

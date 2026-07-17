@@ -4,7 +4,7 @@
         <header>
             <h4 class="h5 fw-bold text-dark mb-1">{{ __('Ganti Password') }}</h4>
             <p class="text-muted small mb-0">
-                {{ __('Pastikan akun Anda menggunakan kata sandi yang panjang dan acak agar tetap aman.') }}
+                {{ __('Perbarui Kata sandi akun anda, dengan kata sandi yang kuat.') }}
             </p>
         </header>
         <button class="btn btn-light rounded-circle shadow-sm" type="button" aria-label="Toggle">
