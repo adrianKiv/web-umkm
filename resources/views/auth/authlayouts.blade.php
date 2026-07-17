@@ -183,7 +183,7 @@
                 </div>
             @endif
 
-            @yield('contentprofil')
+            @yield('contentauth')
         </div>
     </main>
 

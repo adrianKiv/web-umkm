@@ -2,7 +2,7 @@
     <!-- Area Header yang Bisa Diklik -->
     <div class="d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#collapseUpdatePassword" aria-expanded="{{ $errors->updatePassword->isNotEmpty() ? 'true' : 'false' }}" style="cursor: pointer;">
         <header>
-            <h4 class="h5 fw-bold text-dark mb-1">{{ __('Update Password') }}</h4>
+            <h4 class="h5 fw-bold text-dark mb-1">{{ __('Ganti Password') }}</h4>
             <p class="text-muted small mb-0">
                 {{ __('Pastikan akun Anda menggunakan kata sandi yang panjang dan acak agar tetap aman.') }}
             </p>
@@ -20,7 +20,7 @@
                 @method('put')
 
                 <div class="mb-3">
-                    <label for="update_password_current_password" class="form-label fw-semibold">{{ __('Current Password') }}</label>
+                    <label for="update_password_current_password" class="form-label fw-semibold">{{ __('Password Sekarang') }}</label>
                     <input id="update_password_current_password" name="current_password" type="password" class="form-control @error('current_password', 'updatePassword') is-invalid @enderror" autocomplete="current-password" />
                     @error('current_password', 'updatePassword')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -28,7 +28,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="update_password_password" class="form-label fw-semibold">{{ __('New Password') }}</label>
+                    <label for="update_password_password" class="form-label fw-semibold">{{ __('Password Baru') }}</label>
                     <input id="update_password_password" name="password" type="password" class="form-control @error('password', 'updatePassword') is-invalid @enderror" autocomplete="new-password" />
                     @error('password', 'updatePassword')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -36,7 +36,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="update_password_password_confirmation" class="form-label fw-semibold">{{ __('Confirm Password') }}</label>
+                    <label for="update_password_password_confirmation" class="form-label fw-semibold">{{ __('Konfirmasi Password') }}</label>
                     <input id="update_password_password_confirmation" name="password_confirmation" type="password" class="form-control @error('password_confirmation', 'updatePassword') is-invalid @enderror" autocomplete="new-password" />
                     @error('password_confirmation', 'updatePassword')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -44,10 +44,10 @@
                 </div>
 
                 <div class="d-flex align-items-center gap-3 mt-4">
-                    <button type="submit" class="btn btn-primary px-4 rounded-pill">{{ __('Save') }}</button>
+                    <button type="submit" class="btn btn-primary px-4 rounded-pill">{{ __('Simpan') }}</button>
 
                     @if (session('status') === 'password-updated')
-                        <span class="text-success small fw-medium"><i class="fas fa-check-circle me-1"></i>{{ __('Saved.') }}</span>
+                        <span class="text-success small fw-medium"><i class="fas fa-check-circle me-1"></i>{{ __('Tersimpan.') }}</span>
                     @endif
                 </div>
             </form>

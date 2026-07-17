@@ -1,6 +1,21 @@
 @extends('profile.partials.profilelay')
 
 @section('contentprofil')
+
+    @if (session('status') === 'profile-updated')
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            Profil berhasil diperbarui.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session('status') === 'password-updated')
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            Password berhasil diperbarui.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="profile-header">
         <div>
             <p class="profile-eyebrow">Akun pengguna</p>
@@ -78,20 +93,6 @@
             </div>
 
             <div class="col-12 col-xl-8">
-                @if (session('status') === 'profile-updated')
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        Profil berhasil diperbarui.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('status') === 'password-updated')
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        Password berhasil diperbarui.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
                 @if ($user->role?->nama_role === 'user' || !$user->role)
                     <div class="card-shell mb-4">
                         <div class="section-head">
@@ -169,7 +170,7 @@
                                         </div>
                                         <div class="text-muted small">
                                             {{ optional(optional($activity->kategori)->kelompok)->nama_kelompok ?? 'Tanpa kelompok' }}
-                                            • {{ ucfirst(str_replace('_', ' ', $activity->interaction_type)) }}</div>
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach
