@@ -76,8 +76,15 @@
                             <div class="stat-label">Aktivitas</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">{{ $favoriteCategories->count() }}</div>
-                            <div class="stat-label">Kategori favorit</div>
+                            <!-- Menambahkan penyesuaian font agar teks yang panjang tidak terlalu raksasa -->
+                            <div class="stat-value" style="font-size: 1.2rem; line-height: 1.4; white-space: normal;">
+                                @if ($favoriteCategories->isNotEmpty())
+                                    {{ $favoriteCategories->pluck('nama_kategori')->implode(', ') }}
+                                @else
+                                    <span class="text-muted" style="font-size: 1rem;">Belum ada</span>
+                                @endif
+                            </div>
+                            <div class="stat-label mt-2">Kategori favorit</div>
                         </div>
                     </div>
 
