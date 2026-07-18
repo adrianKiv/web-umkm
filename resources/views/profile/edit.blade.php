@@ -72,13 +72,13 @@
 
                     <div class="profile-stats-grid">
                         <div class="stat-card">
-                            <div class="stat-value">{{ $activityCount }}</div>
                             <div class="stat-label">Aktivitas</div>
+                            <div class="stat-value">{{ $activityCount }}</div>
                         </div>
                         <div class="stat-card">
                             <!-- Menambahkan penyesuaian font agar teks yang panjang tidak terlalu raksasa -->
                             <div class="stat-label mt-2">Kategori favorit</div>
-                            <div class="stat-value" style="font-size: 0.8rem; line-height: 1.4; white-space: normal;">
+                            <div class="stat-value" style="font-size: 0.8rem; line-height: 1.1; white-space: normal;">
                                 @if ($favoriteCategories->isNotEmpty())
                                     {{ $favoriteCategories->pluck('nama_kategori')->implode(' - ') }}
                                 @else
@@ -342,7 +342,7 @@
             }
 
             .stat-value {
-                font-size: 1.4rem;
+                font-size: 2rem;
             }
 
             .profile-actions {
