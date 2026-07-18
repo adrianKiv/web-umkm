@@ -73,7 +73,9 @@
                     <div class="profile-stats-grid">
                         <div class="stat-card">
                             <div class="stat-label">Aktivitas</div>
-                            <div class="stat-value">{{ $activityCount }}</div>
+                            <div class="stat-value">{{ $activityCount }}×</div>
+                            <div class="stat-label">Melihat UMKM</div>
+
                         </div>
                         <div class="stat-card">
                             <!-- Menambahkan penyesuaian font agar teks yang panjang tidak terlalu raksasa -->
@@ -342,7 +344,7 @@
             }
 
             .stat-value {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
 
             .profile-actions {
