@@ -77,14 +77,14 @@
                         </div>
                         <div class="stat-card">
                             <!-- Menambahkan penyesuaian font agar teks yang panjang tidak terlalu raksasa -->
-                            <div class="stat-value" style="font-size: 1.2rem; line-height: 1.4; white-space: normal;">
+                            <div class="stat-label mt-2">Kategori favorit</div>
+                            <div class="stat-value" style="font-size: 0.8rem; line-height: 1.4; white-space: normal;">
                                 @if ($favoriteCategories->isNotEmpty())
-                                    {{ $favoriteCategories->pluck('nama_kategori')->implode(', ') }}
+                                    {{ $favoriteCategories->pluck('nama_kategori')->implode(' - ') }}
                                 @else
                                     <span class="text-muted" style="font-size: 1rem;">Belum ada</span>
                                 @endif
                             </div>
-                            <div class="stat-label mt-2">Kategori favorit</div>
                         </div>
                     </div>
 
