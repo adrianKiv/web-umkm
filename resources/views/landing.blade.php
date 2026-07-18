@@ -244,7 +244,7 @@
 
                                         <div class="d-flex justify-content-center">
                                             <small class="badge bg-primary"
-                                                style="font-size: 0.45rem; padding: 0.4rem 0.6rem;">
+                                                style="font-size: 0.35rem; padding: 0.1rem 0.3rem;">
                                                 <i class="fas fa-tag me-1"></i>
                                                 {{ optional($umkm->kategori)->nama_kategori ?? 'Tidak dikategorikan' }}
                                             </small>

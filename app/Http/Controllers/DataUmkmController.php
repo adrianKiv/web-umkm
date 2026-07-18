@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cookie;
 
 class DataUmkmController extends Controller
 {
@@ -189,11 +190,23 @@ public function landing(Request $request)
     $kelompokList = Kelompok::orderBy('nama_kelompok')->get();
     $kategoriList = Kategori::with('kelompok')->orderBy('nama_kategori')->get();
 
-    // Logika pop-up pemilihan preferensi pengguna baru
+    // 1. Cek riwayat halaman sebelumnya untuk menghindari pop-up mendadak setelah login
+    $previousUrl = url()->previous();
+    $isJustAuthenticated = str_contains($previousUrl, '/login') || str_contains($previousUrl, '/register');
+
+    // 2. HYBRID CHECK: Cek apakah pengguna sudah pernah diprompt (di Cookie ATAU Session)
+    $hasBeenPrompted = $request->hasCookie('umkm_preference_prompted') || $request->session()->has('umkm_preference_prompted');
+
+    // 3. Logika Pop-up: Hanya muncul jika preferensi kosong, belum pernah diprompt, DAN tidak baru saja login.
     $shouldShowPreferenceModal = empty($preferredCategoryIds)
-        && !$request->session()->has('umkm_preference_prompted');
+        && !$hasBeenPrompted
+        && !$isJustAuthenticated;
 
     if ($shouldShowPreferenceModal) {
+        // Simpan ke Cookie agar browser mengingatnya selama
+        Cookie::queue('umkm_preference_prompted', 'yes', 10080); // 7 hari
+
+        // Tetap simpan di session sebagai cadangan sementara selama masa transisi
         $request->session()->put('umkm_preference_prompted', true);
     }
 

@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -46,7 +47,7 @@ class AuthenticatedSessionController extends Controller
         // 3. KEMBALIKAN DATA PREFERENSI EKSPLISIT KE SESSION BARU
         if (!empty($guestPreferredCategories)) {
             $request->session()->put('umkm_preferred_categories', $guestPreferredCategories);
-            $request->session()->put('umkm_preference_prompted', true);
+            Cookie::queue('umkm_preference_prompted', 'yes', 10080); // 7 hari
         }
 
         $user = $request->user();

@@ -1,4 +1,5 @@
 <title>@yield('title', 'Aplikasi UMKM')</title>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -24,24 +25,51 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="adminNav">
-                <div class="ms-auto d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3">
-                    <div class="admin-user">
-                        <span class="admin-avatar"><i class="fas fa-user"></i></span>
-                        <div>
-                            <div class="admin-user-label">Administrator</div>
-                            <div class="admin-user-name">{{ auth()->user()->name }}</div>
+                <div
+                    class="ms-auto d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3 pt-3 pt-lg-0">
+
+                    <!-- Profil Admin -->
+                    <div class="admin-user d-flex align-items-center gap-2">
+                        <span class="admin-avatar text-primary">
+                            <i class="fas fa-user-circle fs-3"></i>
+                        </span>
+                        <div class="lh-sm">
+                            <div class="admin-user-label"
+                                style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                Administrator</div>
+                            <div class="admin-user-name fw-bold">{{ auth()->user()->name }}</div>
                         </div>
                     </div>
-                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-ghost">Logout</button>
-                    </form>
+
+                    <!-- Garis Pemisah (Hanya tampil di Desktop) -->
+                    <div class="d-none d-lg-block border-start h-100 mx-2" style="min-height: 30px;"></div>
+
+                    <!-- Tombol Aksi -->
+                    <div class="d-flex align-items-center gap-2 w-100 w-lg-auto mt-2 mt-lg-0">
+
+                        <!-- Tombol Lihat Situs -->
+                        <a href="{{ route('landing') }}" target="_blank"
+                            class="btn btn-sm btn-outline-primary rounded-pill px-3 w-100 w-lg-auto d-inline-flex align-items-center justify-content-center">
+                            <i class="fas fa-external-link-alt me-1"></i> Beranda
+                        </a>
+
+                        <!-- Form Logout (Tambahkan d-flex di sini) -->
+                        <form action="{{ route('logout') }}" method="POST" class="m-0 w-100 w-lg-auto d-flex">
+                            @csrf
+                            <!-- Tombol Logout -->
+                            <button type="submit"
+                                class="btn btn-sm btn-danger rounded-pill px-3 w-100 d-inline-flex align-items-center justify-content-center">
+                                <i class="fas fa-sign-out-alt me-1"></i> Logout
+                            </button>
+                        </form>
+
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
-<div class="row g-3">
+    <div class="row g-3">
         <div class="col-12 col-lg-2 mb-2 mb-lg-4">
             <div class="admin-sidebar sticky-top">
                 <div class="sidebar-head">
@@ -56,7 +84,8 @@
                         <span>Dashboard</span>
                     </a>
 
-                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold"
+                        style="font-size: 0.75rem; letter-spacing: 0.5px;">
                         Data Direktori
                     </div>
                     <a href="{{ route('admin.umkm.index') }}"
@@ -75,7 +104,8 @@
                         <span>Lokasi</span>
                     </a>
 
-                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold"
+                        style="font-size: 0.75rem; letter-spacing: 0.5px;">
                         Parameter CBF
                     </div>
                     <a href="{{ route('admin.kelompok.index') }}"
@@ -89,7 +119,8 @@
                         <span>Kategori</span>
                     </a>
 
-                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold"
+                        style="font-size: 0.75rem; letter-spacing: 0.5px;">
                         Data Ulasan
                     </div>
                     <a href="{{ route('admin.rating.index') }}"
@@ -98,7 +129,8 @@
                         <span>Rating</span>
                     </a>
 
-                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <div class="sidebar-group-header mt-3 px-3 py-2 text-uppercase text-muted fw-bold"
+                        style="font-size: 0.75rem; letter-spacing: 0.5px;">
                         Data Pengguna
                     </div>
                     <a href="{{ route('admin.user.index') }}"
@@ -232,7 +264,7 @@
         font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: rgba(226, 232, 240, 0.6);
+        color: rgba(247, 251, 255, 0.6);
     }
 
     .admin-user-name {

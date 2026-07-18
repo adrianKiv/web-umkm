@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Cookie;
 
 class RegisteredUserController extends Controller
 {
@@ -63,7 +64,7 @@ class RegisteredUserController extends Controller
     // 3. KEMBALIKAN DATA PREFERENSI
     if (!empty($guestPreferredCategories)) {
         $request->session()->put('umkm_preferred_categories', $guestPreferredCategories);
-        $request->session()->put('umkm_preference_prompted', true);
+        Cookie::queue('umkm_preference_prompted', 'yes', 10080); // 7 hari
     }
 
         return redirect(route('dashboard', absolute: false));
