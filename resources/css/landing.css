@@ -26,7 +26,7 @@
         ),
         var(--landing-surface);
     color: var(--landing-ink);
-    min-height: 100vh;
+    min-height: 50vh;
 }
 
 body {
@@ -123,25 +123,6 @@ body {
     animation: pulse-search 1s ease-in-out infinite;
 }
 
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(135deg, #051937 0%, #004d7a 100%);
-    min-height: 60vh;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero-section::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="50" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="30" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-    opacity: 0.1;
-}
-
 /* Search Form */
 .search-form {
     max-width: 600px;
@@ -166,118 +147,124 @@ body {
     font-weight: 600;
 }
 
-/* UMKM Cards */
-.umkm-card {
-    transition: all 0.3s ease;
-    border-radius: 15px;
-    overflow: hidden;
+.neo-hero-section {
+    padding: 4rem 0;
+    /* Memberikan efek background titik-titik retro (halftone) */
+    background-color: #f4f4f0;
+    background-image: radial-gradient(#000 1.5px, transparent 1.5px);
+    background-size: 25px 25px;
+    border-bottom: 5px solid #000;
 }
 
-.umkm-card .card-body {
-    min-width: 0;
-}
-
-/* .umkm-card .umkm-address, */
-.umkm-card .card-title,
-.umkm-card .umkm-rating-meta {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.umkm-card .card-title {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    white-space: normal;
-}
-
-.badge-umkm {
-    font-size: 0.85rem; /* Sesuaikan dengan ukuran desktop Anda */
-    padding: 0.5rem 0.75rem;
-}
-
-/* .umkm-card .umkm-address {
-    display: block;
-    line-height: 1.35;
-    white-space: normal;
-    max-height: 2.7em;
-    word-break: break-word;
-} */
-
-.umkm-card .umkm-rating-block {
-    flex-direction: column; /* Memaksa elemen di dalamnya berbaris atas-bawah */
-    align-items: flex-start;
-    gap: 2px; /* Memberi sedikit jarak antara bintang dan teks */
-}
-
-.umkm-card .umkm-rating-block .stars {
-    flex: 0 0 auto;
-}
-
-.umkm-card .umkm-rating-meta {
-    margin-left: 0 !important;
-    white-space: nowrap; /* Mencegah teks terpotong-potong menjadi banyak baris */
-    display: block;
-}
-
-.umkm-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-.card-img-container {
+.neo-hero-panel {
+    background-color: #fff;
+    border: 5px solid #000;
+    box-shadow: 15px 15px 0 #000;
+    padding: 3rem 2rem;
+    border-radius: 0;
     position: relative;
-    height: 120px;
-    overflow: hidden;
+    transition: transform 0.2s;
 }
 
-.umkm-image {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.3s ease;
+.neo-hero-badge {
+    display: inline-block;
+    background-color: #ffde59; /* Kuning cerah */
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 #000;
+    padding: 0.5rem 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
 }
 
-.umkm-card:hover .umkm-image {
-    transform: scale(1.05);
+.neo-hero-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #fff; /* Warna teks putih */
+    -webkit-text-stroke: 2px #000; /* Garis tepi hitam tebal */
+    text-shadow: 6px 6px 0 #5ad641; /* Bayangan hijau neon */
+    margin-bottom: 1rem;
+    line-height: 1.1;
+    letter-spacing: -1px;
 }
 
-.umkm-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
+.neo-hero-subtitle {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px dashed #000;
+    padding: 10px;
+    background: #fff;
+}
+
+/* Tombol Aksi */
+.neo-hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.neo-hero-btn-primary,
+.neo-hero-btn-ghost {
+    font-weight: 900;
+    text-transform: uppercase;
+    border: 3px solid #000;
+    padding: 12px 24px;
+    border-radius: 0;
+    transition:
+        transform 0.1s,
+        box-shadow 0.1s;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    gap: 8px;
+    text-decoration: none;
 }
 
-.umkm-card:hover .umkm-overlay {
-    opacity: 1;
+.neo-hero-btn-primary {
+    background-color: #5ad641; /* Hijau Neon */
+    color: #000;
+    box-shadow: 6px 6px 0 #000;
 }
 
-.preference-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 0.35rem 0.6rem;
-    border-radius: 999px;
-    box-shadow: 0 6px 14px rgba(22, 163, 74, 0.3);
-    z-index: 2;
+.neo-hero-btn-ghost {
+    background-color: #fff;
+    color: #000;
+    box-shadow: 6px 6px 0 #000;
 }
 
-.preference-badge--compact {
-    font-size: 0.6rem;
-    padding: 0.25rem 0.45rem;
+.neo-hero-btn-primary:active,
+.neo-hero-btn-ghost:active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0 #000;
+}
+
+/* Chips/Pill Info */
+.neo-hero-chips {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.neo-hero-chip {
+    background-color: #e9ecef;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    padding: 0.4rem 0.8rem;
+    font-weight: 900;
+    font-size: 0.8rem;
+    color: #000;
+    text-transform: uppercase;
 }
 
 .umkm-detail-modal-image {
@@ -322,15 +309,6 @@ body {
 .rating {
     display: flex;
     align-items: center;
-}
-
-.stars {
-    display: flex;
-    gap: 2px;
-}
-
-.stars i {
-    font-size: 0.9rem;
 }
 
 /* Empty State */
@@ -415,66 +393,6 @@ body {
     min-width: 108px;
 }
 
-/* @media (max-width: 576px) {
-    .hero-section {
-        min-height: 44vh;
-    }
-
-    .hero-section .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    .search-form .input-group {
-        flex-direction: column;
-    }
-
-    .search-form .form-control {
-        border-radius: 25px 25px 0 0;
-        border-bottom: none;
-    }
-
-    .search-form .btn {
-        border-radius: 0 0 25px 25px;
-    }
-
-    .recommended-section,
-    .umkm-section {
-        padding-top: 2rem !important;
-        padding-bottom: 2rem !important;
-    }
-
-    .card-img-container {
-        height: 150px;
-    }
-
-    .recommended-image {
-        height: 86px;
-    }
-
-    .umkm-card .card-body {
-        padding: 0.75rem;
-    }
-
-    .umkm-card .card-title {
-        font-size: 0.95rem;
-        line-height: 1.35;
-    }
-
-    .umkm-card .card-footer {
-        padding: 0.5rem 0.75rem 0.75rem;
-    }
-
-    .recommended-mobile-item .card-title {
-        font-size: 0.78rem;
-    }
-
-    .recommended-mobile-item .btn {
-        font-size: 0.72rem;
-        padding: 0.3rem 0.4rem;
-    }
-} */
-
 .navbar-custom {
     background: rgba(15, 23, 42, 0.85);
     border-bottom: 1px solid rgba(148, 163, 184, 0.2);
@@ -506,59 +424,6 @@ body {
 .search-container input:focus {
     box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2);
     border-color: rgba(20, 184, 166, 0.65);
-}
-
-.hero-section {
-    min-height: 68vh;
-    padding: 4.5rem 0 5.5rem;
-    background:
-        radial-gradient(
-            1000px 500px at 10% -10%,
-            rgba(20, 184, 166, 0.45) 0%,
-            rgba(20, 184, 166, 0) 65%
-        ),
-        radial-gradient(
-            700px 420px at 90% 10%,
-            rgba(245, 158, 11, 0.35) 0%,
-            rgba(245, 158, 11, 0) 65%
-        ),
-        linear-gradient(135deg, #0f172a 0%, #0f3d4f 55%, #0b1324 100%);
-    color: #f8fafc;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero-section::before,
-.hero-section::after {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(0px);
-    opacity: 0.55;
-}
-
-.hero-section::before {
-    width: 420px;
-    height: 420px;
-    background: radial-gradient(
-        circle,
-        rgba(255, 255, 255, 0.25) 0%,
-        rgba(255, 255, 255, 0) 70%
-    );
-    right: -140px;
-    top: -160px;
-}
-
-.hero-section::after {
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(
-        circle,
-        rgba(94, 234, 212, 0.35) 0%,
-        rgba(94, 234, 212, 0) 70%
-    );
-    left: -120px;
-    bottom: -120px;
 }
 
 .hero-inner {
@@ -701,38 +566,10 @@ body {
     background: var(--landing-surface);
 }
 
-.umkm-card {
-    border-radius: 20px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
-}
-
-.umkm-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 26px 48px rgba(15, 23, 42, 0.12);
-}
-
-.umkm-overlay {
-    background: linear-gradient(
-        135deg,
-        rgba(15, 23, 42, 0.65) 0%,
-        rgba(15, 23, 42, 0.25) 100%
-    );
-}
-
-.preference-badge {
-    background: linear-gradient(135deg, #facc15 0%, #f97316 100%);
-    box-shadow: 0 10px 20px rgba(249, 115, 22, 0.35);
-}
-
 .empty-state {
     background: #ffffff;
     border-radius: 18px;
     border: 1px dashed #e2e8f0;
-}
-
-.title-umkm {
-    margin-bottom: 0.45rem;
 }
 
 @keyframes heroFadeUp {
@@ -746,55 +583,251 @@ body {
     }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .hero-section {
-        min-height: 50vh;
-        padding: 2rem 0;
-    }
+.neo-modal {
+    border: 4px solid #000;
+    border-radius: 0;
+    box-shadow: 10px 10px 0 #000;
+    background-color: #fff;
+}
 
-    .display-4 {
-        font-size: 2rem;
-        line-height: 1.2;
-    }
+.neo-modal-header {
+    border-bottom: 4px solid #000;
+    background-color: #ffde59; /* Warna kuning khas peringatan/retro */
+    border-radius: 0;
+    padding: 1rem 1.5rem;
+}
 
-    .hero-section .lead {
-        font-size: 1rem;
-        margin-bottom: 1.25rem !important;
-    }
+.neo-modal-title {
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #000;
+    margin: 0;
+}
 
-    .hero-section .btn {
-        width: 100%;
-        max-width: 320px;
-    }
+/* Modifikasi tombol silang (close) bawaan bootstrap */
+.neo-btn-close {
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 0;
+    opacity: 1;
+    box-shadow: 2px 2px 0 #000;
+    transition:
+        transform 0.1s,
+        box-shadow 0.1s;
+    padding: 0.5rem;
+}
+.neo-btn-close:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 #000;
+}
 
-    .umkm-card {
-        margin-bottom: 1rem;
-    }
+.neo-modal-footer {
+    border-top: 4px solid #000;
+    border-radius: 0;
+    background-color: #f8f9fa;
+    padding: 1rem 1.5rem;
+}
 
-    .recommended-card {
-        margin-bottom: 1rem;
-    }
+/* Gambar UMKM di dalam Modal */
+.umkm-detail-modal-image {
+    border: 3px solid #000;
+    border-radius: 0;
+    box-shadow: 5px 5px 0 #000;
+    object-fit: cover;
+    width: 100%;
+    max-width: 300px;
+    height: 200px; /* Tinggi seragam */
+}
 
-    .umkm-section .d-flex.justify-content-between.align-items-center {
-        flex-direction: column;
-        align-items: flex-start !important;
-        gap: 0.5rem;
-    }
-    .badge-umkm {
-        font-size: 0.45rem;
-        padding: 0.4rem 0.6rem;
-    }
-    .title-umkm {
-        margin-bottom: 1px;
-    }
+/* Tombol Solid & Outline untuk Footer Modal */
+.neo-btn-solid,
+.neo-btn-outline {
+    font-weight: 900;
+    text-transform: uppercase;
+    border-radius: 0;
+    border: 3px solid #000;
+    padding: 8px 16px;
+    transition:
+        transform 0.1s,
+        box-shadow 0.1s;
+}
+
+.neo-btn-solid {
+    background: #5ad641; /* Hijau neon */
+    color: #000;
+    box-shadow: 4px 4px 0 #000;
+}
+
+.neo-btn-outline {
+    background: #fff;
+    color: #000;
+    box-shadow: 4px 4px 0 #000;
+}
+
+.neo-btn-solid:active,
+.neo-btn-outline:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #000;
+}
+
+/* 1. WRAPPER (Wadah Utama) */
+.leaderboard-wrapper {
+    /* Menghilangkan efek blur dan gelap, diganti dengan transparansi agar baris di dalamnya yang menonjol */
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    border-radius: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Memberikan jarak antar baris */
+}
+
+/* 2. BARIS LEADERBOARD (Setiap UMKM) */
+.leaderboard-row {
+    background-color: #ffffff;
+    border: 3px solid #000000;
+    box-shadow: 5px 5px 0 #000000;
+    border-radius: 0; /* Sudut tajam */
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Efek Hover Neo-Brutalism */
+.leaderboard-row:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 8px 8px 0 #000000;
+    background-color: #f8f9fa;
+}
+
+/* Pewarnaan Otomatis untuk Juara 1, 2, dan 3 */
+.leaderboard-row:nth-child(1) {
+    background-color: #ffde59;
+} /* Emas */
+.leaderboard-row:nth-child(2) {
+    background-color: #e0e0e0;
+} /* Perak */
+.leaderboard-row:nth-child(3) {
+    background-color: #ff914d;
+} /* Perunggu */
+
+/* 3. PERINGKAT (Angka) */
+.lb-rank {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #ffffff;
+    -webkit-text-stroke: 2px #000000; /* Garis pinggir teks tebal */
+    text-shadow: 3px 3px 0 #000000; /* Bayangan teks kasar */
+    font-style: italic;
+    width: 50px;
+    text-align: center;
+    margin-right: 15px;
+}
+
+/* 4. GAMBAR UMKM */
+.lb-image {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 0; /* Sudut tajam */
+    border: 3px solid #000000;
+    margin-right: 20px;
+    background-color: #ffffff;
+}
+
+/* 5. DETAIL (Nama & Kategori) */
+.lb-details {
+    flex-grow: 1;
+    color: #000000; /* Mengubah teks putih jadi hitam */
+}
+
+.lb-name {
+    font-size: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #000000;
+    margin-bottom: 5px;
+    display: block;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lb-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Modifikasi Tag Kategori di dalam Papan Peringkat */
+.lb-meta .badge {
+    border: 2px solid #000000;
+    background: #ffffff;
+    color: #000000;
+    font-weight: bold;
+    border-radius: 0;
+    box-shadow: 2px 2px 0 #000000;
+}
+
+.lb-stars i {
+    color: #fbc531;
+    -webkit-text-stroke: 1px #000000; /* Bintang dengan garis tepi hitam */
+    font-size: 0.85rem;
+}
+
+/* 6. SKOR & TOMBOL (Sebelah Kanan) */
+.lb-score-action {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+/* Kotak Jumlah Tayangan / Klik */
+.lb-score {
+    font-size: 1rem;
+    font-weight: 900;
+    color: #000000;
+    background: #ffffff;
+    border: 2px solid #000000;
+    padding: 4px 8px;
+    box-shadow: 2px 2px 0 #000000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lb-score i {
+    color: #ff3838;
+    font-size: 1.1rem;
+    -webkit-text-stroke: 1px #000000;
+}
+
+/* Tombol Detail Brutalist */
+.lb-score-action button {
+    border: 2px solid #000000 !important;
+    border-radius: 0 !important;
+    background: #000000 !important;
+    color: #ffffff !important;
+    font-weight: bold;
+    box-shadow: 3px 3px 0 #5ad641 !important; /* Bayangan hijau neon */
+    transition: transform 0.1s;
+}
+
+.lb-score-action button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #5ad641 !important;
 }
 
 @media (max-width: 991.98px) {
-    .hero-section {
-        min-height: 60vh;
-    }
-
     .hero-panel {
         padding: 2.3rem 2rem;
     }
@@ -806,13 +839,6 @@ body {
 
 @media (max-width: 576px) {
     /* --- HERO SECTION --- */
-    .hero-section {
-        min-height: 44vh;
-    }
-    .hero-section .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
     .hero-panel {
         padding: 2rem 1.6rem;
     }
@@ -847,35 +873,8 @@ body {
         padding-bottom: 2rem !important;
     }
 
-    /* --- CARDS & IMAGES --- */
-    .card-img-container {
-        height: 92px; /* Menggunakan ukuran dari blok kedua */
-    }
     .recommended-image {
         height: 86px;
-    }
-    .umkm-card .card-body {
-        padding: 0.7rem; /* Menggunakan ukuran dari blok kedua */
-    }
-    .umkm-card .card-title {
-        font-size: 0.92rem; /* Menggunakan ukuran dari blok kedua */
-        line-height: 1.3;
-    }
-    .umkm-card .card-footer {
-        padding: 0.5rem 0.75rem 0.75rem;
-    }
-    /* .umkm-card .umkm-address {
-        font-size: 0.8rem;
-        max-height: 2.4em;
-    } */
-    .umkm-card .umkm-rating-block {
-        align-items: flex-start;
-    }
-    .umkm-card .umkm-rating-meta {
-        display: block;
-        margin-left: 0 !important;
-        white-space: normal;
-        line-height: 1.2;
     }
 
     /* --- RECOMMENDED MOBILE ITEMS --- */
@@ -886,179 +885,344 @@ body {
         font-size: 0.72rem;
         padding: 0.3rem 0.4rem;
     }
-
-    .badge-umkm {
-        font-size: 0.5rem;
-        padding: 0.4rem 0.6rem;
-    }
-
-    .title-umkm {
-        margin-bottom: 1px;
-    }
 }
 
-.leaderboard-wrapper {
-    background-color: #28475C;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 35px 70px rgba(15, 23, 42, 0.45);
-    backdrop-filter: blur(10px);
-    border-radius: 8px;
-    padding: 5px;
-}
-
-.leaderboard-row {
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 2px solid rgba(15, 23, 42, 0.6);
-    transition: background-color 0.2s ease;
-}
-
-.leaderboard-row:last-child {
-    border-bottom: none;
-}
-
-.leaderboard-row:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-}
-
-.lb-rank {
-    font-size: 2.2rem;
-    font-weight: 900;
-    color: #d1d8e0;
-    width: 45px;
-    text-align: center;
-    margin-right: 15px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.lb-image {
-    width: 65px;
-    height: 65px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 2px solid #d1d8e0;
-    margin-right: 20px;
-    background-color: #fff;
-}
-
-.lb-details {
-    flex-grow: 1;
-    color: #ffffff;
-}
-
-.lb-name {
-        font-size: 0.85rem;
-        margin-bottom: 4px;
-
-        /* KUNCI FIX: Mengubah jadi 1 baris dengan titik-titik */
-        display: block;                /* Mereset display dari webkit-box sebelumnya */
-        white-space: nowrap !important; /* Memaksa teks memanjang ke samping, pantang turun baris */
-        overflow: hidden;              /* Menyembunyikan teks yang kelebihan/menembus batas */
-        text-overflow: ellipsis;       /* Menambahkan ... di akhir teks yang terpotong */
-    }
-
-.lb-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.lb-score-action {
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-}
-
-.lb-score {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.lb-score i {
-    color: red; /* Warna emas untuk trofi */
-    font-size: 1.2rem;
-}
-
-/* Penyesuaian Bintang Rating agar cocok di background gelap */
-.lb-stars i {
-    color: #fbc531;
-    font-size: 0.85rem;
+.neo-img {
+    height: 160px;
 }
 
 /* Penyesuaian Mobile */
 @media (max-width: 768px) {
+    .neo-hero-section {
+        padding: 2rem 0;
+    }
+    .neo-hero-panel {
+        padding: 2rem 1rem;
+        box-shadow: 8px 8px 0 #000;
+        border-width: 3px;
+    }
+    .neo-hero-title {
+        font-size: 2.2rem;
+        text-shadow: 4px 4px 0 #5ad641;
+        -webkit-text-stroke: 1.5px #000;
+    }
+    .neo-hero-subtitle {
+        font-size: 1rem;
+        border: none;
+        padding: 0;
+    }
+    .neo-hero-actions {
+        flex-direction: column;
+    }
+    .neo-hero-btn-primary,
+    .neo-hero-btn-ghost {
+        width: 100%;
+        box-shadow: 4px 4px 0 #000;
+    }
+
+    .display-4 {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+
+    .recommended-card {
+        margin-bottom: 1rem;
+    }
+
+    .umkm-section .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+    }
+
+    .umkm-detail-modal-image {
+        max-width: 100%;
+        margin-bottom: 10px;
+    }
+
     .leaderboard-row {
         flex-wrap: wrap;
-        padding: 5px;
+        padding: 12px;
+        gap: 10px;
     }
     .lb-rank {
-        font-size: 1.1rem;
-        width: 30px;
-        margin-right: 10px;
+        font-size: 1.6rem;
+        width: 35px;
+        margin-right: 0;
+        -webkit-text-stroke: 1px #000000;
+        text-shadow: 2px 2px 0 #000000;
     }
     .lb-image {
-        width: 50px;
-        height: 50px;
-        margin-right: 10px;
+        width: 55px;
+        height: 55px;
+        margin-right: 0;
+        border-width: 2px;
     }
     .lb-details {
-        width: calc(100% - 105px); /* Sisa ruang setelah rank dan gambar */
+        width: calc(100% - 110px);
     }
     .lb-meta {
-        display: flex;
-        flex-direction: column;  /* Memaksa elemen tersusun ke bawah */
-        gap: 0px !important;     /* KUNCI FIX: Menghilangkan celah bawaan flexbox */
-        align-items: flex-start; /* Memastikan semua elemen rata kiri */
-        margin-top: 2px;
+        flex-direction: column;
+        gap: 6px !important;
+        align-items: flex-start;
+        margin-top: 4px;
     }
     .lb-meta .badge {
-        font-size: 0.6rem !important;  /* Teks kategori dibuat lebih kecil */
-        padding: 2px 6px !important;   /* Menipiskan bantalan/kotak badge */
-        margin-bottom: 3px !important; /* Memberi sedikit ruang napas ke baris rating (bisa diubah ke 0 jika ingin benar-benar menempel) */
-        line-height: 1.2;
-        font-weight: 500;
+        font-size: 0.65rem !important;
+        padding: 2px 6px !important;
+        margin-bottom: 0 !important;
+        box-shadow: 1px 1px 0 #000000;
     }
     .lb-name {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
     }
     .lb-score {
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+        font-size: 0.8rem;
+        padding: 2px 6px;
+        box-shadow: 1px 1px 0 #000000;
     }
     .lb-stars i {
-    color: #fbc531;
-    font-size: 0.55rem;
-    padding-bottom: 12px; /* Menambahkan sedikit padding atas agar bintang lebih sejajar dengan teks */
+        font-size: 0.65rem;
+        padding-bottom: 0;
     }
     .lb-score-action {
         width: 100%;
-        min-height: 30px;
+        min-height: auto;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         margin-top: 5px;
-        padding-top: 5px;
-        border-top: 1px dashed rgba(255, 255, 255, 0.2);
+        padding-top: 10px;
+        border-top: 3px dashed #000000; /* Garis putus-putus tebal khas retro */
     }
     .lb-score-action button {
-        font-size: 0.7rem;          /* Mengecilkan ukuran teks tombol */
-        padding: 2px 8px !important; /* KUNCI FIX: Memangkas padding atas-bawah jadi sangat tipis (2px) */
-        line-height: 1.2;           /* Mengurangi jarak spasi kosong di atas/bawah teks */
-        height: fit-content;        /* Memastikan tombol hanya setinggi isinya */
+        font-size: 0.75rem;
+        padding: 4px 10px !important;
+        height: fit-content;
         display: flex;
         align-items: center;
-        gap: 4px;                   /* Jarak teks dengan icon chevron (>) */
+        gap: 4px;
     }
+    .neo-card {
+        border-width: 3px; /* Mengurangi ketebalan border */
+        box-shadow: 6px 6px 0 #000; /* Mengurangi bayangan agar tidak terlalu memakan tempat */
+    }
+
+    .neo-card:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 8px 8px 0 #000;
+    }
+
+    .neo-img {
+        height: 110px; /* Gambar lebih pendek di HP */
+    }
+
+    .neo-title {
+        font-size: 0.75rem; /* Judul lebih kecil */
+        margin-bottom: 4px;
+    }
+
+    .neo-badge {
+        font-size: 0.4rem; /* Label kategori lebih kecil */
+        padding: 0.25em 0.5em;
+    }
+
+    .neo-button {
+        padding: 4px; /* Tombol lebih tipis */
+        font-size: 0.75rem;
+    }
+
+    .neo-button::before {
+        font-size: 0.75rem;
+        content: "LIHAT!"; /* Teks animasi lebih singkat di HP */
+    }
+    .neo-badge-rekomen {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border: 2px solid #000;
+        background: #e9ecef; /* Warna abu-abu terang agar kontras dengan card putih */
+        color: #000;
+        font-weight: bold;
+        border-radius: 0;
+        box-shadow: 2px 2px 0 #000;
+        padding: 2px 4px;
+        font-size: 0.35rem;
+    }
+}
+
+/* Custom Neo-Brutalist Card */
+.neo-card {
+    background: #fff;
+    border: 4px solid #000;
+    box-shadow: 8px 8px 0 #000;
+    transition:
+        transform 0.3s,
+        box-shadow 0.3s;
+    border-radius: 0; /* Menghilangkan lengkungan bawaan Bootstrap */
+    display: flex;
+    flex-direction: column;
+}
+
+.neo-card:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0 #000;
+}
+
+/* Container Gambar dengan garis bawah tebal */
+.neo-img-container {
+    border-bottom: 4px solid #000;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Judul dengan efek garis bawah animasi */
+.neo-title {
+    font-size: 1rem;
+    font-weight: 900;
+    color: #000;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.neo-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #000;
+    transform: translateX(-101%);
+    transition: transform 0.3s ease-in-out;
+}
+
+.neo-card:hover .neo-title::after {
+    transform: translateX(0);
+}
+
+/* Tombol Neo-Brutalist */
+.neo-button {
+    border: 3px solid #000;
+    background: #000;
+    color: #fff;
+    padding: 5px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.1s;
+    width: 100%;
+    display: block;
+    text-align: center;
+}
+
+.neo-button::before {
+    content: "LIHAT SEKARANG!"; /* Pesan saat di-hover */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #5ad641; /* Hijau neon */
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.neo-button:hover::before {
+    transform: translateY(0);
+}
+
+.neo-button:active {
+    transform: scale(0.95);
+}
+
+/* Badge Kategori & Rekomendasi bergaya brutalist */
+.neo-badge {
+    border: 2px solid #000;
+    background: #fff;
+    color: #000;
+    font-weight: bold;
+    border-radius: 0;
+    box-shadow: 2px 2px 0 #000;
+}
+.neo-badge.rekomen {
+    background: #ffde59; /* Kuning cerah */
+}
+
+.neo-card-rekomen {
+    background: #fff;
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0 #000;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    transition:
+        transform 0.3s,
+        box-shadow 0.3s;
+}
+
+.neo-card-rekomen:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 #000;
+}
+
+.neo-img-rekomen {
+    height: 130px; /* Tinggi gambar proporsional, tidak terlalu besar */
+    width: 100%;
+    object-fit: cover;
+    border-bottom: 3px solid #000;
+}
+
+/* Pengaturan Layout Slider Mobile agar card tidak tergencet */
+.recommended-mobile-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 15px;
+    padding: 10px 10px 20px 10px; /* Ruang untuk shadow agar tidak terpotong */
+    -webkit-overflow-scrolling: touch;
+}
+
+.recommended-mobile-item {
+    flex: 0 0 150px; /* KUNCI UTAMA: Memaksa lebar card di mobile menjadi 150px agar tidak lonjong */
+    scroll-snap-align: start;
+}
+
+/* Mengunci tag kategori agar tidak keluar dari kotak (overflow) */
+.badge-rekomen-wrapper {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 5px; /* Memberi sedikit ruang dari tepi card */
+    box-sizing: border-box;
+}
+
+.neo-badge-rekomen-dekstop {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border: 2px solid #000;
+    background: #e9ecef; /* Warna abu-abu terang agar kontras dengan card putih */
+    color: #000;
+    font-weight: bold;
+    border-radius: 0;
+    box-shadow: 2px 2px 0 #000;
+    padding: 4px 6px;
+    font-size: 0.75rem;
 }
