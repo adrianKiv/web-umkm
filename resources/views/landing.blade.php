@@ -535,7 +535,7 @@
     <!-- Preference Modal (Content-Based Filtering) -->
     <div class="modal fade" id="preferenceModal" tabindex="-1" aria-labelledby="preferenceModalLabel"
         aria-hidden="true" data-auto-show="{{ $shouldShowPreferenceModal ? 'true' : 'false' }}"
-        data-auto-show-delay="15000" data-max-selection="3" data-bs-backdrop="static" data-bs-keyboard="false">
+        data-auto-show-delay="10000" data-max-selection="3" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
 
             <form id="preferenceForm" class="modal-content neo-pref-modal border-0"

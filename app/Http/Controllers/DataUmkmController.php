@@ -214,9 +214,9 @@ public function landing(Request $request)
     $hasBeenPrompted = $request->hasCookie('umkm_preference_prompted') || $request->session()->has('umkm_preference_prompted');
 
     // 3. Logika Pop-up: Hanya muncul jika preferensi kosong, belum pernah diprompt, DAN tidak baru saja login.
-    $shouldShowPreferenceModal = empty($preferredCategoryIds);
-        // && !$hasBeenPrompted
-        // && !$isJustAuthenticated;
+    $shouldShowPreferenceModal = empty($preferredCategoryIds)
+        && !$hasBeenPrompted
+        && !$isJustAuthenticated;
 
     if ($shouldShowPreferenceModal) {
         // Simpan ke Cookie agar browser mengingatnya selama
