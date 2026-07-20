@@ -537,42 +537,69 @@
         aria-hidden="true" data-auto-show="{{ $shouldShowPreferenceModal ? 'true' : 'false' }}"
         data-auto-show-delay="15000" data-max-selection="3" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
-            <form id="preferenceForm" class="modal-content" action="{{ route('landing.preference.store') }}"
-                method="POST">
+
+            <form id="preferenceForm" class="modal-content neo-pref-modal border-0"
+                action="{{ route('landing.preference.store') }}" method="POST">
                 @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title" id="preferenceModalLabel">
-                        <i class="fas fa-bullseye me-2 text-warning"></i>Kamu suka apa?
+
+                <!-- Header -->
+                <div class="modal-header neo-pref-header border-bottom-0">
+                    <h5 class="modal-title neo-pref-title" id="preferenceModalLabel">
+                        <i class="fas fa-bullseye me-2 text-dark"></i> Kamu suka apa?
                     </h5>
                 </div>
-                <div class="modal-body">
-                    <p class="text-muted small mb-3">Pilih maksimal 3 kategori kuliner yang paling kamu sukai.</p>
 
-                    <div class="preference-category-list">
+                <!-- Body -->
+                <div class="modal-body p-4">
+                    <p class="text-dark fw-bold mb-4"
+                        style="font-size: 0.95rem; border-left: 4px solid #5ad641; padding-left: 10px;">
+                        Pilih maksimal 3 kategori kuliner yang paling kamu sukai.
+                    </p>
+
+                    <!-- List Pilihan -->
+                    <div class="preference-category-list mb-2">
                         @foreach ($kategoriList as $kategori)
-                            <label class="preference-option">
-                                <span class="preference-option__row">
-                                    <input type="checkbox" name="kategori_ids[]" value="{{ $kategori->id_kategori }}"
-                                        {{ in_array((int) $kategori->id_kategori, $preferredCategoryIds, true) ? 'checked' : '' }}>
-                                    <span class="fw-semibold">{{ $kategori->nama_kategori }}</span>
-                                </span>
-                                <small
-                                    class="text-muted d-block">{{ optional($kategori->kelompok)->nama_kelompok ?? 'Tanpa Kelompok' }}</small>
+                            <label class="neo-pref-option">
+                                <input type="checkbox" name="kategori_ids[]" value="{{ $kategori->id_kategori }}"
+                                    {{ in_array((int) $kategori->id_kategori, $preferredCategoryIds, true) ? 'checked' : '' }}>
+
+                                <div class="neo-pref-card">
+                                    <span class="fw-bold text-uppercase" style="font-size: 0.9rem;">
+                                        {{ $kategori->nama_kategori }}
+                                    </span>
+                                    <small class="neo-muted-text text-muted mt-1"
+                                        style="font-size: 0.75rem; font-weight: 700;">
+                                        {{ optional($kategori->kelompok)->nama_kelompok ?? 'Tanpa Kelompok' }}
+                                    </small>
+                                </div>
                             </label>
                         @endforeach
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <small class="text-muted">Maksimal 3 kategori.</small>
-                        <small class="text-muted" id="preferenceCount">0/3 dipilih</small>
+                    <!-- Counter Batas Pilihan -->
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-3"
+                        style="border-top: 3px dashed #000;">
+                        <small class="fw-bold text-dark text-uppercase" style="font-size: 0.8rem;">Batas Pilihan</small>
+                        <small class="fw-bold text-dark px-2 py-1" id="preferenceCount"
+                            style="background: #e0e0e0; border: 2px solid #000; box-shadow: 2px 2px 0 #000;">
+                            0/3 Dipilih
+                        </small>
                     </div>
 
-                    <div id="preferenceError" class="text-danger small mt-2 d-none"></div>
+                    <!-- Pesan Error -->
+                    <div id="preferenceError" class="d-none mt-3 p-2 text-white fw-bold text-center text-uppercase"
+                        style="background: #ff3838; border: 3px solid #000; font-size: 0.8rem; box-shadow: 3px 3px 0 #000;">
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Lanjut</button>
+
+                <!-- Footer -->
+                <div class="modal-footer neo-pref-footer border-top-0">
+                    <button type="submit" class="neo-pref-btn">
+                        Lanjut <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
                 </div>
             </form>
+
         </div>
     </div>
 

@@ -1056,7 +1056,7 @@ body {
         border-radius: 0;
         box-shadow: 2px 2px 0 #000;
         padding: 2px 4px;
-        font-size: 0.35rem;
+        font-size: 0.40rem;
     }
 }
 
@@ -1168,7 +1168,7 @@ body {
     box-shadow: 2px 2px 0 #000;
 }
 .neo-badge.rekomen {
-    background: #ffde59; /* Kuning cerah */
+    background: #233D4D; /* Kuning cerah */
 }
 
 .neo-card-rekomen {
@@ -1232,4 +1232,123 @@ body {
     box-shadow: 2px 2px 0 #000;
     padding: 4px 6px;
     font-size: 0.75rem;
+}
+
+.neo-pref-modal {
+    border: 4px solid #000;
+    border-radius: 0;
+    box-shadow: 10px 10px 0 #000;
+    background-color: #fff;
+}
+
+.neo-pref-header {
+    border-bottom: 4px solid #000;
+    background-color: #ffde59; /* Kuning khas pop-up peringatan */
+    border-radius: 0;
+    padding: 1rem 1.5rem;
+}
+
+.neo-pref-title {
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #000;
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+/* Wadah List Kategori (Scrollable dengan gaya kasar) */
+.preference-category-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-height: 350px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+/* Grid 2 kolom untuk layar yang agak lebar */
+@media (min-width: 576px) {
+    .preference-category-list {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Custom Scrollbar bergaya Brutalist */
+.preference-category-list::-webkit-scrollbar {
+    width: 10px;
+}
+.preference-category-list::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-left: 3px solid #000;
+}
+.preference-category-list::-webkit-scrollbar-thumb {
+    background: #000;
+}
+
+/* Tombol Kategori (Modifikasi Checkbox) */
+.neo-pref-option {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    margin: 0;
+}
+
+/* Sembunyikan Checkbox Asli */
+.neo-pref-option input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Desain Kartu Kategori */
+.neo-pref-card {
+    border: 3px solid #000;
+    background-color: #fff;
+    padding: 10px 12px;
+    box-shadow: 4px 4px 0 #000;
+    transition: all 0.1s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* REAKSI SAAT DICENTANG (CHECKED) */
+.neo-pref-option input:checked ~ .neo-pref-card {
+    background-color: #000;
+    color: #fff;
+    transform: translate(2px, 2px);
+    box-shadow: 3px 3px 0 #5ad641; /* Bayangan hijau neon saat dipilih */
+}
+
+/* Ubah warna teks sub-kelompok saat dicentang agar tetap terbaca */
+.neo-pref-option input:checked ~ .neo-pref-card .neo-muted-text {
+    color: #a0a0a0 !important;
+}
+
+.neo-pref-footer {
+    border-top: 4px solid #000;
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+}
+
+/* Tombol Lanjut */
+.neo-pref-btn {
+    background-color: #5ad641;
+    color: #000;
+    border: 3px solid #000;
+    border-radius: 0;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    box-shadow: 6px 6px 0 #000;
+    transition: transform 0.1s, box-shadow 0.1s;
+    width: 100%;
+}
+
+.neo-pref-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0 #000;
 }
