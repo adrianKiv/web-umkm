@@ -26,7 +26,7 @@
         ),
         var(--landing-surface);
     color: var(--landing-ink);
-    min-height: 50vh;
+    max-height: auto;
 }
 
 body {
@@ -838,7 +838,10 @@ body {
 }
 
 @media (max-width: 576px) {
-    /* --- HERO SECTION --- */
+    .landing-page {
+        min-height: auto;
+        display: block;
+    }
     .hero-panel {
         padding: 2rem 1.6rem;
     }
@@ -893,6 +896,10 @@ body {
 
 /* Penyesuaian Mobile */
 @media (max-width: 768px) {
+    .landing-page {
+        min-height: auto;
+        display: block;
+    }
     .neo-hero-section {
         padding: 2rem 0;
     }

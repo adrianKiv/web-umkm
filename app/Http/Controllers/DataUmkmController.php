@@ -76,6 +76,22 @@ public function landing(Request $request)
 
     // B. Ambil Preferensi Eksplisit (Kuesioner/Modal awal user)
     $preferredCategoryIds = collect($request->session()->get('umkm_preferred_categories', []))
+    ->map(fn($id) => (int) $id)->filter()->unique()->values()->all();
+
+    // 1. Coba ambil dari Session terlebih dahulu
+    $sessionCategories = $request->session()->get('umkm_preferred_categories');
+
+    // 2. Jika Session kosong (misal karena baru logout), coba intip di Cookie
+    if (empty($sessionCategories) && $request->hasCookie('umkm_preferred_categories')) {
+        // Bongkar data JSON dari Cookie
+        $sessionCategories = json_decode($request->cookie('umkm_preferred_categories'), true);
+
+        // Kembalikan ke Session agar terbaca stabil oleh seluruh sistem
+        $request->session()->put('umkm_preferred_categories', $sessionCategories);
+    }
+
+    // 3. Olah datanya menjadi array final
+    $preferredCategoryIds = collect($sessionCategories ?? [])
         ->map(fn($id) => (int) $id)->filter()->unique()->values()->all();
 
     $explicitScores = collect($preferredCategoryIds)
@@ -350,6 +366,8 @@ public function landing(Request $request)
         }
 
         $request->session()->put('umkm_preferred_categories', $categoryIds);
+        
+        Cookie::queue('umkm_preferred_categories', json_encode($categoryIds), 10080); // 7 hari
 
         return response()->json([
             'success' => true,
