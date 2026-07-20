@@ -6,6 +6,118 @@ body.sheet-open {
     overflow: hidden;
 }
 
+/* NEO-BRUTALISM: MAP CONTROLS */
+.map-controls {
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    box-shadow: 6px 6px 0 #000 !important;
+    background: #fff !important;
+    backdrop-filter: none !important; /* Hilangkan blur agar lebih solid */
+}
+
+/* Input Pencarian */
+#mapSearchInput {
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+}
+
+/* Tombol Search & Filter */
+.map-search-row .btn, 
+.desktop-filter-panel .btn, 
+.mobile-filter-sheet .btn {
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    box-shadow: 2px 2px 0 #000 !important;
+}
+
+/* Chip Kategori */
+.category-chip {
+    border: 2px solid #000 !important;
+    border-radius: 0 !important;
+    font-weight: 800 !important;
+    background: #fff !important;
+}
+.category-chip.active {
+    background: #5ad641 !important; /* Hijau neon */
+    color: #000 !important;
+}
+
+/* Panel Filter */
+.desktop-filter-panel, .mobile-filter-sheet {
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    background: #f4f4f2 !important;
+}
+
+/* Select Form */
+.form-select {
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    background-color: #fff !important;
+    font-weight: 600 !important;
+}
+
+.neo-detail-panel {
+    border: 4px solid #000;
+    background-color: #fff;
+    box-shadow: 8px 8px 0 #000;
+    border-radius: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.neo-detail-header {
+    background-color: #ffde59;
+    border-bottom: 4px solid #000;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.neo-detail-section {
+    padding: 0.4rem;
+    border-bottom: 2px solid #000;
+}
+
+/* Foto UMKM bergaya Retro */
+.neo-detail-photo {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 #000;
+}
+
+/* Tombol Aksi Neo */
+.neo-btn {
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    box-shadow: 3px 3px 0 #000 !important;
+    transition:
+        transform 0.1s,
+        box-shadow 0.1s;
+}
+
+.neo-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 #000 !important;
+}
+
+/* Badge kategori */
+.neo-badge {
+    border: 2px solid #000;
+    background: #000 !important;
+    color: #fff !important;
+    border-radius: 0;
+    padding: 5px 10px;
+}
+
 .map-controls {
     position: fixed;
     top: 22px;
@@ -33,6 +145,82 @@ body.sheet-open {
 .map-search-row .btn {
     border-radius: 999px;
     min-width: 42px;
+}
+
+.leaflet-popup-content-wrapper {
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    box-shadow: 6px 6px 0 #000 !important;
+    background-color: #fff !important;
+    padding: 0 !important;
+}
+
+/* Mengatur Jarak Konten Dalam */
+.leaflet-popup-content {
+    margin: 12px 14px !important;
+    line-height: 1.4 !important;
+}
+
+/* Segitiga Petunjuk di Bawah Popup */
+.leaflet-popup-tip {
+    border-top: 3px solid #000 !important;
+    border-left: 3px solid #000 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+}
+
+/* Tombol Close (X) bawaan Leaflet */
+.leaflet-popup-close-button {
+    color: #000 !important;
+    font-weight: 900 !important;
+    font-size: 22px !important; /* Sedikit diperbesar agar proporsional */
+    
+    /* 1. Membuat ukuran kotak presisi */
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important; /* Hapus padding bawaan yang bikin X miring */
+    
+    /* 2. Menengahkan huruf X secara vertikal dan horizontal */
+    line-height: 28px !important; 
+    text-align: center !important;
+    
+    /* 3. Menggeser posisi ke pojok mentok */
+    right: 0 !important;
+    top: 0 !important;
+    
+    border-radius: 0 !important;
+    border-bottom: 3px solid #000 !important; /* Memberi batas bawah */
+    border-left: 3px solid #000 !important;   /* Memberi batas kiri */
+    background-color: #e0e0e0 !important; /* Warna dasar abu-abu terang */
+    transition: all 0.1s !important;
+}
+
+.leaflet-popup-close-button:hover {
+    background-color: #ffde59 !important; /* Berubah kuning saat disorot */
+    color: #000 !important;
+}
+
+/* Gaya Teks di Dalam Popup */
+.marker-popup {
+    min-width: 190px;
+}
+
+.marker-popup h6 {
+    color: #000;
+    font-weight: 900;
+    text-transform: uppercase;
+    border-bottom: 3px solid #000;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    padding-right: 15px; /* Memberi ruang agar tidak tertabrak tombol X */
+}
+
+.marker-popup p {
+    color: #000;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-bottom: 12px !important;
 }
 
 #toggleSearchFiltersBtn {
@@ -206,30 +394,170 @@ body.sheet-open {
     right: 1rem;
     width: 350px;
     max-height: 80vh;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     z-index: 1000;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     pointer-events: auto;
     animation: slideInRight 0.3s ease-out;
 }
 
-.detail-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem;
+.neo-modal-container {
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    box-shadow: 8px 8px 0 #000 !important;
+    background-color: #f4f4f2 !important; /* Latar abu-abu terang */
+    padding: 0;
+}
+
+.neo-modal-header-khaki {
+    background-color: #d1c5a1 !important; /* Warna krem/khaki khas retro */
+    border-bottom: 3px solid #000 !important;
+    border-radius: 0 !important;
+    padding: 1rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.detail-header h4 {
-    font-size: 1.1rem;
+.neo-modal-header-khaki .modal-title {
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
     margin: 0;
+    color: #000 !important;
+}
+
+/* Tombol Close Berbentuk Kotak */
+.neo-btn-square-close {
+    background-color: #fff !important;
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    color: #000 !important;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #000 !important;
+    transition: all 0.1s;
+    padding: 0;
+    opacity: 1 !important;
+}
+.neo-btn-square-close:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 #000 !important;
+}
+
+/* Tombol Aksi Bawah */
+.neo-btn-grey {
+    background-color: #e0e0e0 !important;
+    color: #000 !important;
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    font-weight: 900 !important;
+    box-shadow: 4px 4px 0 #000 !important;
+    text-transform: uppercase;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.1s;
+}
+.neo-btn-grey:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 #000 !important;
+}
+
+.neo-btn-green {
+    background-color: #79a367 !important; /* Hijau redup retro */
+    color: #000 !important;
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    font-weight: 900 !important;
+    box-shadow: 4px 4px 0 #000 !important;
+    text-transform: uppercase;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.1s;
+}
+.neo-btn-green:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 #000 !important;
+}
+
+.neo-input,
+.neo-select,
+.neo-textarea {
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    box-shadow: 3px 3px 0 #000;
+    transition: all 0.1s ease-in-out;
+    background-color: #fff;
+    color: #000;
     font-weight: 600;
+}
+
+/* Reaksi saat pengguna mengetik di dalam form */
+.neo-input:focus,
+.neo-select:focus,
+.neo-textarea:focus {
+    outline: none !important;
+    box-shadow: 4px 4px 0 #5ad641 !important;
+    /* Bayangan hijau neon */
+    transform: translate(-1px, -1px);
+    border-color: #000 !important;
+}
+
+/* Label Form */
+.neo-form-label {
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #000;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+/* Kotak Penampung (Peta & Daftar Menu) */
+.neo-box {
+    border: 3px solid #000;
+    border-radius: 0;
+    background-color: #f4f4f0;
+    box-shadow: 4px 4px 0 #000;
+    padding: 1rem;
+}
+
+/* Alert Error Form */
+.neo-alert-danger {
+    background-color: #ff3838;
+    color: #fff;
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 #000;
+    font-weight: bold;
+    border-radius: 0;
+}
+
+/* Tombol Hapus Menu */
+.neo-btn-danger {
+    background: #ff3838;
+    color: #fff;
+    border: 3px solid #000;
+    border-radius: 0;
+    box-shadow: 3px 3px 0 #000;
+    transition:
+        transform 0.1s,
+        box-shadow 0.1s;
+    font-weight: bold;
+}
+
+.neo-btn-danger:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 #000;
+}
+
+/* Map override agar tidak melengkung */
+.neo-map-container {
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
 }
 
 .custom-close-btn {
@@ -249,31 +577,42 @@ body.sheet-open {
     color: #dc3545; /* Berubah merah saat kursor diarahkan (hover) */
 }
 /* CSS Tombol Kembali ke Landing Page */
+/* NEO-BRUTALISM: TOMBOL KEMBALI */
 .btn-back-landing {
     position: fixed;
-    bottom: 30px; /* Jarak dari bawah layar */
-    left: 20px; /* Jarak dari kiri layar */
-    z-index: 1050; /* Pastikan di atas layer peta Leaflet (biasanya index 400-1000) */
-    background-color: #ffffff;
-    color: #495057;
-    padding: 12px 20px;
-    border-radius: 50px; /* Membuat bentuknya bulat lonjong (pill) */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    bottom: 30px;
+    left: 20px;
+    z-index: 1050;
+    
+    /* Gaya Neo */
+    background-color: #fff !important;
+    color: #000 !important;
+    border: 3px solid #000 !important;
+    border-radius: 0 !important; /* Kotak tegas */
+    padding: 10px 20px;
+    font-weight: 900 !important;
+    text-transform: uppercase;
     text-decoration: none;
-    font-weight: 600;
+    
+    /* Bayangan Solid */
+    box-shadow: 4px 4px 0 #000 !important;
+    
     display: flex;
     align-items: center;
-    gap: 8px; /* Jarak antara icon dan teks */
-    transition: all 0.3s ease;
-    border: 1px solid #e9ecef;
+    gap: 8px;
+    transition: transform 0.1s, box-shadow 0.1s;
 }
 
-/* Efek saat disorot/disentuh (Hover) */
+/* Efek saat ditekan */
+.btn-back-landing:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 #000 !important;
+}
+
+/* Efek Hover */
 .btn-back-landing:hover {
-    background-color: #0d6efd; /* Berubah jadi biru primary */
-    color: #ffffff;
-    transform: translateY(-3px); /* Efek terangkat sedikit */
-    box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4); /* Bayangan membesar dan kebiruan */
+    background-color: #ffde59 !important; /* Kuning cerah khas Neo */
+    color: #000 !important;
 }
 
 .global-stop-tracking {
@@ -338,23 +677,8 @@ body.sheet-open {
     overflow-y: auto;
 }
 
-/* .detail-header .btn-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0.25rem;
-            opacity: 0.8;
-            transition: opacity 0.2s;
-        }
-
-        .detail-header .btn-close:hover {
-            opacity: 1;
-        } */
-
 .detail-content {
-    padding: 1rem;
+    padding: 0.4rem;
     max-height: none;
     flex: 1 1 auto;
     min-height: 0;
@@ -362,41 +686,6 @@ body.sheet-open {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     touch-action: pan-y;
-}
-
-.detail-section {
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #eee;
-}
-
-.detail-section:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.detail-section h6 {
-    color: #495057;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.detail-section p {
-    color: #6c757d;
-    margin: 0;
-    line-height: 1.5;
-}
-
-.detail-umkm-photo {
-    width: 100%;
-    height: 170px;
-    object-fit: cover;
-    border-radius: 10px;
-    display: block;
-    border: 1px solid #e9ecef;
 }
 
 .stars {
@@ -434,17 +723,6 @@ body.sheet-open {
 .menu-list {
     max-height: 150px;
     overflow-y: auto;
-}
-
-.menu-item {
-    padding: 0.45rem;
-    border: 1px solid #edf1f7;
-    border-radius: 8px;
-    background: #f8fbff;
-}
-
-.menu-item:last-child {
-    margin-bottom: 0;
 }
 
 .menu-thumb {
@@ -545,7 +823,12 @@ body.sheet-open {
 }
 
 .detail-actions {
-    text-align: center;
+    /* Membuat aksi menempel di bawah */
+    position: sticky;
+    bottom: 0;
+    background: #fff; /* Warna latar belakang agar tidak transparan */
+    border-top: 3px solid #000;
+    z-index: 10;
 }
 
 @keyframes slideInRight {
@@ -799,60 +1082,8 @@ main.container {
     color: #ffc107 !important;
 }
 
-.modal-content {
-    border-radius: 15px;
-    border: none;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-}
-
-.modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 15px 15px 0 0;
-    border-bottom: none;
-}
-
-.modal-header .btn-close {
-    filter: invert(1);
-}
-
 .modal-title {
     font-weight: 600;
-}
-
-.form-label {
-    font-weight: 600;
-    color: #495057;
-}
-
-.form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
-
-.btn-success {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    border: none;
-    font-weight: 600;
-}
-
-.btn-success:hover {
-    background: linear-gradient(135deg, #218838 0%, #1aa085 100%);
-}
-
-.alert {
-    border-radius: 10px;
-    border: none;
-}
-
-.alert-success {
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    color: #155724;
-}
-
-.alert-danger {
-    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-    color: #721c24;
 }
 
 .custom-btn-close {
@@ -913,44 +1144,41 @@ main.container {
 .umkm-marker {
     width: 36px;
     height: 36px;
-    border-radius: 50% 50% 50% 0;
-    background: linear-gradient(135deg, #fb923c, #f97316);
-    border: 2px solid #fff;
-    box-shadow: 0 8px 18px rgba(249, 115, 22, 0.35);
+    /* Membuat bentuk pin tajam: kotak dengan satu sudut lancip */
+    border-radius: 50% 50% 50% 0 !important;
+    /* Opsional: Jika ingin benar-benar kotak, ganti ke 0 !important */
+    
+    background: #ffde59 !important; 
+    border: 3px solid #000 !important;
+    box-shadow: 4px 4px 0 #000 !important;
+    
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    font-size: 14px;
-    transform: rotate(-45deg) translateY(-4px);
+    color: #000 !important;
+    font-size: 16px;
+    
+    /* Kembalikan rotasi agar menunjuk ke bawah */
+    transform: rotate(-45deg) translateY(-4px) !important;
     position: relative;
 }
 
 .umkm-marker i {
-    transform: rotate(45deg);
-    font-size: 13px;
-    line-height: 1;
+    /* Kembalikan ikon agar tegak lurus */
+    transform: rotate(45deg) !important;
+    font-size: 16px;
+    font-weight: 900;
 }
 
 .umkm-marker.is-highlighted {
-    box-shadow:
-        0 0 0 4px rgba(59, 130, 246, 0.25),
-        0 0 24px rgba(59, 130, 246, 0.55),
-        0 10px 24px rgba(59, 130, 246, 0.25);
-    animation: pulseGlow 1.6s ease-in-out infinite;
+    background: #5ad641 !important; 
+    box-shadow: 6px 6px 0 #000 !important;
+    animation: bounce 0.6s infinite alternate;
 }
 
+/* Menghilangkan elemen ::before agar tidak ada glow transparan */
 .umkm-marker.is-highlighted::before {
-    content: "";
-    position: absolute;
-    inset: -10px;
-    border-radius: 999px;
-    background: radial-gradient(
-        circle,
-        rgba(59, 130, 246, 0.35) 0%,
-        rgba(59, 130, 246, 0) 70%
-    );
-    z-index: -1;
+    display: none;
 }
 
 .user-live-marker {

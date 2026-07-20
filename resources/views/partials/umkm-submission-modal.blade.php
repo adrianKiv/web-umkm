@@ -1,21 +1,105 @@
-<div class="modal fade" id="umkmSubmissionModal" data-show-on-errors="{{ ($errors->any() && old('nama_umkm')) ? '1' : '0' }}" tabindex="-1" aria-labelledby="umkmSubmissionModalLabel" aria-hidden="true">
+<style>
+    .neo-input,
+    .neo-select,
+    .neo-textarea {
+        border: 3px solid #000 !important;
+        border-radius: 0 !important;
+        box-shadow: 3px 3px 0 #000;
+        transition: all 0.1s ease-in-out;
+        background-color: #fff;
+        color: #000;
+        font-weight: 600;
+    }
+
+    /* Reaksi saat pengguna mengetik di dalam form */
+    .neo-input:focus,
+    .neo-select:focus,
+    .neo-textarea:focus {
+        outline: none !important;
+        box-shadow: 4px 4px 0 #5ad641 !important;
+        /* Bayangan hijau neon */
+        transform: translate(-1px, -1px);
+        border-color: #000 !important;
+    }
+
+    /* Label Form */
+    .neo-form-label {
+        font-weight: 900;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        color: #000;
+        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Kotak Penampung (Peta & Daftar Menu) */
+    .neo-box {
+        border: 3px solid #000;
+        border-radius: 0;
+        background-color: #f4f4f0;
+        box-shadow: 4px 4px 0 #000;
+        padding: 1rem;
+    }
+
+    /* Alert Error Form */
+    .neo-alert-danger {
+        background-color: #ff3838;
+        color: #fff;
+        border: 3px solid #000;
+        box-shadow: 4px 4px 0 #000;
+        font-weight: bold;
+        border-radius: 0;
+    }
+
+    /* Tombol Hapus Menu */
+    .neo-btn-danger {
+        background: #ff3838;
+        color: #fff;
+        border: 3px solid #000;
+        border-radius: 0;
+        box-shadow: 3px 3px 0 #000;
+        transition: transform 0.1s, box-shadow 0.1s;
+        font-weight: bold;
+    }
+
+    .neo-btn-danger:active {
+        transform: translate(3px, 3px);
+        box-shadow: 0 0 0 #000;
+    }
+
+    /* Map override agar tidak melengkung */
+    .neo-map-container {
+        border: 3px solid #000 !important;
+        border-radius: 0 !important;
+    }
+</style>
+
+<div class="modal fade" id="umkmSubmissionModal"
+    data-show-on-errors="{{ $errors->any() && old('nama_umkm') ? '1' : '0' }}" tabindex="-1"
+    aria-labelledby="umkmSubmissionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
 
-        {{-- PERBAIKAN: Form digabung menjadi satu dengan modal-content --}}
-        <form method="POST" action="{{ route('umkm-submissions.store') }}" class="modal-content" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('umkm-submissions.store') }}" class="modal-content neo-modal border-0"
+            enctype="multipart/form-data">
             @csrf
 
-            <div class="modal-header">
-                <h5 class="modal-title" id="umkmSubmissionModalLabel">
-                    <i class="fas fa-plus-circle me-2 text-primary"></i>Ajukan Data UMKM Baru
+            <!-- Header Modal -->
+            <div class="modal-header neo-modal-header border-bottom-0">
+                <h5 class="modal-title neo-modal-title" id="umkmSubmissionModalLabel">
+                    <i class="fas fa-bullhorn me-2 text-dark"></i> Ajukan UMKM Baru
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close neo-btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
 
-            <div class="modal-body">
+            <!-- Body Modal -->
+            <div class="modal-body p-4 bg-white">
+
                 @if ($errors->any() && old('nama_umkm'))
-                    <div class="alert alert-danger py-2 mb-3">
-                        <ul class="mb-0 ps-3">
+                    <div class="neo-alert-danger p-3 mb-4">
+                        <div class="text-uppercase mb-2"><i
+                                class="fas fa-exclamation-triangle me-2"></i><strong>Terdapat Kesalahan:</strong></div>
+                        <ul class="mb-0 ps-3" style="font-size: 0.9rem;">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -29,26 +113,39 @@
                     $maxMenuRows = max(count($oldMenuNames), count($oldMenuPrices), 1);
                 @endphp
 
-                <div class="row g-3">
+                <div class="row g-4">
+                    <!-- Data Pengusul -->
                     <div class="col-md-6">
-                        <label class="form-label">Nama Pengusul <span class="text-danger">*</span></label>
-                        <input type="text" name="nama_pengusul" class="form-control" value="{{ old('nama_pengusul') }}" required>
+                        <label class="neo-form-label">Nama Pengusul <span class="text-danger fs-5">*</span></label>
+                        <input type="text" name="nama_pengusul" class="form-control neo-input"
+                            value="{{ old('nama_pengusul', auth()->user()?->name) }} {{ auth()->check() ? 'readonly' : '' }}"
+                            required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Email Pengusul</label>
-                        <input type="email" name="email_pengusul" class="form-control" value="{{ old('email_pengusul') }}" placeholder="opsional">
+                        <label class="neo-form-label">Email Pengusul <span class="text-danger fs-5">*</span></label>
+                        <input type="email" name="email_pengusul" class="form-control neo-input"
+                            value="{{ old('email_pengusul', auth()->user()?->email) }} {{ auth()->check() ? 'readonly' : '' }}"
+                            placeholder="yan@email.com" required>
                     </div>
 
+                    <!-- Pemisah Visual -->
+                    <div class="col-12">
+                        <hr style="border-top: 3px dashed #000; opacity: 1;">
+                    </div>
+
+                    <!-- Data UMKM -->
                     <div class="col-md-6">
-                        <label class="form-label">Nama UMKM <span class="text-danger">*</span></label>
-                        <input type="text" name="nama_umkm" class="form-control" value="{{ old('nama_umkm') }}" required>
+                        <label class="neo-form-label">Nama UMKM <span class="text-danger fs-5">*</span></label>
+                        <input type="text" name="nama_umkm" class="form-control neo-input"
+                            value="{{ old('nama_umkm') }}" placeholder="Contoh: Ayam Geprek Mantap" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Kategori <span class="text-danger">*</span></label>
-                        <select name="id_kategori" class="form-select" required>
-                            <option value="">Pilih kategori</option>
-                            @foreach(($kategoriList ?? collect()) as $kategori)
-                                <option value="{{ $kategori->id_kategori }}" {{ (string) old('id_kategori') === (string) $kategori->id_kategori ? 'selected' : '' }}>
+                        <label class="neo-form-label">Kategori <span class="text-danger fs-5">*</span></label>
+                        <select name="id_kategori" class="form-select neo-select" required>
+                            <option value="">-- Pilih Kategori --</option>
+                            @foreach ($kategoriList ?? collect() as $kategori)
+                                <option value="{{ $kategori->id_kategori }}"
+                                    {{ (string) old('id_kategori') === (string) $kategori->id_kategori ? 'selected' : '' }}>
                                     {{ $kategori->nama_kategori }}
                                 </option>
                             @endforeach
@@ -56,85 +153,117 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Jam Buka <span class="text-danger">*</span></label>
-                        <input type="text" name="jam_buka" class="form-control" value="{{ old('jam_buka') }}" placeholder="contoh: 08:00-20:00" required>
+                        <label class="neo-form-label">Jam Buka <span class="text-danger fs-5">*</span></label>
+                        <input type="text" name="jam_buka" class="form-control neo-input"
+                            value="{{ old('jam_buka') }}" placeholder="Contoh: 08:00 - 20:00" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">No Telepon <span class="text-danger">*</span></label>
-                        <input type="text" name="no_telfon" class="form-control" value="{{ old('no_telfon') }}" placeholder="contoh: 081234567890" required>
+                        <label class="neo-form-label">No Telepon <span class="text-danger fs-5">*</span></label>
+                        <input type="text" name="no_telfon" class="form-control neo-input"
+                            value="{{ old('no_telfon') }}" placeholder="Contoh: 081234567890" required>
                     </div>
 
-                    <div class="col-12">
-                        <label class="form-label">Pilih Lokasi pada Peta <span class="text-danger">*</span></label>
-                        <div
-                            class="location-picker border rounded-3 p-3 bg-light"
-                            data-location-picker
-                            data-map-id="umkmSubmissionMap"
-                            data-latitude-input-id="submissionLatitude"
-                            data-longitude-input-id="submissionLongitude"
+                    <!-- Lokasi Map -->
+                    <div class="col-12 mt-4">
+                        <label class="neo-form-label">Lokasi Peta <span class="text-danger fs-5">*</span></label>
+                        <div class="neo-box" data-location-picker data-map-id="umkmSubmissionMap"
+                            data-latitude-input-id="submissionLatitude" data-longitude-input-id="submissionLongitude"
                             data-readout-id="submissionCoordinateReadout"
                             data-initial-latitude="{{ old('latitude', '-6.861082410263256') }}"
                             data-initial-longitude="{{ old('longitude', '107.59205888361987') }}"
-                            data-initial-zoom="15"
-                        >
-                            <div id="umkmSubmissionMap" data-location-picker-map class="location-picker-map map-h-320 rounded-12"></div>
-                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mt-3">
-                                <small class="text-muted">Geser marker atau klik map untuk menentukan koordinat.</small>
-                                <small class="fw-semibold">Koordinat: <span id="submissionCoordinateReadout">-</span></small>
+                            data-initial-zoom="15">
+
+                            <div id="umkmSubmissionMap" data-location-picker-map
+                                class="location-picker-map map-h-320 neo-map-container mb-3"></div>
+
+                            <div
+                                class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 px-1">
+                                <small class="text-dark fw-bold"><i class="fas fa-hand-pointer me-1"></i> Geser marker /
+                                    klik area map.</small>
+                                <span class="badge"
+                                    style="background: #e0e0e0; color: #000; border: 2px solid #000; font-size: 0.8rem; box-shadow: 2px 2px 0 #000;">
+                                    📍 <span id="submissionCoordinateReadout">-</span>
+                                </span>
                             </div>
-                            <input type="hidden" id="submissionLatitude" name="latitude" value="{{ old('latitude') }}">
-                            <input type="hidden" id="submissionLongitude" name="longitude" value="{{ old('longitude') }}">
+                            <input type="hidden" id="submissionLatitude" name="latitude"
+                                value="{{ old('latitude') }}" required>
+                            <input type="hidden" id="submissionLongitude" name="longitude"
+                                value="{{ old('longitude') }}" required>
                         </div>
-                        @error('latitude')<span class="text-danger small d-block mt-1">{{ $message }}</span>@enderror
-                        @error('longitude')<span class="text-danger small d-block mt-1">{{ $message }}</span>@enderror
+                        @error('latitude')
+                            <span class="text-danger fw-bold small d-block mt-2">{{ $message }}</span>
+                        @enderror
+                        @error('longitude')
+                            <span class="text-danger fw-bold small d-block mt-2">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
-                        <textarea name="alamat_lengkap" class="form-control" rows="2" required>{{ old('alamat_lengkap') }}</textarea>
+                        <label class="neo-form-label">Alamat Lengkap <span class="text-danger fs-5">*</span></label>
+                        <textarea name="alamat_lengkap" class="form-control neo-textarea" rows="2" required>{{ old('alamat_lengkap') }}</textarea>
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label">Deskripsi UMKM <span class="text-danger">*</span></label>
-                        <textarea name="deskripsi" class="form-control" rows="3" required>{{ old('deskripsi') }}</textarea>
+                        <label class="neo-form-label">Deskripsi UMKM <span class="text-danger fs-5">*</span></label>
+                        <textarea name="deskripsi" class="form-control neo-textarea" rows="3" required>{{ old('deskripsi') }}</textarea>
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label">Foto UMKM</label>
-                        <input type="file" name="foto_umkm" class="form-control" accept="image/*">
-                        <small class="text-muted">Format: JPG, JPEG, PNG, WEBP. Maksimal 2MB.</small>
-                        @error('foto_umkm')<span class="text-danger small d-block mt-1">{{ $message }}</span>@enderror
+                        <label class="neo-form-label">Foto UMKM</label>
+                        <input type="file" name="foto_umkm" class="form-control neo-input"
+                            style="padding-top: 0.35rem;" accept="image/*" required>
+                        <small class="text-muted fw-bold mt-1 d-block">Format: JPG, JPEG, PNG, WEBP. Maks: 2MB.</small>
+                        @error('foto_umkm')
+                            <span class="text-danger fw-bold small d-block mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
 
+                    <!-- Pemisah Visual -->
                     <div class="col-12">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="form-label mb-0">Menu UMKM (Opsional)</label>
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="addSubmissionMenuItem">
-                                <i class="fas fa-plus me-1"></i>Tambah Menu
+                        <hr style="border-top: 3px dashed #000; opacity: 1;">
+                    </div>
+                    <label class="neo-form-label mb-0 fs-6">Isi salah satu, Daftar Menu atau Foto Daftar Menu</label>
+                    <div class="col-12">
+                        <hr style="border-top: 3px dashed #000; opacity: 1;">
+                    </div>
+
+                    <!-- Dynamic Menu List -->
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="neo-form-label mb-0 fs-6">Daftar Menu <span
+                                    class="text-muted fw-normal text-lowercase">(Opsional)</span></label>
+                            <button type="button" class="neo-btn-outline py-1 px-3" style="font-size: 0.85rem;"
+                                id="addSubmissionMenuItem">
+                                <i class="fas fa-plus me-1"></i> Tambah
                             </button>
                         </div>
 
-                        <div id="submissionMenuList" class="d-grid gap-2">
+                        <div id="submissionMenuList" class="d-grid gap-3">
                             @for ($i = 0; $i < $maxMenuRows; $i++)
-                                <div class="border rounded-3 p-2 submission-menu-item" data-menu-item>
-                                    <div class="row g-2 align-items-end">
-                                        <div class="col-md-5">
-                                            <label class="form-label small">Nama Menu</label>
-                                            <input type="text" name="menu_nama[]" class="form-control form-control-sm"
-                                                value="{{ $oldMenuNames[$i] ?? '' }}" placeholder="Contoh: Ayam Bakar">
+                                <div class="neo-box submission-menu-item p-3" data-menu-item>
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="neo-form-label" style="font-size: 0.75rem;">Nama
+                                                Menu</label>
+                                            <input type="text" name="menu_nama[]" class="form-control neo-input"
+                                                value="{{ $oldMenuNames[$i] ?? '' }}" placeholder="Ayam Bakar">
                                         </div>
                                         <div class="col-md-3">
-                                            <label class="form-label small">Harga</label>
+                                            <label class="neo-form-label" style="font-size: 0.75rem;">Harga
+                                                (Rp)</label>
                                             <input type="number" step="0.01" min="0" name="menu_harga[]"
-                                                class="form-control form-control-sm" value="{{ $oldMenuPrices[$i] ?? '' }}"
-                                                placeholder="Contoh: 25000">
+                                                class="form-control neo-input" value="{{ $oldMenuPrices[$i] ?? '' }}"
+                                                placeholder="25000">
                                         </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label small">Foto Menu</label>
-                                            <input type="file" name="menu_foto[]" class="form-control form-control-sm" accept="image/*">
+                                        <div class="col-md-4">
+                                            <label class="neo-form-label" style="font-size: 0.75rem;">Foto
+                                                Menu</label>
+                                            <input type="file" name="menu_foto[]" class="form-control neo-input"
+                                                style="padding-top: 0.2rem;" accept="image/*">
                                         </div>
                                         <div class="col-md-1 d-grid">
-                                            <button type="button" class="btn btn-sm btn-outline-danger" data-remove-menu-item title="Hapus menu">
+                                            <button type="button" class="btn neo-btn-danger"
+                                                style="padding: 0.45rem;" data-remove-menu-item title="Hapus menu">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         </div>
@@ -143,26 +272,36 @@
                             @endfor
                         </div>
 
-                        @if ($errors->has('menu_nama') || $errors->has('menu_nama.*') || $errors->has('menu_harga') || $errors->has('menu_harga.*') || $errors->has('menu_foto') || $errors->has('menu_foto.*'))
-                            <div class="text-danger small mt-2">
+                        <!-- Menu Errors -->
+                        @if (
+                            $errors->has('menu_nama') ||
+                                $errors->has('menu_nama.*') ||
+                                $errors->has('menu_harga') ||
+                                $errors->has('menu_harga.*') ||
+                                $errors->has('menu_foto') ||
+                                $errors->has('menu_foto.*'))
+                            <div class="neo-alert-danger p-2 mt-3 small">
                                 @foreach (array_merge($errors->get('menu_nama'), $errors->get('menu_nama.*'), $errors->get('menu_harga'), $errors->get('menu_harga.*'), $errors->get('menu_foto'), $errors->get('menu_foto.*')) as $messages)
                                     @foreach ((array) $messages as $message)
-                                        <div>{{ $message }}</div>
+                                        <div><i class="fas fa-times-circle me-1"></i> {{ $message }}</div>
                                     @endforeach
                                 @endforeach
                             </div>
                         @endif
                     </div>
 
-                    <div class="col-12">
-                        <label class="form-label">Foto Daftar Menu (Opsional)</label>
-                        <input type="file" name="menu_daftar_foto[]" class="form-control" accept="image/*" multiple>
-                        <small class="text-muted">Unggah satu atau lebih foto daftar menu, tanpa wajib isi data menu (nama/harga menu).</small>
+                    <div class="col-12 mt-4">
+                        <label class="neo-form-label">Upload Foto Buku/Daftar Menu Lengkap <span
+                                class="text-muted fw-normal text-lowercase">(Opsional)</span></label>
+                        <input type="file" name="menu_daftar_foto[]" class="form-control neo-input"
+                            style="padding-top: 0.35rem;" accept="image/*" multiple>
+                        <small class="text-muted fw-bold mt-1 d-block">Gunakan jika malas menginput satu-persatu di
+                            atas.</small>
                         @if ($errors->has('menu_daftar_foto') || $errors->has('menu_daftar_foto.*'))
-                            <div class="text-danger small mt-2">
+                            <div class="neo-alert-danger p-2 mt-2 small">
                                 @foreach (array_merge($errors->get('menu_daftar_foto'), $errors->get('menu_daftar_foto.*')) as $messages)
                                     @foreach ((array) $messages as $message)
-                                        <div>{{ $message }}</div>
+                                        <div><i class="fas fa-times-circle me-1"></i> {{ $message }}</div>
                                     @endforeach
                                 @endforeach
                             </div>
@@ -171,19 +310,19 @@
                 </div>
             </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-paper-plane me-1"></i>Kirim Pengajuan
+            <!-- Footer Modal -->
+            <div class="modal-footer neo-modal-footer border-top-0 d-flex justify-content-between">
+                <button type="button" class="neo-btn-outline m-0" data-bs-dismiss="modal">BATAL</button>
+                <button type="submit" class="neo-btn-solid m-0">
+                    <i class="fas fa-paper-plane me-2"></i>KIRIM PENGAJUAN
                 </button>
             </div>
 
         </form>
     </div>
 </div>
-
 {{-- modal init and behaviors moved to resources/js/refactor/umkm-submission-modal.js --}}
 
 @push('scripts')
-    @vite(['resources/js/location-picker.js','resources/js/refactor/umkm-submission-modal.js'])
+    @vite(['resources/js/location-picker.js', 'resources/js/refactor/umkm-submission-modal.js'])
 @endpush

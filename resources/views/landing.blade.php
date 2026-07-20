@@ -295,7 +295,7 @@
     @endif
 
     <!-- UMKM Grid Section -->
-    <section class="umkm-section py-5">
+    <section class="umkm-section py-5" id="daftar-umkm">
         <div class="container">
             @php
                 $hasFilters =
@@ -369,7 +369,7 @@
 
                                     @if ($isRecommended)
                                         <span class="badge neo-badge rekomen position-absolute top-0 end-0 m-1 m-md-2">
-                                            ⭐ <span class="d-none d-md-inline">Rekomendasi</span>
+                                            ★ <span class="d-none d-md-inline">Rekomendasi</span>
                                         </span>
                                     @endif
                                 </div>

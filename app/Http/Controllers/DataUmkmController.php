@@ -173,6 +173,20 @@ public function landing(Request $request)
     // =========================================================================
     // 3. PAGINATION (Pemotongan Data untuk Halaman Utama)
     // =========================================================================
+    // Jika tidak ada parameter ?page= (berarti membuka beranda dari awal)
+    // Kita buat kunci acak (seed) baru dan simpan di session.
+    if (!$request->has('page') || $request->page == 1) {
+        $seed = rand();
+        $request->session()->put('umkm_random_seed', $seed);
+    } else {
+        // Jika sedang menekan tombol halaman (page 2, 3, dst),
+        // ambil kunci acak yang tadi agar susunannya tidak berubah-ubah.
+        $seed = $request->session()->get('umkm_random_seed', rand());
+    }
+
+    // Acak seluruh koleksi UMKM berdasarkan kunci (seed) tersebut
+    $allUmkms = $allUmkms->shuffle($seed);
+
     $page = LengthAwarePaginator::resolveCurrentPage();
     $perPage = 12;
     $currentItems = $allUmkms->slice(($page - 1) * $perPage, $perPage)->values();
@@ -182,9 +196,8 @@ public function landing(Request $request)
         $allUmkms->count(),
         $perPage,
         $page,
-        ['path' => secure_url($request->path()), 'query' => $request->query()]
+        ['path' => $request->url(), 'query' => $request->query(), 'fragment' => 'daftar-umkm']
     );
-    $umkms->appends($request->query());
 
 
     // =========================================================================

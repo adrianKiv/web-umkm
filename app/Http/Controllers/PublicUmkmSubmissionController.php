@@ -194,7 +194,9 @@ class PublicUmkmSubmissionController extends Controller
         }
 
         if (!$createdAny) {
-            return back()->with('error', 'Isi minimal satu menu atau unggah minimal satu foto daftar menu sebelum mengajukan.');
+            throw ValidationException::withMessages([
+                'menu_nama' => 'Anda belum memasukkan data menu. Isi manual minimal 1 Nama Menu atau unggah Foto Daftar Menu.',
+            ]);
         }
 
         return back()->with('success', 'Pengajuan menu berhasil dikirim dan menunggu konfirmasi admin.');

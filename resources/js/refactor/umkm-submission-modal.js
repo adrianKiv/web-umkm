@@ -48,7 +48,7 @@
         });
     }
 
-    function bindMenuListActions() {
+function bindMenuListActions() {
         const menuList = document.getElementById("submissionMenuList");
         const addBtn = document.getElementById("addSubmissionMenuItem");
         if (!menuList || !addBtn) return;
@@ -72,24 +72,27 @@
 
         addBtn.addEventListener("click", function () {
             const wrapper = document.createElement("div");
-            wrapper.className = "border rounded-3 p-2 submission-menu-item";
+            // Menggunakan class kotak Neo-Brutalism
+            wrapper.className = "neo-box submission-menu-item p-3";
             wrapper.setAttribute("data-menu-item", "1");
+
+            // HTML disamakan dengan struktur Blade gaya Neo
             wrapper.innerHTML = `
-                <div class="row g-2 align-items-end">
-                    <div class="col-md-5">
-                        <label class="form-label small">Nama Menu</label>
-                        <input type="text" name="menu_nama[]" class="form-control form-control-sm" placeholder="Contoh: Ayam Bakar">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="neo-form-label" style="font-size: 0.75rem;">Nama Menu</label>
+                        <input type="text" name="menu_nama[]" class="form-control neo-input" placeholder="Ayam Bakar">
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label small">Harga</label>
-                        <input type="number" step="0.01" min="0" name="menu_harga[]" class="form-control form-control-sm" placeholder="Contoh: 25000">
+                        <label class="neo-form-label" style="font-size: 0.75rem;">Harga (Rp)</label>
+                        <input type="number" step="0.01" min="0" name="menu_harga[]" class="form-control neo-input" placeholder="25000">
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label small">Foto Menu</label>
-                        <input type="file" name="menu_foto[]" class="form-control form-control-sm" accept="image/*">
+                    <div class="col-md-4">
+                        <label class="neo-form-label" style="font-size: 0.75rem;">Foto Menu</label>
+                        <input type="file" name="menu_foto[]" class="form-control neo-input" style="padding-top: 0.2rem;" accept="image/*">
                     </div>
                     <div class="col-md-1 d-grid">
-                        <button type="button" class="btn btn-sm btn-outline-danger" data-remove-menu-item title="Hapus menu">
+                        <button type="button" class="btn neo-btn-danger" style="padding: 0.45rem;" data-remove-menu-item title="Hapus menu">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>

@@ -362,11 +362,11 @@ function generateStars(rating) {
     let starsHtml = "";
     for (let i = 1; i <= 5; i += 1) {
         if (i <= Math.floor(rating)) {
-            starsHtml += '<i class="fas fa-star text-warning"></i>';
+            starsHtml += '<i class="fas fa-star text-warning" style="-webkit-text-stroke: 1px #000;"></i>';
         } else if (i - 0.5 <= rating) {
-            starsHtml += '<i class="fas fa-star-half-alt text-warning"></i>';
+            starsHtml += '<i class="fas fa-star-half-alt text-warning" style="-webkit-text-stroke: 1px #000;"></i>';
         } else {
-            starsHtml += '<i class="far fa-star text-warning"></i>';
+            starsHtml += '<i class="far fa-star text-warning" style="-webkit-text-stroke: 1px #000;"></i>';
         }
     }
     return starsHtml;
@@ -807,7 +807,7 @@ function setResultInfo(visibleCount) {
 
     const totalCount = Object.keys(umkmData).length;
     if (visibleCount === totalCount) {
-        info.textContent = `Menampilkan semua UMKM (${totalCount})`;
+        info.textContent = `Menampilkan (${totalCount}) UMKM`;
     } else {
         info.textContent = `Menampilkan ${visibleCount} dari ${totalCount} UMKM`;
     }
@@ -960,17 +960,41 @@ function createPopupElement(item) {
     wrapper.className = "marker-popup";
 
     const title = document.createElement("h6");
-    title.className = "mb-1";
+    title.className = "mb-1 text-truncate"; // Text-truncate agar tidak terlalu panjang
     title.textContent = item.nama_umkm;
 
     const address = document.createElement("p");
-    address.className = "mb-2 text-muted small";
     address.textContent = item.alamat_lengkap || "-";
 
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "btn btn-primary btn-sm";
-    button.innerHTML = '<i class="fas fa-info-circle me-1"></i>Lihat Detail';
+    // Menerapkan gaya tombol Neo-Brutalism secara langsung
+    button.className = "btn w-100";
+    button.style.backgroundColor = "#5ad641"; // Hijau neo
+    button.style.color = "#000";
+    button.style.border = "3px solid #000";
+    button.style.borderRadius = "0";
+    button.style.fontWeight = "900";
+    button.style.textTransform = "uppercase";
+    button.style.boxShadow = "3px 3px 0 #000";
+    button.style.transition = "all 0.1s";
+    
+    button.innerHTML = '<i class="fas fa-arrow-right me-1"></i> Lihat Detail';
+    
+    // Efek saat tombol ditekan (active) dan disorot (hover)
+    button.addEventListener("mousedown", () => {
+        button.style.transform = "translate(2px, 2px)";
+        button.style.boxShadow = "1px 1px 0 #000";
+    });
+    button.addEventListener("mouseup", () => {
+        button.style.transform = "translate(0, 0)";
+        button.style.boxShadow = "3px 3px 0 #000";
+    });
+    button.addEventListener("mouseleave", () => {
+        button.style.transform = "translate(0, 0)";
+        button.style.boxShadow = "3px 3px 0 #000";
+    });
+
     button.addEventListener("click", () => {
         showUmkmDetail(item.id);
     });
@@ -978,6 +1002,7 @@ function createPopupElement(item) {
     wrapper.appendChild(title);
     wrapper.appendChild(address);
     wrapper.appendChild(button);
+    
     return wrapper;
 }
 
@@ -986,24 +1011,28 @@ function showUmkmDetail(umkmId) {
     if (!data) return;
 
     trackUmkmClick(umkmId);
-
     closeDetailPanel();
 
     const panel = document.createElement("div");
     panel.id = "umkm-detail-panel";
-    panel.className = "umkm-detail-panel";
+    // PERUBAHAN: Menambahkan class neo-detail-panel
+    panel.className = "umkm-detail-panel neo-detail-panel";
 
     const header = document.createElement("div");
-    header.className = "detail-header";
+    // PERUBAHAN: Menambahkan class neo-detail-header
+    header.className = "detail-header neo-detail-header";
 
     const title = document.createElement("h4");
-    title.className = "mb-0";
+    // PERUBAHAN: Teks tebal dan uppercase
+    title.className = "mb-0 fw-bold text-uppercase";
+    title.style.fontWeight = "900";
     title.textContent = data.nama_umkm;
 
     const closeBtn = document.createElement("button");
     closeBtn.type = "button";
-    closeBtn.className = "custom-btn-close";
-    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    // PERUBAHAN: Gaya tombol close diubah ke neo
+    closeBtn.className = "btn btn-outline-dark border-0 p-1 custom-btn-close";
+    closeBtn.innerHTML = '<i class="fas fa-times fa-lg"></i>';
     closeBtn.addEventListener("click", closeDetailPanel);
 
     header.appendChild(title);
@@ -1012,10 +1041,22 @@ function showUmkmDetail(umkmId) {
     const content = document.createElement("div");
     content.className = "detail-content";
 
+    const scrollWrapper = document.createElement("div");
+    scrollWrapper.className = "detail-content-scrollable";
+    scrollWrapper.style.flex = "1";
+    scrollWrapper.style.overflowY = "auto";
+
+    while (content.firstChild) {
+        scrollWrapper.appendChild(content.firstChild);
+    }
+    content.appendChild(scrollWrapper);
+
     const photoSection = document.createElement("div");
-    photoSection.className = "detail-section";
+    // PERUBAHAN: Menambahkan neo-detail-section
+    photoSection.className = "detail-section neo-detail-section";
     const photoEl = document.createElement("img");
-    photoEl.className = "detail-umkm-photo";
+    // PERUBAHAN: Menambahkan neo-detail-photo
+    photoEl.className = "neo-detail-photo lightbox-trigger";
     photoEl.src = data.foto_umkm_url || "/images/default-umkm.svg";
     photoEl.alt = `Foto ${data.nama_umkm}`;
     photoEl.style.cursor = "zoom-in";
@@ -1029,10 +1070,12 @@ function showUmkmDetail(umkmId) {
     photoSection.appendChild(photoEl);
     content.appendChild(photoSection);
 
+    // PERUBAHAN: Menyesuaikan helper makeSection agar menerapkan gaya neo
     const makeSection = (icon, label, node) => {
         const section = document.createElement("div");
-        section.className = "detail-section";
+        section.className = "detail-section neo-detail-section";
         const h6 = document.createElement("h6");
+        h6.className = "fw-bold text-uppercase";
         h6.innerHTML = `<i class="fas ${icon} me-2"></i>${label}`;
         section.appendChild(h6);
         section.appendChild(node);
@@ -1040,27 +1083,29 @@ function showUmkmDetail(umkmId) {
     };
 
     const kategoriBadge = document.createElement("span");
-    kategoriBadge.className = "badge bg-primary";
-    kategoriBadge.textContent = data.kategori;
+    // PERUBAHAN: Menerapkan neo-badge
+    kategoriBadge.className = "badge neo-badge";
+    kategoriBadge.textContent = data.kategori || "-";
     content.appendChild(makeSection("fa-tag", "Kategori", kategoriBadge));
 
     const jamText = document.createElement("p");
-    jamText.className = "mb-0";
+    jamText.className = "mb-0 fw-semibold";
     jamText.textContent = data.jam_buka || "-";
     content.appendChild(makeSection("fa-clock", "Jam Buka", jamText));
 
     const alamatText = document.createElement("p");
-    alamatText.className = "mb-0";
+    alamatText.className = "mb-0 fw-semibold";
     alamatText.textContent = data.alamat_lengkap || "-";
     content.appendChild(
         makeSection("fa-map-marker-alt", "Alamat Lengkap", alamatText),
     );
 
     const phoneText = document.createElement("p");
-    phoneText.className = "mb-0";
+    phoneText.className = "mb-0 fw-semibold";
     if (data.no_telfon) {
         const phoneLink = document.createElement("a");
         phoneLink.href = `tel:${String(data.no_telfon).replace(/\s+/g, "")}`;
+        phoneLink.className = "text-dark";
         phoneLink.textContent = data.no_telfon;
         phoneText.appendChild(phoneLink);
     } else {
@@ -1075,14 +1120,15 @@ function showUmkmDetail(umkmId) {
     starsDiv.className = "stars me-2";
     starsDiv.innerHTML = generateStars(data.rating_avg || 0);
     const ratingText = document.createElement("small");
-    ratingText.className = "text-muted";
-    ratingText.textContent = `(${(Number(data.rating_avg) || 0).toFixed(1)} • ${Number(data.rating_count) || 0} ulasan)`;
+    // PERUBAHAN: Teks rating ditebalkan dan dihitamkan
+    ratingText.className = "text-dark fw-bold";
+    ratingText.textContent = `(${Number(data.rating_avg || 0).toFixed(1)} • ${Number(data.rating_count || 0)} ulasan)`;
     ratingContainer.appendChild(starsDiv);
     ratingContainer.appendChild(ratingText);
 
     const ulasanBtn = document.createElement("button");
     ulasanBtn.type = "button";
-    ulasanBtn.className = "btn btn-link btn-sm p-0 mt-2";
+    ulasanBtn.className = "btn btn-link btn-sm p-0 mt-2 text-dark fw-bold";
     ulasanBtn.innerHTML = '<i class="fas fa-comments me-1"></i>Lihat ulasan';
 
     const ulasanContainer = document.createElement("div");
@@ -1100,7 +1146,7 @@ function showUmkmDetail(umkmId) {
 
     if (data.deskripsi) {
         const desc = document.createElement("p");
-        desc.className = "mb-0";
+        desc.className = "mb-0 fw-semibold";
         desc.textContent = data.deskripsi;
         content.appendChild(makeSection("fa-info-circle", "Deskripsi", desc));
     }
@@ -1121,10 +1167,12 @@ function showUmkmDetail(umkmId) {
 
         menuItems.forEach((menuItem) => {
             const menuRow = document.createElement("div");
-            menuRow.className = "menu-item d-flex align-items-center gap-2";
+            // PERUBAHAN: Menambahkan border tebal hitam di setiap menu
+            menuRow.className = "menu-item d-flex align-items-center gap-2 border-dark border-2";
+            menuRow.style.backgroundColor = "#fff";
 
             const menuImage = document.createElement("img");
-            menuImage.className = "menu-thumb";
+            menuImage.className = "menu-thumb border-dark border-2";
             menuImage.src =
                 menuItem.foto_menu_url || "/images/default-menu.svg";
             menuImage.alt = `Foto ${menuItem.nama_menu}`;
@@ -1143,10 +1191,10 @@ function showUmkmDetail(umkmId) {
             const menuInfo = document.createElement("div");
             menuInfo.className = "flex-grow-1";
             const menuName = document.createElement("div");
-            menuName.className = "fw-semibold";
+            menuName.className = "fw-bold text-dark";
             menuName.textContent = menuItem.nama_menu || "-";
             const menuPrice = document.createElement("small");
-            menuPrice.className = "text-muted";
+            menuPrice.className = "text-dark fw-bold";
             menuPrice.textContent = formatMenuPrice(menuItem.harga_menu);
 
             menuInfo.appendChild(menuName);
@@ -1159,7 +1207,7 @@ function showUmkmDetail(umkmId) {
         menuWrap.appendChild(menuList);
     } else {
         const emptyMenuText = document.createElement("p");
-        emptyMenuText.className = "mb-1 text-muted";
+        emptyMenuText.className = "mb-1 text-muted fw-bold";
         emptyMenuText.textContent =
             "Belum ada data menu dengan nama dan harga.";
         menuWrap.appendChild(emptyMenuText);
@@ -1167,7 +1215,7 @@ function showUmkmDetail(umkmId) {
 
     if (menuGalleryItems.length > 0) {
         const galleryTitle = document.createElement("small");
-        galleryTitle.className = "text-muted fw-semibold d-block mb-2";
+        galleryTitle.className = "text-dark fw-bold d-block mb-2 mt-3";
         galleryTitle.textContent =
             "Foto daftar menu *Harga sewaktu-waktu dapat berubah";
 
@@ -1176,7 +1224,7 @@ function showUmkmDetail(umkmId) {
 
         menuGalleryItems.forEach((galleryItem) => {
             const galleryImg = document.createElement("img");
-            galleryImg.className = "menu-gallery-thumb";
+            galleryImg.className = "menu-gallery-thumb border-dark border-2";
             galleryImg.src =
                 galleryItem.foto_menu_url || "/images/default-menu.svg";
             galleryImg.alt = `Foto daftar menu ${data.nama_umkm}`;
@@ -1203,7 +1251,7 @@ function showUmkmDetail(umkmId) {
 
     const submitMenuBtn = document.createElement("button");
     submitMenuBtn.type = "button";
-    submitMenuBtn.className = "btn btn-outline-primary btn-sm mt-2";
+    submitMenuBtn.className = "btn btn-outline-dark btn-sm mt-2 neo-btn";
     submitMenuBtn.innerHTML =
         '<i class="fas fa-plus-circle me-1"></i>Ajukan Menu Baru';
     submitMenuBtn.addEventListener("click", () =>
@@ -1214,7 +1262,7 @@ function showUmkmDetail(umkmId) {
     const resolvedCoords = resolveUmkmCoordinates(data);
 
     const actionsSection = document.createElement("div");
-    actionsSection.className = "detail-actions mt-3";
+    actionsSection.className = "detail-actions p-2";
     const row = document.createElement("div");
     row.className = "row g-2";
 
@@ -1222,7 +1270,8 @@ function showUmkmDetail(umkmId) {
     ratingCol.className = "col-6";
     const ratingBtn = document.createElement("button");
     ratingBtn.type = "button";
-    ratingBtn.className = "btn btn-success btn-sm w-100";
+    // PERUBAHAN: Menambahkan neo-btn
+    ratingBtn.className = "btn btn-success btn-sm w-100 neo-btn";
     ratingBtn.innerHTML = '<i class="fas fa-star me-1"></i>Beri Rating';
     ratingBtn.addEventListener("click", () =>
         openRatingModal(data.id, data.nama_umkm),
@@ -1233,15 +1282,17 @@ function showUmkmDetail(umkmId) {
     backCol.className = "col-6";
     const backLink = document.createElement("a");
     backLink.href = window.mapPageConfig?.landingUrl || "/";
-    backLink.className = "btn btn-outline-primary btn-sm w-100";
+    // PERUBAHAN: Menambahkan neo-btn
+    backLink.className = "btn btn-outline-dark btn-sm w-100 neo-btn";
     backLink.innerHTML = '<i class="fas fa-arrow-left me-1"></i>Kembali';
     backCol.appendChild(backLink);
 
     const liveTrackCol = document.createElement("div");
-    liveTrackCol.className = "col-6";
+    liveTrackCol.className = "col-12 mt-2";
     const liveTrackBtn = document.createElement("button");
     liveTrackBtn.type = "button";
-    liveTrackBtn.className = "btn btn-info btn-sm w-100";
+    // PERUBAHAN: Menambahkan neo-btn
+    liveTrackBtn.className = "btn btn-info btn-sm w-100 neo-btn";
     liveTrackBtn.innerHTML = '<i class="fas fa-route me-1"></i>Live Track';
     liveTrackBtn.disabled = !resolvedCoords;
     liveTrackBtn.addEventListener("click", () => {
@@ -1263,9 +1314,9 @@ function showUmkmDetail(umkmId) {
     row.appendChild(liveTrackCol);
     actionsSection.appendChild(row);
     content.appendChild(actionsSection);
-
     panel.appendChild(header);
     panel.appendChild(content);
+    panel.appendChild(actionsSection);
     document.body.appendChild(panel);
     prepareDetailPanel(panel);
 }
@@ -1968,7 +2019,6 @@ function openRatingModal(umkmId, umkmName) {
     modalEl.style.zIndex = "1115";
 
     document.getElementById("ratingUmkmId").value = umkmId;
-    document.getElementById("umkmName").textContent = umkmName;
     document.getElementById("ratingForm").reset();
     document.getElementById("nilaiRating").value = "0";
     document.getElementById("ratingText").textContent = "Belum dipilih";
@@ -2118,7 +2168,7 @@ function initMapFeature(config) {
             radius: Number(upi.radius || 1000),
         })
             .addTo(map)
-            .bindPopup("Radius 1km dari UPI");
+            .bindPopup("Radius 1km dari UPI........");
 
         L.marker(center)
             .addTo(map)

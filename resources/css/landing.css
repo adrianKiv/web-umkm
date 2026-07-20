@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
 
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     --landing-ink: #0f172a;
     --landing-muted: #64748b;
@@ -1168,7 +1172,7 @@ body {
     box-shadow: 2px 2px 0 #000;
 }
 .neo-badge.rekomen {
-    background: #233D4D; /* Kuning cerah */
+    background: #FFCF00; /* Kuning cerah */
 }
 
 .neo-card-rekomen {

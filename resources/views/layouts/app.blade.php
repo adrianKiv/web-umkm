@@ -510,7 +510,7 @@
                     <p class="small text-muted mb-0">&copy; {{ date('Y') }} Tesis R&D - Kawasan UPI Bandung.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p class="small text-muted mb-0">Developed dengan <i class="fas fa-heart text-danger mx-1"></i>
+                    <p class="small text-muted mb-0">Developed dengan <i class="fas fa-fire me-1"></i>
                         untuk UMKM</p>
                 </div>
             </div>
