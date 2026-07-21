@@ -160,7 +160,7 @@
             color: #000;
             font-weight: 900;
             text-transform: uppercase;
-            padding: 0.4rem 1.2rem;
+            padding: 0.4rem 0.5rem;
             box-shadow: 3px 3px 0 #000;
             text-decoration: none;
             transition: all 0.1s;
