@@ -149,9 +149,6 @@
             border-color: #000;
         }
 
-        /* =========================================
-           TOMBOL AUTH & DROPDOWN PROFIL
-           ========================================= */
         .neo-btn-auth {
             background: #5ad641;
             /* Hijau */

@@ -310,7 +310,7 @@
 @endsection
 
 <!-- Rating Modal -->
-<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+<div class="modal fade" id="ratingModal" tabindex="-1" data-bs-backdrop="false" aria-labelledby="ratingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
 
         <!-- PERBAIKAN: Tambahkan action, method="POST", dan @csrf -->
@@ -398,7 +398,9 @@
 @if($errors->has('nilai_rating') || $errors->has('komentar'))
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'));
+            var ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'), {
+                backdrop: false
+            });
             ratingModal.show();
         });
     </script>
