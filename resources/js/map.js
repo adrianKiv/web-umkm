@@ -978,9 +978,9 @@ function createPopupElement(item) {
     button.style.textTransform = "uppercase";
     button.style.boxShadow = "3px 3px 0 #000";
     button.style.transition = "all 0.1s";
-    
+
     button.innerHTML = '<i class="fas fa-arrow-right me-1"></i> Lihat Detail';
-    
+
     // Efek saat tombol ditekan (active) dan disorot (hover)
     button.addEventListener("mousedown", () => {
         button.style.transform = "translate(2px, 2px)";
@@ -1002,7 +1002,7 @@ function createPopupElement(item) {
     wrapper.appendChild(title);
     wrapper.appendChild(address);
     wrapper.appendChild(button);
-    
+
     return wrapper;
 }
 
@@ -2099,34 +2099,34 @@ function initRatingFeature() {
         setStars(parseInt(document.getElementById("nilaiRating").value, 10));
     });
 
-    ratingForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
+    // ratingForm.addEventListener("submit", async (event) => {
+    //     event.preventDefault();
 
-        try {
-            const response = await fetch(window.mapPageConfig.ratingStoreUrl, {
-                method: "POST",
-                body: new FormData(ratingForm),
-                headers: {
-                    "X-CSRF-TOKEN": document
-                        .querySelector('meta[name="csrf-token"]')
-                        .getAttribute("content"),
-                    Accept: "application/json",
-                },
-            });
+    //     try {
+    //         const response = await fetch(window.mapPageConfig.ratingStoreUrl, {
+    //             method: "POST",
+    //             body: new FormData(ratingForm),
+    //             headers: {
+    //                 "X-CSRF-TOKEN": document
+    //                     .querySelector('meta[name="csrf-token"]')
+    //                     .getAttribute("content"),
+    //                 Accept: "application/json",
+    //             },
+    //         });
 
-            const data = await response.json();
-            if (!response.ok || !data.success) {
-                throw new Error(data.message || "Gagal menyimpan rating.");
-            }
+    //         const data = await response.json();
+    //         if (!response.ok || !data.success) {
+    //             throw new Error(data.message || "Gagal menyimpan rating.");
+    //         }
 
-            ratingModal?.hide();
-            showAlert("success", data.message || "Rating berhasil dikirim.");
-            setTimeout(() => window.location.reload(), 1200);
-        } catch (error) {
-            console.error(error);
-            showAlert("error", "Terjadi kesalahan saat mengirim rating.");
-        }
-    });
+    //         ratingModal?.hide();
+    //         showAlert("success", data.message || "Rating berhasil dikirim.");
+    //         setTimeout(() => window.location.reload(), 1200);
+    //     } catch (error) {
+    //         console.error(error);
+    //         showAlert("error", "Terjadi kesalahan saat mengirim rating.");
+    //     }
+    // });
 }
 
 function initMapFeature(config) {
@@ -2389,3 +2389,85 @@ document.addEventListener("DOMContentLoaded", () => {
     initMapFeature(config);
     initRatingFeature();
 });
+
+// Fungsi global untuk menampilkan pesan Neo-Brutalism via JavaScript
+window.showAlert = function(type, message) {
+    // 1. Cari kontainer flash message, jika belum ada, buat baru
+    let container = document.getElementById('neo-flash-container');
+
+    if (!container) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'fixed-top px-3 pt-3';
+        wrapper.style.cssText = 'z-index: 1116; pointer-events: none;';
+
+        container = document.createElement('div');
+        container.id = 'neo-flash-container';
+        container.className = 'container d-flex flex-column align-items-end gap-2';
+        container.style.cssText = 'pointer-events: auto;';
+
+        wrapper.appendChild(container);
+        document.body.appendChild(wrapper);
+    }
+
+    // 2. Tentukan warna dan ikon berdasarkan tipe (success / error)
+    const isSuccess = type === 'success';
+    const alertClass = isSuccess ? 'neo-alert-success' : 'neo-alert-danger';
+    const iconClass = isSuccess ? 'fa-check-circle' : 'fa-exclamation-triangle';
+
+    // 3. Buat elemen alert
+    const alertEl = document.createElement('div');
+    // Tambahkan class yang sama dengan file Blade Anda
+    alertEl.className = `neo-alert-flash ${alertClass} fade show d-flex align-items-center justify-content-between p-3`;
+    alertEl.setAttribute('role', 'alert');
+
+    // Isi HTML di dalamnya
+    alertEl.innerHTML = `
+        <div class="fw-black text-uppercase me-4" style="color: #000;">
+            <i class="fas ${iconClass} me-2"></i>${message}
+        </div>
+        <button type="button" class="neo-btn-square-close" onclick="this.parentElement.remove()"
+                style="background: transparent; border: 2px solid #000; padding: 2px 8px; font-weight: 900; cursor: pointer;">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    // 4. Masukkan ke dalam layar
+    container.appendChild(alertEl);
+
+    // 5. Hilangkan otomatis setelah 3 detik (jika halaman tidak keburu di-reload)
+    setTimeout(() => {
+        if (alertEl.parentElement) {
+            alertEl.remove();
+        }
+    }, 5000);
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Cari semua form yang memiliki class 'neo-submit-form'
+    const submissionForms = document.querySelectorAll('.neo-submit-form');
+    const loaderOverlay = document.getElementById('neoFormLoader');
+
+    submissionForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            // Cek apakah form sudah diisi dengan benar (validasi bawaan HTML5)
+            if (form.checkValidity()) {
+
+                // 1. Tampilkan layar loading
+                if (loaderOverlay) {
+                    loaderOverlay.classList.remove('d-none');
+                }
+
+                // 2. Disable tombol submit untuk mencegah double-click
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    // Ubah teks tombol jika diinginkan
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>MENGIRIM...';
+                }
+
+                // Form akan otomatis melanjutkan pengiriman ke server
+            }
+        });
+    });
+});
+

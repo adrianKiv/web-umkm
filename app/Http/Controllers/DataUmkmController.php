@@ -541,26 +541,25 @@ public function landing(Request $request)
      */
     public function storeRating(Request $request)
     {
-        // 1. Ubah 'required' menjadi 'nullable' agar validasi tidak gagal jika nama dikosongkan
+        // 1. Validasi Input. Tambahkan kustom pesan error untuk 'min:1' agar lebih ramah
         $validated = $request->validate([
             'nama_pengulas' => 'nullable|string|max:255',
             'nilai_rating' => 'required|integer|min:1|max:5',
-            'komentar' => 'nullable|string|max:1000',
-            'id_umkm' => 'required|exists:umkm,id_umkm',
+            'komentar'      => 'nullable|string|max:1000',
+            'id_umkm'       => 'required|exists:umkm,id_umkm',
+        ], [
+            'nilai_rating.min' => 'Silakan klik bintang untuk memberikan nilai rating (1-5) terlebih dahulu.',
         ]);
 
-        // 2. Berikan kondisi: jika nama_pengulas kosong, ganti dengan "Anonymous"
-        // Kita menggunakan $request->filled() untuk mengecek apakah ada input yang tidak kosong
+        // 2. Jika nama kosong, set menjadi Anonymous
         if (!$request->filled('nama_pengulas')) {
             $validated['nama_pengulas'] = 'Anonymous';
         }
 
-        $rating = Rating::create($validated);
+        // 3. Simpan ke database
+        Rating::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Rating berhasil ditambahkan!',
-            'rating' => $rating
-        ]);
+        // 4. Kembalikan dengan pesan sukses
+        return back()->with('success', 'Rating berhasil dikirim. Terima kasih atas ulasan Anda!');
     }
 }

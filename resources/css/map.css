@@ -23,8 +23,8 @@ body.sheet-open {
 }
 
 /* Tombol Search & Filter */
-.map-search-row .btn, 
-.desktop-filter-panel .btn, 
+.map-search-row .btn,
+.desktop-filter-panel .btn,
 .mobile-filter-sheet .btn {
     border: 3px solid #000 !important;
     border-radius: 0 !important;
@@ -174,20 +174,20 @@ body.sheet-open {
     color: #000 !important;
     font-weight: 900 !important;
     font-size: 22px !important; /* Sedikit diperbesar agar proporsional */
-    
+
     /* 1. Membuat ukuran kotak presisi */
     width: 32px !important;
     height: 32px !important;
     padding: 0 !important; /* Hapus padding bawaan yang bikin X miring */
-    
+
     /* 2. Menengahkan huruf X secara vertikal dan horizontal */
-    line-height: 28px !important; 
+    line-height: 28px !important;
     text-align: center !important;
-    
+
     /* 3. Menggeser posisi ke pojok mentok */
     right: 0 !important;
     top: 0 !important;
-    
+
     border-radius: 0 !important;
     border-bottom: 3px solid #000 !important; /* Memberi batas bawah */
     border-left: 3px solid #000 !important;   /* Memberi batas kiri */
@@ -410,7 +410,7 @@ body.sheet-open {
 }
 
 .neo-modal-header-khaki {
-    background-color: #d1c5a1 !important; /* Warna krem/khaki khas retro */
+    background-color: #ffde59 !important; /* Warna krem/khaki khas retro */
     border-bottom: 3px solid #000 !important;
     border-radius: 0 !important;
     padding: 1rem 1.5rem;
@@ -583,7 +583,7 @@ body.sheet-open {
     bottom: 30px;
     left: 20px;
     z-index: 1050;
-    
+
     /* Gaya Neo */
     background-color: #fff !important;
     color: #000 !important;
@@ -593,10 +593,10 @@ body.sheet-open {
     font-weight: 900 !important;
     text-transform: uppercase;
     text-decoration: none;
-    
+
     /* Bayangan Solid */
     box-shadow: 4px 4px 0 #000 !important;
-    
+
     display: flex;
     align-items: center;
     gap: 8px;
@@ -829,6 +829,112 @@ body.sheet-open {
     background: #fff; /* Warna latar belakang agar tidak transparan */
     border-top: 3px solid #000;
     z-index: 10;
+}
+
+/* KOTAK LOADING NEO-BRUTALISM */
+.neo-loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(244, 244, 242, 0.85); /* Latar semi-transparan */
+    backdrop-filter: blur(3px); /* Efek blur mirip landing page */
+    z-index: 9999; /* Pastikan di paling atas */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.neo-loader-box {
+    background: #ffde59; /* Kuning Peringatan */
+    border: 4px solid #000;
+    box-shadow: 8px 8px 0 #000;
+    padding: 2rem 3rem;
+    text-align: center;
+    color: #000;
+    animation: neoPulse 1.5s infinite;
+}
+
+.neo-loader-icon {
+    font-size: 3rem;
+    color: #000;
+}
+
+/* Animasi detak tipis agar terlihat memproses */
+@keyframes neoPulse {
+    0% { transform: scale(1); box-shadow: 8px 8px 0 #000; }
+    50% { transform: scale(0.98); box-shadow: 4px 4px 0 #000; }
+    100% { transform: scale(1); box-shadow: 8px 8px 0 #000; }
+}
+
+/* NEO-BRUTALISM FLASH MESSAGES (TOASTS) */
+.neo-alert-flash {
+    border: 4px solid #000;
+    border-radius: 0;
+    box-shadow: 6px 6px 0 #000;
+    background: #fff; /* Default jika tidak ada kelas warna */
+    color: #000;
+    min-width: 320px;
+    max-width: 100%;
+    animation: neoSlideInRight 0.3s ease-out;
+}
+
+.neo-alert-success {
+    background: #5ad641; /* Hijau Terang */
+}
+
+.neo-alert-danger {
+    background: #ff7675; /* Merah Terang */
+}
+
+/* Animasi masuk dari kanan */
+@keyframes neoSlideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.neo-modal-footer {
+    border-top: 4px solid #000;
+    border-radius: 0;
+    background-color: #f8f9fa;
+    padding: 1rem 1.5rem;
+}
+
+.neo-btn-solid,
+.neo-btn-outline {
+    font-weight: 900;
+    text-transform: uppercase;
+    border-radius: 0;
+    border: 3px solid #000;
+    padding: 8px 16px;
+    transition:
+        transform 0.1s,
+        box-shadow 0.1s;
+}
+
+.neo-btn-solid {
+    background: #5ad641; /* Hijau neon */
+    color: #000;
+    box-shadow: 4px 4px 0 #000;
+}
+
+.neo-btn-outline {
+    background: #fff;
+    color: #000;
+    box-shadow: 4px 4px 0 #000;
+}
+
+.neo-btn-solid:active,
+.neo-btn-outline:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #000;
 }
 
 @keyframes slideInRight {
@@ -1147,17 +1253,17 @@ main.container {
     /* Membuat bentuk pin tajam: kotak dengan satu sudut lancip */
     border-radius: 50% 50% 50% 0 !important;
     /* Opsional: Jika ingin benar-benar kotak, ganti ke 0 !important */
-    
-    background: #ffde59 !important; 
+
+    background: #ffde59 !important;
     border: 3px solid #000 !important;
     box-shadow: 4px 4px 0 #000 !important;
-    
+
     display: flex;
     align-items: center;
     justify-content: center;
     color: #000 !important;
     font-size: 16px;
-    
+
     /* Kembalikan rotasi agar menunjuk ke bawah */
     transform: rotate(-45deg) translateY(-4px) !important;
     position: relative;
@@ -1171,7 +1277,7 @@ main.container {
 }
 
 .umkm-marker.is-highlighted {
-    background: #5ad641 !important; 
+    background: #5ad641 !important;
     box-shadow: 6px 6px 0 #000 !important;
     animation: bounce 0.6s infinite alternate;
 }

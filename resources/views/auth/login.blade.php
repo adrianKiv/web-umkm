@@ -4,38 +4,45 @@
 
 @section('title', 'Daftar - UMKM Kuliner')
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;900&display=swap');
 
+        /* NEO-BRUTALISM: LAYOUT & SHELL */
         .auth-shell {
-            background: radial-gradient(900px 520px at 15% 10%, rgba(236, 253, 245, 0.85) 0%, rgba(236, 253, 245, 0) 65%),
-                radial-gradient(800px 420px at 95% 20%, rgba(219, 234, 254, 0.9) 0%, rgba(219, 234, 254, 0) 70%),
-                #f8fafc !important;
+            background-color: #e0e0e0 !important; /* Latar belakang abu-abu solid */
+            background-image: radial-gradient(#94a3b8 1px, transparent 1px); /* Efek grid titik retro */
+            background-size: 20px 20px;
             padding: 3rem 1.5rem 4rem;
+            min-height: 100vh;
         }
 
         .auth-logo {
             display: none;
         }
 
-        .auth-card {
-            max-width: 960px !important;
-            width: min(960px, 100%);
-            margin: 0 auto;
-            border-radius: 24px !important;
-            border: 1px solid rgba(148, 163, 184, 0.3) !important;
-            box-shadow: 0 28px 60px rgba(15, 23, 42, 0.15) !important;
-            padding: 0 !important;
-            overflow: hidden;
-            background: #3ff532 !important;
-        }
-
         .auth-login {
             font-family: 'Space Grotesk', sans-serif;
-            color: #0f172a;
+            color: #000;
             display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
+        }
+
+        /* NEO-BRUTALISM: KOTAK UTAMA (CARD) */
+        .auth-card {
+            max-width: 960px !important;
+            width: min(960px, 100%);
+            margin: 0 auto;
+
+            /* Sudut tajam, border tebal, shadow solid */
+            border-radius: 0 !important;
+            border: 4px solid #000 !important;
+            box-shadow: 12px 12px 0 #000 !important;
+
+            padding: 0 !important;
+            background: #fff !important;
+            display: flex;
+            flex-direction: column;
         }
 
         .auth-card__inner {
@@ -44,22 +51,15 @@
             min-height: 520px;
         }
 
+        /* NEO-BRUTALISM: PANEL KIRI (INFO) */
         .auth-panel {
             padding: 2.8rem;
-            background: linear-gradient(135deg, #0f766e 0%, #0f172a 70%);
-            color: #e2e8f0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .auth-panel::after {
-            content: '';
-            position: absolute;
-            right: -120px;
-            bottom: -120px;
-            width: 260px;
-            height: 260px;
-            background: radial-gradient(circle, rgba(45, 212, 191, 0.45) 0%, rgba(45, 212, 191, 0) 70%);
+            background: #ffde59; /* Kuning cerah khas Neo */
+            color: #000;
+            border-right: 4px solid #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .auth-panel__badge {
@@ -67,116 +67,123 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.35rem 0.75rem;
-            border-radius: 999px;
-            background: rgba(45, 212, 191, 0.18);
-            color: #5eead4;
-            font-size: 0.75rem;
-            font-weight: 600;
+            border: 3px solid #000;
+            background: #fff;
+            color: #000;
+            font-size: 0.85rem;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            box-shadow: 3px 3px 0 #000;
+            align-self: flex-start;
         }
 
         .auth-panel h1 {
-            font-size: 2rem;
-            line-height: 1.2;
-            margin: 1rem 0 0.75rem;
-            color: #39cc7b;
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin: 1.5rem 0 1rem;
+            color: #000;
+            text-transform: uppercase;
         }
 
         .auth-panel p {
-            color: rgba(226, 232, 240, 0.8);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
+            color: #000;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid #000;
+            padding-bottom: 1rem;
         }
 
         .auth-panel__list {
             display: grid;
-            gap: 0.75rem;
-            margin-bottom: 1.75rem;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .auth-panel__item {
             display: flex;
             align-items: center;
-            gap: 0.65rem;
-            font-size: 0.9rem;
+            gap: 0.75rem;
+            font-size: 1rem;
+            font-weight: 900;
+            color: #000;
         }
 
         .auth-panel__item i {
-            color: #5eead4;
+            color: #000;
+            font-size: 1.2rem;
         }
 
         .auth-panel__meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            margin-top: auto;
         }
 
         .auth-pill {
             padding: 0.4rem 0.75rem;
-            border-radius: 999px;
-            background: rgba(148, 163, 184, 0.25);
-            color: #e2e8f0;
+            border: 2px solid #000;
+            background: #5ad641; /* Hijau neon */
+            color: #000;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 900;
+            text-transform: uppercase;
+            box-shadow: 2px 2px 0 #000;
         }
 
+        /* NEO-BRUTALISM: PANEL KANAN (FORM) */
         .auth-form {
             padding: 2.6rem;
-            background: #e4e3e3;
-        }
-
-        .auth-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #0f766e;
-            text-decoration: none;
-        }
-
-        .auth-back:hover {
-            color: #0f172a;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .auth-form__header h2 {
-            font-size: 1.55rem;
-            margin-bottom: 0.35rem;
-            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #000;
         }
 
         .auth-form__header p {
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
+            color: #000;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
         }
 
         .auth-field {
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
         }
 
         .auth-label {
             display: block;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #475569;
-            margin-bottom: 0.35rem;
+            font-weight: 900;
+            font-size: 0.9rem;
+            color: #000;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
         }
 
         .auth-input {
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 0.75rem 0.9rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 0; /* Menghilangkan efek rounded */
+            padding: 0.8rem 1rem;
+            transition: all 0.1s ease;
         }
 
         .auth-input i {
-            color: #94a3b8;
+            color: #000;
+            font-size: 1.1rem;
         }
 
         .auth-input input {
@@ -184,13 +191,15 @@
             outline: none;
             background: transparent;
             width: 100%;
-            font-size: 0.95rem;
-            color: #0f172a;
+            font-size: 1rem;
+            color: #000;
+            font-weight: 600;
         }
 
         .auth-input:focus-within {
-            border-color: #14b8a6;
-            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+            box-shadow: 4px 4px 0 #000;
+            background: #f4f4f2;
+            transform: translate(-2px, -2px);
         }
 
         .auth-actions {
@@ -199,81 +208,102 @@
             justify-content: space-between;
             gap: 0.75rem;
             align-items: center;
-            margin: 0.75rem 0 1.5rem;
-            font-size: 0.85rem;
+            margin: 1rem 0 2rem;
+            font-size: 0.9rem;
         }
 
         .auth-check {
             display: inline-flex;
             align-items: center;
-            gap: 0.45rem;
-            color: #475569;
-            font-weight: 600;
+            gap: 0.5rem;
+            color: #000;
+            font-weight: 900;
+            cursor: pointer;
         }
 
         .auth-check input {
-            accent-color: #14b8a6;
+            width: 18px;
+            height: 18px;
+            accent-color: #000;
+            border: 2px solid #000;
+            cursor: pointer;
         }
 
         .auth-link {
-            color: #0f766e;
-            font-weight: 600;
-            text-decoration: none;
+            color: #000;
+            font-weight: 900;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
         }
 
         .auth-link:hover {
-            color: #0f172a;
+            background: #ffde59;
+            text-decoration: none;
         }
 
+        /* TOMBOL UTAMA */
         .auth-submit {
             width: 100%;
-            border: none;
-            border-radius: 999px;
-            padding: 0.9rem 1rem;
-            background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 0.95rem;
-            box-shadow: 0 10px 24px rgba(15, 118, 110, 0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 3px solid #000;
+            border-radius: 0;
+            padding: 1rem;
+            background: #5ad641; /* Hijau */
+            color: #000;
+            font-weight: 900;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            box-shadow: 4px 4px 0 #000;
+            transition: all 0.1s ease;
+            cursor: pointer;
         }
 
-        .auth-submit:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 14px 30px rgba(15, 118, 110, 0.35);
+        .auth-submit:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0 0 0 #000;
         }
 
+        /* TOMBOL KEMBALI */
         .auth-back-btn {
             width: 100%;
-            margin-top: 0.75rem;
-            border: 1px solid #0f766e;
-            border-radius: 999px;
-            padding: 0.9rem 1rem;
-            background: transparent;
-            color: #0f766e;
-            font-weight: 600;
-            font-size: 0.95rem;
+            margin-top: 1rem;
+            border: 3px solid #000;
+            border-radius: 0;
+            padding: 1rem;
+            background: #fff;
+            color: #000;
+            font-weight: 900;
+            font-size: 1rem;
+            text-transform: uppercase;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.4rem;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+            gap: 0.5rem;
+            box-shadow: 4px 4px 0 #000;
+            transition: all 0.1s ease;
         }
 
         .auth-back-btn:hover {
-            background: #0f766e;
-            color: #ffffff;
-            box-shadow: 0 10px 24px rgba(15, 118, 110, 0.25);
+            background: #e0e0e0;
+        }
+
+        .auth-back-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0 0 0 #000;
         }
 
         .auth-footer {
-            margin-top: 1rem;
+            margin-top: 2rem;
             text-align: center;
-            font-size: 0.85rem;
-            color: #64748b;
+            font-size: 0.95rem;
+            color: #000;
+            font-weight: 600;
+            border-top: 3px solid #000;
+            padding-top: 1.5rem;
         }
 
+        /* RESPONSIVE UNTUK MOBILE */
         @media (max-width: 900px) {
             .auth-card__inner {
                 grid-template-columns: 1fr;
@@ -281,66 +311,74 @@
             }
 
             .auth-panel {
-                border-radius: 24px 24px 0 0;
+                border-right: none;
+                border-bottom: 4px solid #000;
                 order: 1;
             }
 
             .auth-form {
-                padding: 2rem;
-                border-radius: 0 0 24px 24px;
                 order: 2;
+                padding: 2rem;
             }
         }
 
         @media (max-width: 520px) {
             .auth-shell {
-                padding: 2rem 1rem 3rem;
+                padding: 1.5rem 1rem;
             }
 
             .auth-panel,
             .auth-form {
-                padding: 1.6rem;
+                padding: 1.5rem;
             }
 
             .auth-panel h1 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
+            }
+
+            .auth-card {
+                border-width: 3px !important;
+                box-shadow: 8px 8px 0 #000 !important;
             }
         }
     </style>
+
     <x-slot name="title">
         Login - UMKM Kuliner
     </x-slot>
+
     <div class="auth-login">
         <div class="auth-card">
             <div class="auth-card__inner">
+                <!-- SISI KIRI: PANEL INFO -->
                 <section class="auth-panel">
                     <div class="auth-panel__badge">
-                        <i class="fas fa-utensils"></i>UMKM Kuliner
+                        <i class="fas fa-utensils"></i> UMKM KULINER
                     </div>
-                    <h1>Masuk untuk rekomendasi kuliner yang lebih tepat.</h1>
+                    <h1>Masuk untuk rekomendasi lebih tepat.</h1>
                     <p>Kelola preferensi, simpan rekomendasi, dan bantu kami mengenal rasa favoritmu.</p>
 
                     <div class="auth-panel__list">
                         <div class="auth-panel__item">
-                            <i class="fas fa-check-circle"></i>Rekomendasi UMKM personal
+                            <i class="fas fa-check-square"></i> Rekomendasi UMKM personal
                         </div>
                         <div class="auth-panel__item">
-                            <i class="fas fa-check-circle"></i>Riwayat preferensi tersimpan
+                            <i class="fas fa-check-square"></i> Riwayat preferensi tersimpan
                         </div>
                         <div class="auth-panel__item">
-                            <i class="fas fa-check-circle"></i>Detail UMKM lebih cepat
+                            <i class="fas fa-check-square"></i> Detail UMKM lebih cepat
                         </div>
                     </div>
 
                     <div class="auth-panel__meta">
                         <span class="auth-pill">Aman</span>
                         <span class="auth-pill">Responsif</span>
-                        <span class="auth-pill">Modern</span>
+                        <span class="auth-pill">Retro</span>
                     </div>
                 </section>
 
+                <!-- SISI KANAN: FORM LOGIN -->
                 <section class="auth-form">
-
                     <div class="auth-form__header">
                         <h2>Login Akun</h2>
                         <p>Masukkan email dan password yang terdaftar.</p>
@@ -358,7 +396,7 @@
                                 <input type="email" name="email" id="email" value="{{ old('email') }}" required
                                     autofocus autocomplete="username" placeholder="contoh: namasaya@email.com" />
                             </div>
-                            <x-input-error :messages="$errors->get('email')" class="mt-1" />
+                            <x-input-error :messages="$errors->get('email')" class="mt-1 fw-bold text-danger" />
                         </div>
 
                         <div class="auth-field">
@@ -368,7 +406,7 @@
                                 <input type="password" name="password" id="password" required
                                     autocomplete="current-password" placeholder="Masukkan password" />
                             </div>
-                            <x-input-error :messages="$errors->get('password')" class="mt-1" />
+                            <x-input-error :messages="$errors->get('password')" class="mt-1 fw-bold text-danger" />
                         </div>
 
                         <div class="auth-actions">
@@ -381,15 +419,15 @@
                             @endif
                         </div>
 
-                        <button class="auth-submit" type="submit">Masuk</button>
+                        <button class="auth-submit" type="submit">MASUK</button>
 
                         <a class="auth-back-btn" href="{{ url('/') }}">
-                            <i class="fas fa-arrow-left"></i>Kembali
+                            <i class="fas fa-arrow-left"></i> KEMBALI
                         </a>
 
                         @if (Route::has('register'))
                             <div class="auth-footer">
-                                Belum punya akun? <a class="auth-link" href="{{ route('register') }}">Daftar</a>
+                                Belum punya akun? <a class="auth-link" href="{{ route('register') }}">DAFTAR SEKARANG</a>
                             </div>
                         @endif
                     </form>
@@ -398,4 +436,3 @@
         </div>
     </div>
 @endsection
-

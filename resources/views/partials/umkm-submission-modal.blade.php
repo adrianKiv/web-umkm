@@ -72,15 +72,23 @@
         border: 3px solid #000 !important;
         border-radius: 0 !important;
     }
+
+    .readonly-input[readonly] {
+        background: #e9ecef;
+        color: #888;
+        border: 3px solid #000;
+        font-weight: 600;
+        opacity: 1;
+        cursor: not-allowed;
+    }
 </style>
 
-<div class="modal fade" id="umkmSubmissionModal"
-    data-show-on-errors="{{ $errors->any() && old('nama_umkm') ? '1' : '0' }}" tabindex="-1"
-    aria-labelledby="umkmSubmissionModalLabel" aria-hidden="true">
+<div class="modal fade" id="umkmSubmissionModal" data-show-on-errors="{{ $errors->any() && old('nama_umkm') ? '1' : '0' }}"
+    tabindex="-1" aria-labelledby="umkmSubmissionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
 
-        <form method="POST" action="{{ route('umkm-submissions.store') }}" class="modal-content neo-modal border-0"
-            enctype="multipart/form-data">
+        <form method="POST" action="{{ route('umkm-submissions.store') }}"
+            class="neo-submit-form modal-content neo-modal border-0" novalidate enctype="multipart/form-data">
             @csrf
 
             <!-- Header Modal -->
@@ -116,16 +124,35 @@
                 <div class="row g-4">
                     <!-- Data Pengusul -->
                     <div class="col-md-6">
-                        <label class="neo-form-label">Nama Pengusul <span class="text-danger fs-5">*</span></label>
-                        <input type="text" name="nama_pengusul" class="form-control neo-input"
-                            value="{{ old('nama_pengusul', auth()->user()?->name) }} {{ auth()->check() ? 'readonly' : '' }}"
-                            required>
+                        <label class="neo-form-label">
+                            Nama Pengusul <span class="text-danger fs-5">*</span>
+                        </label>
+
+                        <input type="text" name="nama_pengusul"
+                            class="form-control neo-input {{ auth()->check() ? 'readonly-input' : '' }}"
+                            value="{{ old('nama_pengusul', auth()->user()?->name) }}" placeholder="Contoh: Adrian M"
+                            required {{ auth()->check() ? 'readonly' : '' }}>
+                        @error('nama_pengusul')
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
+
                     <div class="col-md-6">
-                        <label class="neo-form-label">Email Pengusul <span class="text-danger fs-5">*</span></label>
-                        <input type="email" name="email_pengusul" class="form-control neo-input"
-                            value="{{ old('email_pengusul', auth()->user()?->email) }} {{ auth()->check() ? 'readonly' : '' }}"
-                            placeholder="yan@email.com" required>
+                        <label class="neo-form-label">
+                            Email Pengusul <span class="text-danger fs-5">*</span>
+                        </label>
+
+                        <input type="email" name="email_pengusul"
+                            class="form-control neo-input {{ auth()->check() ? 'readonly-input' : '' }}"
+                            value="{{ old('email_pengusul', auth()->user()?->email) }}"
+                            placeholder="contoh: rian@email.com" required {{ auth()->check() ? 'readonly' : '' }}>
+                        @error('email_pengusul')
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <!-- Pemisah Visual -->
@@ -138,7 +165,13 @@
                         <label class="neo-form-label">Nama UMKM <span class="text-danger fs-5">*</span></label>
                         <input type="text" name="nama_umkm" class="form-control neo-input"
                             value="{{ old('nama_umkm') }}" placeholder="Contoh: Ayam Geprek Mantap" required>
+                        @error('nama_umkm')
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
+
                     <div class="col-md-6">
                         <label class="neo-form-label">Kategori <span class="text-danger fs-5">*</span></label>
                         <select name="id_kategori" class="form-select neo-select" required>
@@ -150,17 +183,33 @@
                                 </option>
                             @endforeach
                         </select>
+                        @error('id_kategori')
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="col-md-6">
                         <label class="neo-form-label">Jam Buka <span class="text-danger fs-5">*</span></label>
                         <input type="text" name="jam_buka" class="form-control neo-input"
                             value="{{ old('jam_buka') }}" placeholder="Contoh: 08:00 - 20:00" required>
+                        @error('jam_buka')
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
+
                     <div class="col-md-6">
                         <label class="neo-form-label">No Telepon <span class="text-danger fs-5">*</span></label>
                         <input type="text" name="no_telfon" class="form-control neo-input"
                             value="{{ old('no_telfon') }}" placeholder="Contoh: 081234567890" required>
+                        @error('no_telfon')
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <!-- Lokasi Map -->
@@ -178,7 +227,8 @@
 
                             <div
                                 class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 px-1">
-                                <small class="text-dark fw-bold"><i class="fas fa-hand-pointer me-1"></i> Geser marker /
+                                <small class="text-dark fw-bold"><i class="fas fa-hand-pointer me-1"></i> Geser marker
+                                    /
                                     klik area map.</small>
                                 <span class="badge"
                                     style="background: #e0e0e0; color: #000; border: 2px solid #000; font-size: 0.8rem; box-shadow: 2px 2px 0 #000;">
@@ -191,30 +241,46 @@
                                 value="{{ old('longitude') }}" required>
                         </div>
                         @error('latitude')
-                            <span class="text-danger fw-bold small d-block mt-2">{{ $message }}</span>
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
                         @enderror
                         @error('longitude')
-                            <span class="text-danger fw-bold small d-block mt-2">{{ $message }}</span>
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
                         @enderror
                     </div>
 
                     <div class="col-12">
                         <label class="neo-form-label">Alamat Lengkap <span class="text-danger fs-5">*</span></label>
                         <textarea name="alamat_lengkap" class="form-control neo-textarea" rows="2" required>{{ old('alamat_lengkap') }}</textarea>
+                        @error('alamat_lengkap')
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="col-12">
                         <label class="neo-form-label">Deskripsi UMKM <span class="text-danger fs-5">*</span></label>
                         <textarea name="deskripsi" class="form-control neo-textarea" rows="3" required>{{ old('deskripsi') }}</textarea>
+                        @error('deskripsi')
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="col-12">
-                        <label class="neo-form-label">Foto UMKM</label>
+                        <label class="neo-form-label">Foto UMKM <span class="text-danger fs-5">*</span></label>
                         <input type="file" name="foto_umkm" class="form-control neo-input"
                             style="padding-top: 0.35rem;" accept="image/*" required>
                         <small class="text-muted fw-bold mt-1 d-block">Format: JPG, JPEG, PNG, WEBP. Maks: 2MB.</small>
                         @error('foto_umkm')
-                            <span class="text-danger fw-bold small d-block mt-1">{{ $message }}</span>
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
                         @enderror
                     </div>
 
@@ -321,7 +387,36 @@
         </form>
     </div>
 </div>
+
+<!-- PERBAIKAN: Script agar Modal otomatis terbuka ulang jika ada error validasi -->
+@if (
+    $errors->has('nama_pengusul') ||
+        $errors->has('email_pengusul') ||
+        $errors->has('id_kategori') ||
+        $errors->has('nama_umkm') ||
+        $errors->has('jam_buka') ||
+        $errors->has('no_telfon') ||
+        $errors->has('latitude') ||
+        $errors->has('longitude') ||
+        $errors->has('alamat_lengkap') ||
+        $errors->has('deskripsi') ||
+        $errors->has('foto_umkm'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var ratingModal = new bootstrap.Modal(document.getElementById('umkmSubmissionModal'));
+            ratingModal.show();
+        });
+    </script>
+@endif
 {{-- modal init and behaviors moved to resources/js/refactor/umkm-submission-modal.js --}}
+<!-- Neo-Brutalism Loading Overlay -->
+<div id="neoFormLoader" class="neo-loader-overlay d-none">
+    <div class="neo-loader-box">
+        <i class="fas fa-spinner fa-spin neo-loader-icon"></i>
+        <h4 class="fw-black text-uppercase mt-3 mb-1" style="-webkit-text-stroke: 0.5px #000;">Memproses...</h4>
+        <p class="fw-bold small mb-0">Mohon tunggu, data sedang dikirim.</p>
+    </div>
+</div>
 
 @push('scripts')
     @vite(['resources/js/location-picker.js', 'resources/js/refactor/umkm-submission-modal.js'])

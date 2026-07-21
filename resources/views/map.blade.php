@@ -313,8 +313,9 @@
 <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
 
-        <!-- Form digabung dengan modal-content agar batas tepinya rapi -->
-        <form id="ratingForm" class="modal-content neo-modal-container border-0">
+        <!-- PERBAIKAN: Tambahkan action, method="POST", dan @csrf -->
+        <form id="ratingForm" action="{{ route('rating.store') }}" method="POST" class="neo-submit-form modal-content neo-modal-container border-0">
+            @csrf
 
             <!-- HEADER KHAKI -->
             <div class="modal-header neo-modal-header-khaki border-bottom-0">
@@ -328,56 +329,62 @@
 
             <!-- BODY -->
             <div class="modal-body p-4 bg-white">
-                <input type="hidden" id="ratingUmkmId" name="id_umkm">
+                <!-- Pastikan id_umkm terisi oleh JavaScript saat tombol rating dipencet -->
+                <input type="hidden" id="ratingUmkmId" name="id_umkm" value="{{ old('id_umkm') }}">
 
                 <div class="mb-4">
                     <label for="namaPengulas" class="neo-form-label">
-                        <i class="fas fa-user me-2"></i>Nama Anda <span class="text-danger fs-5">*</span>
+                        <i class="fas fa-user me-2"></i>Nama Anda <span class="text-danger">(Opsional)</span>
                     </label>
-                    <input type="text" class="form-control neo-input" id="namaPengulas" name="nama_pengulas"
-                        required value="{{ old('nama_pengulas', auth()->user()?->name) }}"
-                        placeholder="Masukkan nama Anda">
+                    <input type="text" name="nama_pengulas"
+                        class="form-control neo-input {{ auth()->check() ? 'readonly-input' : '' }}"
+                        value="{{ old('nama_pengulas', auth()->user()?->name) }}" placeholder="Contoh: Adrian M"
+                        {{ auth()->check() ? 'readonly' : '' }}>
                 </div>
 
                 <div class="mb-4">
                     <label class="neo-form-label">
                         <i class="fas fa-star me-2"></i>Rating <span class="text-danger fs-5">*</span>
                     </label>
-                    <!-- Area Bintang dibungkus dengan neo-box agar lebih tegas -->
+
                     <div class="rating-stars neo-box p-3 bg-white text-center">
-                        <input type="hidden" id="nilaiRating" name="nilai_rating" value="0">
+                        <input type="hidden" id="nilaiRating" name="nilai_rating" value="{{ old('nilai_rating', 0) }}" required>
                         <div class="stars-container d-flex justify-content-center gap-2 mb-2">
-                            <!-- Gaya stroke hitam ditambahkan agar bintang terlihat "retro" -->
-                            <i class="far fa-star star text-warning" data-rating="1"
-                                style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
-                            <i class="far fa-star star text-warning" data-rating="2"
-                                style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
-                            <i class="far fa-star star text-warning" data-rating="3"
-                                style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
-                            <i class="far fa-star star text-warning" data-rating="4"
-                                style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
-                            <i class="far fa-star star text-warning" data-rating="5"
-                                style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
+                            <i class="far fa-star star text-warning" data-rating="1" style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
+                            <i class="far fa-star star text-warning" data-rating="2" style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
+                            <i class="far fa-star star text-warning" data-rating="3" style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
+                            <i class="far fa-star star text-warning" data-rating="4" style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
+                            <i class="far fa-star star text-warning" data-rating="5" style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
                         </div>
                         <small class="fw-bold text-uppercase fs-6" id="ratingText">Belum dipilih</small>
                     </div>
+
+                    <!-- PERBAIKAN: Tampilkan error jika rating kosong (0) -->
+                    @error('nilai_rating')
+                        <div class="text-danger fw-bold mt-2 text-uppercase">
+                            <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                        </div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="komentar" class="neo-form-label">
-                        <i class="fas fa-comment me-2"></i>Komentar <span
-                            class="text-muted fw-normal text-lowercase">(Opsional)</span>
+                        <i class="fas fa-comment me-2"></i>Komentar <span class="text-muted fw-normal text-lowercase">(Opsional)</span>
                     </label>
                     <textarea class="form-control neo-input" id="komentar" name="komentar" rows="3"
-                        placeholder="Berikan komentar atau ulasan Anda..."></textarea>
+                        placeholder="Berikan komentar atau ulasan Anda...">{{ old('komentar') }}</textarea>
+
+                    @error('komentar')
+                        <div class="text-danger fw-bold mt-2 text-uppercase">
+                            <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                        </div>
+                    @enderror
                 </div>
             </div>
 
             <!-- FOOTER -->
             <div class="modal-footer border-top-0 d-flex justify-content-between p-4 pt-0 bg-white">
-                <button type="button" class="neo-btn-grey m-0" data-bs-dismiss="modal">
-                    BATAL
-                </button>
+                <button type="button" class="neo-btn-grey m-0" data-bs-dismiss="modal">BATAL</button>
                 <button type="submit" class="neo-btn-green m-0">
                     <i class="fas fa-paper-plane me-2"></i>KIRIM RATING
                 </button>
@@ -387,6 +394,16 @@
     </div>
 </div>
 
+<!-- PERBAIKAN: Script agar Modal otomatis terbuka ulang jika ada error validasi -->
+@if($errors->has('nilai_rating') || $errors->has('komentar'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'));
+            ratingModal.show();
+        });
+    </script>
+@endif
+
 {{-- rating modal behavior moved to resources/js/refactor/map-modals.js --}}
 
 <div class="modal fade" id="menuSubmissionModal"
@@ -395,7 +412,7 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
 
         <form id="menuSubmissionForm" method="POST" action="{{ route('menu-submissions.store') }}"
-            class="modal-content neo-modal-container border-0" enctype="multipart/form-data">
+            class="neo-submit-form modal-content neo-modal-container border-0" enctype="multipart/form-data">
             @csrf
             @php
                 $oldMenuTargetName = null;
@@ -431,17 +448,27 @@
                         </div>
                     </div>
 
+                    <!-- Data Pengusul -->
                     <div class="col-md-6">
-                        <label class="neo-form-label">Nama Pengusul <span class="text-danger fs-5">*</span></label>
-                        <input type="text" name="nama_pengusul" class="form-control neo-input"
-                            value="{{ old('nama_pengusul', auth()->user()?->name) }} {{ auth()->check() ? 'readonly' : '' }}"
-                            required>
+                        <label class="neo-form-label">
+                            Nama Pengusul <span class="text-danger fs-5">*</span>
+                        </label>
+
+                        <input type="text" name="nama_pengusul"
+                            class="form-control neo-input {{ auth()->check() ? 'readonly-input' : '' }}"
+                            value="{{ old('nama_pengusul', auth()->user()?->name) }}" placeholder="Contoh: Adrian M"
+                            required {{ auth()->check() ? 'readonly' : '' }}>
                     </div>
+
                     <div class="col-md-6">
-                        <label class="neo-form-label">Email Pengusul <span class="text-danger fs-5">*</span></label>
-                        <input type="email" name="email_pengusul" class="form-control neo-input"
-                            value="{{ old('email_pengusul', auth()->user()?->email) }} {{ auth()->check() ? 'readonly' : '' }}"
-                            placeholder="yan@email.com" required>
+                        <label class="neo-form-label">
+                            Email Pengusul <span class="text-danger fs-5">*</span>
+                        </label>
+
+                        <input type="email" name="email_pengusul"
+                            class="form-control neo-input {{ auth()->check() ? 'readonly-input' : '' }}"
+                            value="{{ old('email_pengusul', auth()->user()?->email) }}"
+                            placeholder="contoh: rian@email.com" required {{ auth()->check() ? 'readonly' : '' }}>
                     </div>
 
                     <div class="col-12">
@@ -472,20 +499,20 @@
                                                 Menu</label>
                                             <input type="text" name="menu_nama[]" class="form-control neo-input"
                                                 value="{{ $oldMenuNames[$i] ?? '' }}" placeholder="Ayam Bakar"
-                                                required>
+                                                >
                                         </div>
                                         <div class="col-md-3">
                                             <label class="neo-form-label" style="font-size: 0.75rem;">Harga
                                                 (Rp)</label>
                                             <input type="number" step="0.01" min="0" name="menu_harga[]"
                                                 class="form-control neo-input" value="{{ $oldMenuPrices[$i] ?? '' }}"
-                                                placeholder="25000" required>
+                                                placeholder="25000" >
                                         </div>
                                         <div class="col-md-4">
                                             <label class="neo-form-label" style="font-size: 0.75rem;">Foto
                                                 Menu</label>
                                             <input type="file" name="menu_foto[]" class="form-control neo-input"
-                                                style="padding-top: 0.2rem;" accept="image/*" required>
+                                                style="padding-top: 0.2rem;" accept="image/*" >
                                         </div>
                                         <div class="col-md-1 d-grid">
                                             <button type="button" class="btn neo-btn-danger"
@@ -511,9 +538,9 @@
             </div>
 
             <!-- FOOTER DENGAN TOMBOL NEO -->
-            <div class="modal-footer border-top-0 d-flex justify-content-between p-4 pt-2">
-                <button type="button" class="neo-btn-grey m-0" data-bs-dismiss="modal">BATAL</button>
-                <button type="submit" class="neo-btn-green m-0">
+           <div class="modal-footer neo-modal-footer border-top-0 d-flex justify-content-between">
+                <button type="button" class="neo-btn-outline m-0" data-bs-dismiss="modal">BATAL</button>
+                <button type="submit" class="neo-btn-solid m-0">
                     <i class="fas fa-paper-plane me-2"></i>KIRIM PENGAJUAN
                 </button>
             </div>
@@ -522,6 +549,56 @@
     </div>
 </div>
 
+<!-- NEO FLASH MESSAGES GLOBAL -->
+<div class="fixed-top px-3 pt-3" style="z-index: 1116; pointer-events: none;">
+    <div id="neo-flash-container" class="container d-flex flex-column align-items-end gap-2" style="pointer-events: auto;">
+
+        <!-- Pesan Sukses -->
+        @if (session('success'))
+            <div id="alert-timer" class="neo-alert-flash neo-alert-success fade show d-flex align-items-center justify-content-between p-3" role="alert">
+                <div class="fw-black text-uppercase me-4">
+                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                </div>
+                <button type="button" class="neo-btn-square-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        @endif
+
+        <!-- Pesan Error Umum -->
+        @if (session('error'))
+            <div id="alert-timer" class="neo-alert-flash neo-alert-danger fade show d-flex align-items-center justify-content-between p-3" role="alert">
+                <div class="fw-black text-uppercase me-4">
+                    <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
+                </div>
+                <button type="button" class="neo-btn-square-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        @endif
+
+        <!-- Pesan Error Khusus Validasi Menu Kosong -->
+        @error('menu_kosong')
+            <div id="alert-timer" class="neo-alert-flash neo-alert-danger fade show d-flex align-items-center justify-content-between p-3" role="alert">
+                <div class="fw-black text-uppercase me-4">
+                    <i class="fas fa-times-circle me-2"></i>{{ $message }}
+                </div>
+                <button type="button" class="neo-btn-square-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        @enderror
+    </div>
+</div>
+
+<!-- Neo-Brutalism Loading Overlay -->
+<div id="neoFormLoader" class="neo-loader-overlay d-none">
+    <div class="neo-loader-box">
+        <i class="fas fa-spinner fa-spin neo-loader-icon"></i>
+        <h4 class="fw-black text-uppercase mt-3 mb-1" style="-webkit-text-stroke: 0.5px #000;">Memproses...</h4>
+        <p class="fw-bold small mb-0">Mohon tunggu, data sedang dikirim.</p>
+    </div>
+</div>
 {{-- menu submission modal behavior moved to resources/js/refactor/map-modals.js --}}
 
 <div class="modal fade" id="imageLightboxModal" tabindex="-1" aria-labelledby="imageLightboxLabel"
@@ -575,29 +652,6 @@
 @endpush
 
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('menuSubmissionForm');
-
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    // Ambil input nama menu pertama
-                    const firstMenuName = document.querySelector('input[name="menu_nama[]"]').value.trim();
-                    // Cek apakah ada file foto daftar menu yang diunggah
-                    const menuDaftarFoto = document.querySelector('input[name="menu_daftar_foto[]"]').files
-                        .length;
-
-                    // Jika KEDUANYA kosong, tahan form dan munculkan peringatan
-                    if (firstMenuName === '' && menuDaftarFoto === 0) {
-                        e.preventDefault(); // Menghentikan form agar tidak terkirim
-                        alert(
-                            '⚠️ PERHATIAN: Anda wajib mengisi minimal 1 Nama Menu ATAU mengunggah Foto Daftar Menu!'
-                            );
-                    }
-                });
-            }
-        });
-    </script>
 
     <script id="mapPageConfig" type="application/json">
         {!! json_encode([

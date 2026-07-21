@@ -16,9 +16,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 40px; /* Ukuran kotak seragam */
-    height: 40px;
-    padding: 0.5rem 0.75rem;
+    min-width: auto; /* Ukuran kotak seragam */
+    height: 30px;
+    padding: 0.5rem 0.5rem;
     background-color: #fff;
     color: #000;
     font-weight: 900;
