@@ -391,16 +391,16 @@
 <!-- PERBAIKAN: Script agar Modal otomatis terbuka ulang jika ada error validasi -->
 @if (
     $errors->has('nama_pengusul') ||
-        $errors->has('email_pengusul') ||
-        $errors->has('id_kategori') ||
-        $errors->has('nama_umkm') ||
-        $errors->has('jam_buka') ||
-        $errors->has('no_telfon') ||
-        $errors->has('latitude') ||
-        $errors->has('longitude') ||
-        $errors->has('alamat_lengkap') ||
-        $errors->has('deskripsi') ||
-        $errors->has('foto_umkm'))
+    $errors->has('email_pengusul') ||
+    $errors->has('id_kategori') ||
+    $errors->has('nama_umkm') ||
+    $errors->has('jam_buka') ||
+    $errors->has('no_telfon') ||
+    $errors->has('latitude') ||
+    $errors->has('longitude') ||
+    $errors->has('alamat_lengkap') ||
+    $errors->has('deskripsi') ||
+    $errors->has('foto_umkm'))
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var ratingModal = new bootstrap.Modal(document.getElementById('umkmSubmissionModal'));

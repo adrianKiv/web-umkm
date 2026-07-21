@@ -19,7 +19,7 @@ class PublicUmkmSubmissionController extends Controller
     {
     $validated = $request->validate([
         'nama_pengusul'      => ['required', 'string', 'max:120'],
-        'email_pengusul'     => ['nullable', 'email', 'max:160'],
+        'email_pengusul'     => ['required', 'email', 'max:160'],
         'nama_umkm'          => ['required', 'string', 'max:120'],
         'jam_buka'           => ['required', 'string', 'max:60'],
         'no_telfon'          => ['required', 'string', 'max:25'],
@@ -41,6 +41,7 @@ class PublicUmkmSubmissionController extends Controller
         // Pesan Error Pengusul
         'nama_pengusul.required' => 'Nama pengusul wajib diisi.',
         'nama_pengusul.max'      => 'Nama pengusul maksimal 120 karakter.',
+        'email_pengusul.required' => 'Email pengusul wajib diisi.',
         'email_pengusul.email'   => 'Format email pengusul tidak valid.',
         'email_pengusul.max'     => 'Email pengusul maksimal 160 karakter.',
 
