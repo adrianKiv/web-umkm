@@ -13,7 +13,7 @@ class KelompokAdminController extends Controller
      */
     public function index()
     {
-        $kelompoks = Kelompok::paginate(20);
+        $kelompoks = Kelompok::withCount('kategoris')->paginate(20);
 
         return view('admin.kelompok.index', compact('kelompoks'));
     }
