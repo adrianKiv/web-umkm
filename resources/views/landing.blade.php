@@ -438,6 +438,52 @@
     </section>
     </div>
 
+
+<!-- NEO FLASH MESSAGES GLOBAL -->
+<div class="fixed-top px-3 pt-3" style="z-index: 1116; pointer-events: none;">
+    <div class="container d-flex flex-column align-items-end gap-2" id="neo-flash-container" style="pointer-events: auto;">
+
+        <!-- HANYA MUNCUL JIKA SERVER MENGIRIM STATUS SUKSES -->
+        @if (session('success'))
+            <div class="neo-alert-flash neo-alert-success fade show d-flex align-items-center justify-content-between p-3" role="alert">
+                <div class="fw-black text-uppercase me-4" style="color: #000;">
+                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                </div>
+                <button type="button" class="neo-btn-square-close" onclick="this.parentElement.remove()" style="background: transparent; border: 2px solid #000; padding: 2px 8px; font-weight: 900; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        @endif
+
+        <!-- HANYA MUNCUL JIKA SERVER MENGIRIM STATUS GAGAL SISTEM/DATABASE -->
+        @if (session('error'))
+            <div class="neo-alert-flash neo-alert-danger fade show d-flex align-items-center justify-content-between p-3" role="alert">
+                <div class="fw-black text-uppercase me-4" style="color: #000;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
+                </div>
+                <button type="button" class="neo-btn-square-close" onclick="this.parentElement.remove()" style="background: transparent; border: 2px solid #000; padding: 2px 8px; font-weight: 900; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        @endif
+
+    </div>
+</div>
+
+<!-- Script Auto-Remove Flash Message (5 Detik) -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const flashMessages = document.querySelectorAll('.neo-alert-flash');
+        flashMessages.forEach(function(message) {
+            setTimeout(function() {
+                message.style.transition = "opacity 0.5s ease";
+                message.style.opacity = "0";
+                setTimeout(() => message.remove(), 500);
+            }, 5000);
+        });
+    });
+</script>
+
     <!-- UMKM Detail Modal (Landing) -->
     <div class="modal fade" id="umkmDetailModal" tabindex="-1" aria-labelledby="umkmDetailModalLabel"
         aria-hidden="true" data-map-url="{{ route('data-umkm.map') }}" data-default-image="{{ $defaultUmkmImage }}">

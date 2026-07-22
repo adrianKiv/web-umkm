@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cookie;
 
 class DataUmkmController extends Controller
@@ -539,7 +540,7 @@ public function landing(Request $request)
     /**
      * Store a new rating for UMKM
      */
-    public function storeRating(Request $request)
+    public function storeRating(Request $request): RedirectResponse
     {
         // 1. Validasi Input. Tambahkan kustom pesan error untuk 'min:1' agar lebih ramah
         $validated = $request->validate([
@@ -547,9 +548,11 @@ public function landing(Request $request)
             'nilai_rating' => 'required|integer|min:1|max:5',
             'komentar'      => 'nullable|string|max:1000',
             'id_umkm'       => 'required|exists:umkm,id_umkm',
-        ], [
+        ]
+        , [
             'nilai_rating.min' => 'Silakan klik bintang untuk memberikan nilai rating (1-5) terlebih dahulu.',
-        ]);
+        ]
+        );
 
         // 2. Jika nama kosong, set menjadi Anonymous
         if (!$request->filled('nama_pengulas')) {

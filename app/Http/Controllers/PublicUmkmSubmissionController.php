@@ -37,7 +37,8 @@ class PublicUmkmSubmissionController extends Controller
         'menu_foto.*'        => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,bmp,webp', 'max:2048'],
         'menu_daftar_foto'   => ['nullable', 'array'],
         'menu_daftar_foto.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,bmp,webp', 'max:4096'],
-    ], [
+    ]
+    , [
         // Pesan Error Pengusul
         'nama_pengusul.required' => 'Nama pengusul wajib diisi.',
         'nama_pengusul.max'      => 'Nama pengusul maksimal 120 karakter.',
@@ -83,7 +84,10 @@ class PublicUmkmSubmissionController extends Controller
         'menu_daftar_foto.*.image' => 'File daftar menu harus berupa gambar.',
         'menu_daftar_foto.*.mimes' => 'Format daftar menu yang diizinkan hanya: jpg, jpeg, png, gif, bmp, webp.',
         'menu_daftar_foto.*.max'   => 'Ukuran foto daftar menu maksimal 4 MB per file.',
-    ]);
+    ]
+    );
+
+    try{
 
         if ($request->hasFile('foto_umkm')) {
             $validated['foto_umkm'] = WebpImageUploader::store($request->file('foto_umkm'), 'umkm', 'umkm');
@@ -157,6 +161,10 @@ class PublicUmkmSubmissionController extends Controller
         }
 
         return back()->with('success', 'Pengajuan UMKM berhasil dikirim dan sedang menunggu konfirmasi admin.');
+
+        } catch (\Exception $e){
+        return back()->with('error', 'Terjadi kesalahan sistem saat menyimpan pengajuan.');
+    }
     }
 
     /**
@@ -167,7 +175,7 @@ class PublicUmkmSubmissionController extends Controller
         $validated = $request->validate([
             'id_umkm' => ['required', 'exists:umkm,id_umkm'],
             'nama_pengusul' => ['required', 'string', 'max:120'],
-            'email_pengusul' => ['nullable', 'email', 'max:160'],
+            'email_pengusul' => ['required', 'email', 'max:160'],
             'menu_nama' => ['nullable', 'array'],
             'menu_nama.*' => ['nullable', 'string', 'max:100'],
             'menu_harga' => ['nullable', 'array'],
@@ -176,7 +184,16 @@ class PublicUmkmSubmissionController extends Controller
             'menu_foto.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,bmp,webp', 'max:2048'],
             'menu_daftar_foto' => ['nullable', 'array'],
             'menu_daftar_foto.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,bmp,webp', 'max:4096'],
+        ], [
+            // Pesan Error Pengusul
+            'nama_pengusul.required' => 'Nama pengusul wajib diisi.',
+            'nama_pengusul.max'      => 'Nama pengusul maksimal 120 karakter.',
+            'email_pengusul.required' => 'Email pengusul wajib diisi.',
+            'email_pengusul.email'   => 'Format email pengusul tidak valid.',
+            'email_pengusul.max'     => 'Email pengusul maksimal 160 karakter.',
         ]);
+
+        try{
 
         $targetUmkm = Umkm::findOrFail($validated['id_umkm']);
 
@@ -275,5 +292,8 @@ class PublicUmkmSubmissionController extends Controller
         }
 
         return back()->with('success', 'Pengajuan menu berhasil dikirim dan menunggu konfirmasi admin.');
+    } catch (\Exception $e){
+        return back()->with('error', 'Terjadi kesalahan sistem saat menyimpan pengajuan.');
+    }
     }
 }

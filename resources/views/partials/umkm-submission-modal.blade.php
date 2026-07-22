@@ -83,14 +83,15 @@
     }
 </style>
 
-<div class="modal fade" id="umkmSubmissionModal" data-show-on-errors="{{ $errors->any() && old('nama_umkm') ? '1' : '0' }}"
-    tabindex="-1" aria-labelledby="umkmSubmissionModalLabel" aria-hidden="true">
+<div class="modal fade" id="umkmSubmissionModal" tabindex="-1" aria-labelledby="umkmSubmissionModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
 
         <form method="POST" action="{{ route('umkm-submissions.store') }}"
             class="neo-submit-form modal-content neo-modal border-0" novalidate enctype="multipart/form-data">
             @csrf
 
+            <input type="hidden" name="tipe_form" value="form_umkm">
             <!-- Header Modal -->
             <div class="modal-header neo-modal-header border-bottom-0">
                 <h5 class="modal-title neo-modal-title" id="umkmSubmissionModalLabel">
@@ -103,7 +104,7 @@
             <!-- Body Modal -->
             <div class="modal-body p-4 bg-white">
 
-                @if ($errors->any() && old('nama_umkm'))
+                @if ($errors->any() && old('tipe_form') === 'form_umkm')
                     <div class="neo-alert-danger p-3 mb-4">
                         <div class="text-uppercase mb-2"><i
                                 class="fas fa-exclamation-triangle me-2"></i><strong>Terdapat Kesalahan:</strong></div>
@@ -214,7 +215,7 @@
 
                     <!-- Lokasi Map -->
                     <div class="col-12 mt-4">
-                        <label class="neo-form-label">Lokasi Peta <span class="text-danger fs-5">*</span></label>
+                        <label class="neo-form-label">Lokasi Di Peta <span class="text-danger fs-5">*</span></label>
                         <div class="neo-box" data-location-picker data-map-id="umkmSubmissionMap"
                             data-latitude-input-id="submissionLatitude" data-longitude-input-id="submissionLongitude"
                             data-readout-id="submissionCoordinateReadout"
@@ -388,36 +389,19 @@
     </div>
 </div>
 
-<!-- PERBAIKAN: Script agar Modal otomatis terbuka ulang jika ada error validasi -->
-@if (
-    $errors->has('nama_pengusul') ||
-    $errors->has('email_pengusul') ||
-    $errors->has('id_kategori') ||
-    $errors->has('nama_umkm') ||
-    $errors->has('jam_buka') ||
-    $errors->has('no_telfon') ||
-    $errors->has('latitude') ||
-    $errors->has('longitude') ||
-    $errors->has('alamat_lengkap') ||
-    $errors->has('deskripsi') ||
-    $errors->has('foto_umkm'))
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var ratingModal = new bootstrap.Modal(document.getElementById('umkmSubmissionModal'));
-            ratingModal.show();
-        });
-    </script>
-@endif
 {{-- modal init and behaviors moved to resources/js/refactor/umkm-submission-modal.js --}}
-<!-- Neo-Brutalism Loading Overlay -->
-<div id="neoFormLoader" class="neo-loader-overlay d-none">
-    <div class="neo-loader-box">
-        <i class="fas fa-spinner fa-spin neo-loader-icon"></i>
-        <h4 class="fw-black text-uppercase mt-3 mb-1" style="-webkit-text-stroke: 0.5px #000;">Memproses...</h4>
-        <p class="fw-bold small mb-0">Mohon tunggu, data sedang dikirim.</p>
-    </div>
-</div>
 
 @push('scripts')
+    @if ($errors->any() && old('tipe_form') === 'form_umkm')
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var umkmModalEl = document.getElementById('umkmSubmissionModal');
+                if (umkmModalEl) {
+                    var umkmModal = new bootstrap.Modal(umkmModalEl);
+                    umkmModal.show();
+                }
+            });
+        </script>
+    @endif
     @vite(['resources/js/location-picker.js', 'resources/js/refactor/umkm-submission-modal.js'])
 @endpush

@@ -4,20 +4,6 @@
 
 @section('contentmap')
 
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show abs-top-right" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show abs-top-right" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
     @if ($dataUmkms->isEmpty())
         <div class="alert alert-warning abs-top-left">Tidak ada data UMKM.</div>
     @endif
@@ -310,12 +296,15 @@
 @endsection
 
 <!-- Rating Modal -->
-<div class="modal fade" id="ratingModal" tabindex="-1" data-bs-backdrop="false" aria-labelledby="ratingModalLabel" aria-hidden="true">
+<div class="modal fade" id="ratingModal" tabindex="-1" data-bs-backdrop="false" aria-labelledby="ratingModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
 
-        <!-- PERBAIKAN: Tambahkan action, method="POST", dan @csrf -->
-        <form id="ratingForm" action="{{ route('rating.store') }}" method="POST" class="neo-submit-form modal-content neo-modal-container border-0">
+        <form id="ratingForm" action="{{ route('rating.store') }}" method="POST"
+            class="neo-submit-form modal-content neo-modal-container border-0">
             @csrf
+
+            <input type="hidden" name="tipe_form" value="form_rating">
 
             <!-- HEADER KHAKI -->
             <div class="modal-header neo-modal-header-khaki border-bottom-0">
@@ -329,7 +318,19 @@
 
             <!-- BODY -->
             <div class="modal-body p-4 bg-white">
-                <!-- Pastikan id_umkm terisi oleh JavaScript saat tombol rating dipencet -->
+
+                @if ($errors->any() && old('tipe_form') === 'form_rating')
+                    <div class="neo-alert-danger p-3 mb-4">
+                        <div class="text-uppercase mb-2"><i
+                                class="fas fa-exclamation-triangle me-2"></i><strong>Terdapat Kesalahan:</strong></div>
+                        <ul class="mb-0 ps-3" style="font-size: 0.9rem;">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <input type="hidden" id="ratingUmkmId" name="id_umkm" value="{{ old('id_umkm') }}">
 
                 <div class="mb-4">
@@ -348,13 +349,19 @@
                     </label>
 
                     <div class="rating-stars neo-box p-3 bg-white text-center">
-                        <input type="hidden" id="nilaiRating" name="nilai_rating" value="{{ old('nilai_rating', 0) }}" required>
+                        <input type="hidden" id="nilaiRating" name="nilai_rating"
+                            value="{{ old('nilai_rating', 0) }}" required>
                         <div class="stars-container d-flex justify-content-center gap-2 mb-2">
-                            <i class="far fa-star star text-warning" data-rating="1" style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
-                            <i class="far fa-star star text-warning" data-rating="2" style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
-                            <i class="far fa-star star text-warning" data-rating="3" style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
-                            <i class="far fa-star star text-warning" data-rating="4" style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
-                            <i class="far fa-star star text-warning" data-rating="5" style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
+                            <i class="far fa-star star text-warning" data-rating="1"
+                                style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
+                            <i class="far fa-star star text-warning" data-rating="2"
+                                style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
+                            <i class="far fa-star star text-warning" data-rating="3"
+                                style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
+                            <i class="far fa-star star text-warning" data-rating="4"
+                                style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
+                            <i class="far fa-star star text-warning" data-rating="5"
+                                style="-webkit-text-stroke: 2px #000; font-size: 2.2rem; cursor: pointer;"></i>
                         </div>
                         <small class="fw-bold text-uppercase fs-6" id="ratingText">Belum dipilih</small>
                     </div>
@@ -369,7 +376,8 @@
 
                 <div class="mb-3">
                     <label for="komentar" class="neo-form-label">
-                        <i class="fas fa-comment me-2"></i>Komentar <span class="text-muted fw-normal text-lowercase">(Opsional)</span>
+                        <i class="fas fa-comment me-2"></i>Komentar <span
+                            class="text-muted fw-normal text-lowercase">(Opsional)</span>
                     </label>
                     <textarea class="form-control neo-input" id="komentar" name="komentar" rows="3"
                         placeholder="Berikan komentar atau ulasan Anda...">{{ old('komentar') }}</textarea>
@@ -394,28 +402,17 @@
     </div>
 </div>
 
-<!-- PERBAIKAN: Script agar Modal otomatis terbuka ulang jika ada error validasi -->
-@if($errors->has('nilai_rating') || $errors->has('komentar'))
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'), {
-                backdrop: false
-            });
-            ratingModal.show();
-        });
-    </script>
-@endif
-
 {{-- rating modal behavior moved to resources/js/refactor/map-modals.js --}}
 
-<div class="modal fade" id="menuSubmissionModal"
-    data-show-on-errors="{{ $errors->any() && old('id_umkm') && (old('menu_nama') || $errors->has('menu_daftar_foto') || $errors->has('menu_daftar_foto.*')) ? '1' : '0' }}"
-    tabindex="-1" aria-labelledby="menuSubmissionModalLabel" aria-hidden="true">
+<div class="modal fade" id="menuSubmissionModal" tabindex="-1" aria-labelledby="menuSubmissionModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
 
-        <form id="menuSubmissionForm" method="POST" action="{{ route('menu-submissions.store') }}"
-            class="neo-submit-form modal-content neo-modal-container border-0" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('menu-submissions.store') }}"
+            class="neo-submit-form modal-content neo-modal-container border-0" novalidate
+            enctype="multipart/form-data">
             @csrf
+            <input type="hidden" name="tipe_form" value="form_menu">
             @php
                 $oldMenuTargetName = null;
                 if (old('id_umkm')) {
@@ -439,6 +436,19 @@
 
             <!-- BODY -->
             <div class="modal-body p-4">
+
+                @if ($errors->any() && old('tipe_form') === 'form_menu')
+                    <div class="neo-alert-danger p-3 mb-4">
+                        <div class="text-uppercase mb-2"><i
+                                class="fas fa-exclamation-triangle me-2"></i><strong>Terdapat Kesalahan:</strong></div>
+                        <ul class="mb-0 ps-3" style="font-size: 0.9rem;">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <input type="hidden" id="menuSubmissionUmkmId" name="id_umkm" value="{{ old('id_umkm') }}">
 
                 <div class="row g-4">
@@ -460,6 +470,11 @@
                             class="form-control neo-input {{ auth()->check() ? 'readonly-input' : '' }}"
                             value="{{ old('nama_pengusul', auth()->user()?->name) }}" placeholder="Contoh: Adrian M"
                             required {{ auth()->check() ? 'readonly' : '' }}>
+                        @error('nama_pengusul')
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="col-md-6">
@@ -471,6 +486,11 @@
                             class="form-control neo-input {{ auth()->check() ? 'readonly-input' : '' }}"
                             value="{{ old('email_pengusul', auth()->user()?->email) }}"
                             placeholder="contoh: rian@email.com" required {{ auth()->check() ? 'readonly' : '' }}>
+                        @error('email_pengusul')
+                            <div class="text-danger fw-bold mt-2 text-uppercase">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="col-12">
@@ -478,9 +498,16 @@
                     </div>
 
                     <label class="neo-form-label mb-0 fs-6">Isi salah satu, Daftar Menu atau Foto Daftar Menu</label>
+
                     <div class="col-12">
                         <hr style="border-top: 3px dashed #000; opacity: 1;">
                     </div>
+
+                    @error('menu_kosong')
+                        <div class="text-danger fw-bold mt-2 text-uppercase">
+                            <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                        </div>
+                    @enderror
 
                     <div class="col-12">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -500,21 +527,20 @@
                                             <label class="neo-form-label" style="font-size: 0.75rem;">Nama
                                                 Menu</label>
                                             <input type="text" name="menu_nama[]" class="form-control neo-input"
-                                                value="{{ $oldMenuNames[$i] ?? '' }}" placeholder="Ayam Bakar"
-                                                >
+                                                value="{{ $oldMenuNames[$i] ?? '' }}" placeholder="Ayam Bakar">
                                         </div>
                                         <div class="col-md-3">
                                             <label class="neo-form-label" style="font-size: 0.75rem;">Harga
                                                 (Rp)</label>
                                             <input type="number" step="0.01" min="0" name="menu_harga[]"
                                                 class="form-control neo-input" value="{{ $oldMenuPrices[$i] ?? '' }}"
-                                                placeholder="25000" >
+                                                placeholder="25000">
                                         </div>
                                         <div class="col-md-4">
                                             <label class="neo-form-label" style="font-size: 0.75rem;">Foto
                                                 Menu</label>
                                             <input type="file" name="menu_foto[]" class="form-control neo-input"
-                                                style="padding-top: 0.2rem;" accept="image/*" >
+                                                style="padding-top: 0.2rem;" accept="image/*">
                                         </div>
                                         <div class="col-md-1 d-grid">
                                             <button type="button" class="btn neo-btn-danger"
@@ -540,7 +566,7 @@
             </div>
 
             <!-- FOOTER DENGAN TOMBOL NEO -->
-           <div class="modal-footer neo-modal-footer border-top-0 d-flex justify-content-between">
+            <div class="modal-footer neo-modal-footer border-top-0 d-flex justify-content-between">
                 <button type="button" class="neo-btn-outline m-0" data-bs-dismiss="modal">BATAL</button>
                 <button type="submit" class="neo-btn-solid m-0">
                     <i class="fas fa-paper-plane me-2"></i>KIRIM PENGAJUAN
@@ -553,33 +579,37 @@
 
 <!-- NEO FLASH MESSAGES GLOBAL -->
 <div class="fixed-top px-3 pt-3" style="z-index: 1116; pointer-events: none;">
-    <div id="neo-flash-container" class="container d-flex flex-column align-items-end gap-2" style="pointer-events: auto;">
+    <div class="container d-flex flex-column align-items-end gap-2" id="neo-flash-container"
+        style="pointer-events: auto;">
 
-        <!-- Pesan Sukses -->
+        <!-- HANYA MUNCUL JIKA SERVER MENGIRIM STATUS SUKSES -->
         @if (session('success'))
-            <div id="alert-timer" class="neo-alert-flash neo-alert-success fade show d-flex align-items-center justify-content-between p-3" role="alert">
-                <div class="fw-black text-uppercase me-4">
+            <div class="neo-alert-flash neo-alert-success fade show d-flex align-items-center justify-content-between p-3"
+                role="alert">
+                <div class="fw-black text-uppercase me-4" style="color: #000;">
                     <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
                 </div>
-                <button type="button" class="neo-btn-square-close" onclick="this.parentElement.remove()">
+                <button type="button" class="neo-btn-square-close" onclick="this.parentElement.remove()"
+                    style="background: transparent; border: 2px solid #000; padding: 2px 8px; font-weight: 900; cursor: pointer;">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
         @endif
 
-        <!-- Pesan Error Umum -->
+        <!-- HANYA MUNCUL JIKA SERVER MENGIRIM STATUS GAGAL SISTEM/DATABASE -->
         @if (session('error'))
-            <div id="alert-timer" class="neo-alert-flash neo-alert-danger fade show d-flex align-items-center justify-content-between p-3" role="alert">
-                <div class="fw-black text-uppercase me-4">
+            <div class="neo-alert-flash neo-alert-danger fade show d-flex align-items-center justify-content-between p-3"
+                role="alert">
+                <div class="fw-black text-uppercase me-4" style="color: #000;">
                     <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
                 </div>
-                <button type="button" class="neo-btn-square-close" onclick="this.parentElement.remove()">
+                <button type="button" class="neo-btn-square-close" onclick="this.parentElement.remove()"
+                    style="background: transparent; border: 2px solid #000; padding: 2px 8px; font-weight: 900; cursor: pointer;">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
         @endif
-
-        <!-- Pesan Error Khusus Validasi Menu Kosong -->
+        {{--
         @error('menu_kosong')
             <div id="alert-timer" class="neo-alert-flash neo-alert-danger fade show d-flex align-items-center justify-content-between p-3" role="alert">
                 <div class="fw-black text-uppercase me-4">
@@ -589,9 +619,24 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-        @enderror
+        @enderror --}}
+
     </div>
 </div>
+
+<!-- Script Auto-Remove Flash Message (5 Detik) -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const flashMessages = document.querySelectorAll('.neo-alert-flash');
+        flashMessages.forEach(function(message) {
+            setTimeout(function() {
+                message.style.transition = "opacity 0.5s ease";
+                message.style.opacity = "0";
+                setTimeout(() => message.remove(), 500);
+            }, 5000);
+        });
+    });
+</script>
 
 <!-- Neo-Brutalism Loading Overlay -->
 <div id="neoFormLoader" class="neo-loader-overlay d-none">
@@ -654,6 +699,32 @@
 @endpush
 
 @push('scripts')
+
+    <!-- Script Buka Otomatis Modal Rating -->
+    @if ($errors->hasAny(['nama_pengulas', 'nilai_rating', 'komentar']))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var ratingModalEl = document.getElementById('ratingModal');
+                if (ratingModalEl) {
+                    var ratingModal = new bootstrap.Modal(ratingModalEl);
+                    ratingModal.show();
+                }
+            });
+        </script>
+    @endif
+
+    <!-- Script Buka Otomatis Modal Pengajuan Menu -->
+    @if ($errors->any() && old('tipe_form') === 'form_menu')
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var menuModalEl = document.getElementById('menuSubmissionModal');
+                if (menuModalEl) {
+                    var menuModal = new bootstrap.Modal(menuModalEl);
+                    menuModal.show();
+                }
+            });
+        </script>
+    @endif
 
     <script id="mapPageConfig" type="application/json">
         {!! json_encode([

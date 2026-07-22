@@ -615,22 +615,14 @@
 
     <main>
         <div class="container">
-            @if (session('success'))
-                <div id="alert-timer" class="alert neo-alert neo-alert-success alert-dismissible fade show mt-2 d-flex justify-content-between align-items-center"
-                    role="alert">
-                    <div><i class="fas fa-check-circle me-2"></i>{{ session('success') }}</div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div id="neoFormLoader" class="neo-loader-overlay d-none">
+                <div class="neo-loader-box">
+                    <i class="fas fa-spinner fa-spin neo-loader-icon"></i>
+                    <h4 class="fw-black text-uppercase mt-3 mb-1" style="-webkit-text-stroke: 0.5px #000;">
+                        Memproses...</h4>
+                    <p class="fw-bold small mb-0">Mohon tunggu, data sedang dikirim.</p>
                 </div>
-            @endif
-
-            @if (session('error'))
-                <div id="alert-timer" class="alert neo-alert neo-alert-danger alert-dismissible fade show mt-2 d-flex justify-content-between align-items-center"
-                    role="alert">
-                    <div><i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}</div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
+            </div>
             @yield('content')
         </div>
     </main>
@@ -697,19 +689,6 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     @stack('scripts')
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const alert = document.getElementById('alert-timer');
-
-            if (alert) {
-                setTimeout(() => {
-                    const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
-                    bsAlert.close();
-                }, 5000); // 5000 ms = 5 detik
-            }
-        });
-    </script>
 </body>
 
 </html>

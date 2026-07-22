@@ -137,25 +137,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const loaderOverlay = document.getElementById('neoFormLoader');
 
     submissionForms.forEach(form => {
+        if (form.dataset.neoLoaderBound === 'true') return;
+        form.dataset.neoLoaderBound = 'true';
+
         form.addEventListener('submit', function(e) {
             // Cek apakah form sudah diisi dengan benar (validasi bawaan HTML5)
-            if (form.checkValidity()) {
 
-                // 1. Tampilkan layar loading
-                if (loaderOverlay) {
-                    loaderOverlay.classList.remove('d-none');
-                }
+            e.preventDefault();
 
-                // 2. Disable tombol submit untuk mencegah double-click
-                const submitBtn = form.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    // Ubah teks tombol jika diinginkan
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>MENGIRIM...';
-                }
-
-                // Form akan otomatis melanjutkan pengiriman ke server
+            // 1. Tampilkan layar loading
+            if (loaderOverlay) {
+                loaderOverlay.classList.remove('d-none');
             }
-        });
+
+            // 2. Disable tombol submit untuk mencegah double-click
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                // Ubah teks tombol jika diinginkan
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>MENGIRIM...';
+            }
+
+            window.requestAnimationFrame(() => form.submit());
+
+        }, true);
     });
 });
