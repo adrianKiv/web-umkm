@@ -344,7 +344,7 @@
                             <i class="fas fa-check-square"></i> Simpan preferensi kategori
                         </div>
                         <div class="auth-panel__item">
-                            <i class="fas fa-check-square"></i> Update promo terbaru
+                            <i class="fas fa-check-square"></i> Akses halaman profil dan pengaturan akun
                         </div>
                     </div>
 
