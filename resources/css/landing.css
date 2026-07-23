@@ -1025,7 +1025,7 @@ body.modal-open {
     .neo-feature-desc {
         grid-column: 2 / 3;
         grid-row: 2 / 3;
-        font-size: 0.65rem;
+        font-size: 0.75rem;
     }
 
     /* 6. Opsional: Mengecilkan jarak antar kotak (row gap) */
