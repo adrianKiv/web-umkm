@@ -6,6 +6,17 @@ body.sheet-open {
     overflow: hidden;
 }
 
+/* Menghilangkan seluruh backdrop modal Bootstrap */
+.modal-backdrop {
+    display: none !important;
+}
+
+/* Memastikan background body tidak ikut membeku/kaku saat modal terbuka */
+body.modal-open {
+    overflow: auto !important;
+    padding-right: 0 !important;
+}
+
 /* NEO-BRUTALISM: MAP CONTROLS */
 .map-controls {
     border: 3px solid #000 !important;

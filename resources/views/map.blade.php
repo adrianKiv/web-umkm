@@ -391,12 +391,19 @@
             </div>
 
             <!-- FOOTER -->
-            <div class="modal-footer border-top-0 d-flex justify-content-between p-4 pt-0 bg-white">
+            <div class="modal-footer neo-modal-footer border-top-0 d-flex justify-content-between">
+                <button type="button" class="neo-btn-outline m-0" data-bs-dismiss="modal">BATAL</button>
+                <button type="submit" class="neo-btn-solid m-0">
+                    <i class="fas fa-paper-plane me-2"></i>KIRIM PENGAJUAN
+                </button>
+            </div>
+
+            {{-- <div class="modal-footer border-top-0 d-flex justify-content-between p-4 pt-0 bg-white">
                 <button type="button" class="neo-btn-grey m-0" data-bs-dismiss="modal">BATAL</button>
                 <button type="submit" class="neo-btn-green m-0">
                     <i class="fas fa-paper-plane me-2"></i>KIRIM RATING
                 </button>
-            </div>
+            </div> --}}
 
         </form>
     </div>
@@ -404,7 +411,7 @@
 
 {{-- rating modal behavior moved to resources/js/refactor/map-modals.js --}}
 
-<div class="modal fade" id="menuSubmissionModal" tabindex="-1" aria-labelledby="menuSubmissionModalLabel"
+<div class="modal fade" id="menuSubmissionModal" data-bs-backdrop="false" tabindex="-1" aria-labelledby="menuSubmissionModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
 
@@ -648,7 +655,7 @@
 </div>
 {{-- menu submission modal behavior moved to resources/js/refactor/map-modals.js --}}
 
-<div class="modal fade" id="imageLightboxModal" tabindex="-1" aria-labelledby="imageLightboxLabel"
+<div class="modal fade" id="imageLightboxModal" data-bs-backdrop="false" tabindex="-1" aria-labelledby="imageLightboxLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content border-0 bg-transparent shadow-none lightbox-modal-content">
@@ -706,7 +713,7 @@
             document.addEventListener("DOMContentLoaded", function() {
                 var ratingModalEl = document.getElementById('ratingModal');
                 if (ratingModalEl) {
-                    var ratingModal = new bootstrap.Modal(ratingModalEl);
+                    var ratingModal = new bootstrap.Modal(ratingModalEl, { backdrop: false });
                     ratingModal.show();
                 }
             });
@@ -719,7 +726,7 @@
             document.addEventListener("DOMContentLoaded", function() {
                 var menuModalEl = document.getElementById('menuSubmissionModal');
                 if (menuModalEl) {
-                    var menuModal = new bootstrap.Modal(menuModalEl);
+                    var menuModal = new bootstrap.Modal(menuModalEl, { backdrop: false });
                     menuModal.show();
                 }
             });

@@ -20,7 +20,7 @@
                     ".modal-backdrop.show:not([data-umkm-submission-backdrop])",
                 );
                 if (backdrop) {
-                    backdrop.dataset.umkmSubmissionBackdrop = "true";
+                    backdrop.dataset.umkmSubmissionBackdrop = "false";
                     backdrop.style.zIndex = "1110";
                 }
             });

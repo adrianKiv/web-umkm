@@ -2029,7 +2029,7 @@ function openRatingModal(umkmId, umkmName) {
             ".modal-backdrop.show:not([data-rating-modal-backdrop])",
         );
         if (backdrop) {
-            backdrop.dataset.ratingModalBackdrop = "true";
+            backdrop.dataset.ratingModalBackdrop = "false";
             backdrop.style.zIndex = "1110";
         }
     });
@@ -2061,7 +2061,7 @@ function openMenuSubmissionModal(umkmId, umkmName) {
             ".modal-backdrop.show:not([data-menu-submission-backdrop])",
         );
         if (backdrop) {
-            backdrop.dataset.menuSubmissionBackdrop = "true";
+            backdrop.dataset.menuSubmissionBackdrop = "false";
             backdrop.style.zIndex = "1110";
         }
     });
