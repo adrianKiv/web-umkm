@@ -660,8 +660,8 @@
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content border-0 bg-transparent shadow-none lightbox-modal-content">
             <div class="modal-header border-0 pb-1 lightbox-modal-header">
-                <h6 class="modal-title text-white" id="imageLightboxLabel">Preview Gambar</h6>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                <h6 class="modal-title" id="imageLightboxLabel">Preview Gambar</h6>
+                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
             <div class="modal-body text-center pt-0 lightbox-modal-body">
