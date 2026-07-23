@@ -61,96 +61,187 @@
                 </div>
             </div>
         </section>
-    </div>
 
-    <!-- top 10 UMKM Section -->
-    <section class="top-umkm-section py-5">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12 text-center">
-                    <h2 class="h3 mb-3 text-dark">
-                        <i class="fas fa-trophy text-warning me-2"></i>
-                        Top 10 UMKM Terpopuler
-                    </h2>
-                    <p class="text-muted">Papan peringkat UMKM yang paling banyak dilihat oleh pelanggan</p>
-                </div>
-            </div>
-
-            @if ($topClicks->isEmpty())
-                <div class="text-muted text-center py-5 empty-state">Belum ada data klik UMKM saat ini.</div>
-            @else
+<!-- SECTION ABOUT / FITUR NEO-BRUTALISM -->
+        <section class="neo-about-section py-5" style="background-color: #f4f4f0; border-top: 4px solid #000;">
+            <div class="container">
+                <!-- Judul Section -->
                 <div class="row justify-content-center">
-                    <div class="col-lg-10">
-                        <div class="leaderboard-wrapper">
-                            @foreach ($topClicks as $umkm)
-                                <div class="leaderboard-row">
-                                    <div class="lb-rank">
-                                        {{ $loop->iteration }}
-                                    </div>
-
-                                    <img src="{{ $umkm->foto_umkm_url }}" alt="Foto {{ $umkm->nama_umkm }}" class="lb-image"
-                                        onerror="this.onerror=null;this.src='{{ $defaultUmkmImage }}';">
-
-                                    <div class="lb-details">
-                                        <div class="lb-name">
-                                            {{ Str::limit($umkm->nama_umkm, 35) }}
-                                        </div>
-                                        <div class="lb-meta">
-                                            <span class="badge bg-light text-dark shadow-sm">
-                                                <i class="fas fa-tag me-1"></i>
-                                                {{ optional($umkm->kategori)->nama_kategori ?? 'Umum' }}
-                                            </span>
-
-                                            @php
-                                                $avgRating = $umkm->rating->avg('nilai_rating') ?? 0;
-                                                $ratingCount = $umkm->rating->count();
-                                            @endphp
-
-                                            <div class="d-flex align-items-center">
-                                                <div class="lb-stars me-1">
-                                                    @for ($i = 1; $i <= 5; $i++)
-                                                        @if ($i <= floor($avgRating))
-                                                            <i class="fas fa-star"></i>
-                                                        @elseif($i - 0.5 <= $avgRating)
-                                                            <i class="fas fa-star-half-alt"></i>
-                                                        @else
-                                                            <i class="far fa-star"></i>
-                                                        @endif
-                                                    @endfor
-                                                </div>
-                                                <span class="fw-bold ms-1"
-                                                    style="font-size: 0.65rem;">{{ number_format($avgRating, 1) }}</span>
-                                                <span class="ms-1"
-                                                    style="font-size: 0.65rem; opacity: 0.8;">({{ $ratingCount }})
-                                                    ulasan</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="lb-score-action">
-                                        <div class="lb-score">
-                                            <i class="fas fa-fire me-1"></i>
-                                            @if ((int) $umkm->total_klik >= 1000000)
-                                                {{ floor((int) $umkm->total_klik / 1000000) }}jt+ Dilihat
-                                            @else
-                                                {{ number_format((int) $umkm->total_klik, 0, ',', '.') }}x Dilihat
-                                            @endif
-                                        </div>
-                                        <button type="button" class="btn btn-light btn-sm fw-bold shadow-sm"
-                                            data-umkm-detail data-umkm-id="{{ $umkm->id_umkm }}"
-                                            data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
-                                            data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
-                                            Detail <i class="fas fa-chevron-right ms-1" style="font-size: 0.7rem;"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            @endforeach
+                    <div class="col-12 col-md-8 text-center">
+                        <div class="d-inline-block px-4 py-2 mb-3" style="background-color: #000; color: #fff; font-weight: 900; transform: rotate(-2deg); border: 2px solid #000; box-shadow: 4px 4px 0 #ffde59;">
+                            <i class="fas fa-info-circle me-2"></i> TENTANG PLATFORM INI
                         </div>
+                        <p class="fw-bold" style="font-size: 1rem; color: #000;">
+                            Platform direktori kuliner ini dirancang untuk mendigitalkan dan mempromosikan UMKM lokal. Saya menyediakan ekosistem interaktif yang memudahkan Anda menemukan dan mendukung usaha kuliner terbaik di sekitar Anda.
+                        </p>
                     </div>
                 </div>
-            @endif
+
+                <!-- Grid Fitur -->
+                <div class="row g-4 justify-content-center">
+
+                    <!-- Fitur 1: Peta -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="neo-feature-card" style="background-color: #b8e994;">
+                            <div class="neo-feature-icon">📍</div>
+                            <h3 class="neo-feature-title">Peta & Detail Lokasi</h3>
+                            <p class="neo-feature-desc">Jelajahi sebaran UMKM langsung di atas peta dengan lokasi yang akurat. Lihat informasi lengkap setiap UMKM, mulai dari jam operasional, menu, hingga detail lainnya.</p>
+                        </div>
+                    </div>
+
+                    <!-- Fitur 2: Rekomendasi CBF -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="neo-feature-card" style="background-color: #ffde59;">
+                            <div class="neo-feature-icon">🧠</div>
+                            <h3 class="neo-feature-title">Rekomendasi Cerdas</h3>
+                            <p class="neo-feature-desc">Sistem <em>Content-Based Filtering</em> (CBF) kami menganalisis preferensi Anda untuk menyuguhkan tempat makan yang paling sesuai selera.</p>
+                        </div>
+                    </div>
+
+                    <!-- Fitur 3: Kontribusi Komunitas -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="neo-feature-card" style="background-color: #ff9ff3;">
+                            <div class="neo-feature-icon">🤝</div>
+                            <h3 class="neo-feature-title">Kontribusi Komunitas</h3>
+                            <p class="neo-feature-desc">Ketemu tempat enak yang belum terdaftar? Anda bisa langsung mengajukan UMKM baru, update menu, hingga memberi rating & ulasan.</p>
+                        </div>
+                    </div>
+
+                    <!-- Fitur 4: Kelola Profil -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="neo-feature-card" style="background-color: #81ecec;">
+                            <div class="neo-feature-icon">👤</div>
+                            <h3 class="neo-feature-title">Personalisasi Akun</h3>
+                            <p class="neo-feature-desc">Daftar dan kelola profil Anda untuk menyimpan riwayat ulasan, melacak status pengajuan UMKM, dan mendapat pengalaman maksimal.</p>
+                        </div>
+                    </div>
+
+                    <!-- Fitur 5: Pencarian -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="neo-feature-card" style="background-color: #fff;">
+                            <div class="neo-feature-icon">🔍</div>
+                            <h3 class="neo-feature-title">Pencarian Cepat</h3>
+                            <p class="neo-feature-desc">Cari seblak, kopi, atau warteg favorit Anda dalam hitungan detik melalui bilah pencarian pintar dan filter kategori kami.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+<!-- TOMBOL MELAYANG SAMPING LAYAR -->
+<button type="button" class="neo-floating-btn" data-bs-toggle="modal" data-bs-target="#leaderboardModal">
+    <i class="fas fa-trophy fs-3 mb-1"></i>
+    <span style="font-size: 0.75rem; letter-spacing: 1px;">Top 10</span>
+</button>
+
+<!-- MODAL LEADERBOARD NEO-BRUTALISM -->
+<div class="modal fade" id="leaderboardModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+
+        <!-- Bungkus Modal Utama -->
+        <div class="modal-content" style="border: 4px solid #000; border-radius: 0; box-shadow: 12px 12px 0 #000; background-color: #fff;">
+
+            <!-- Header Modal -->
+            <div class="modal-header border-bottom-0 pb-0 pt-4 px-4 d-flex justify-content-between align-items-start" style="background-color: #ffde59;">
+                <div>
+                    <h2 class="h3 mb-1 text-dark fw-black text-uppercase" style="letter-spacing: -1px;">
+                        <i class="fas fa-trophy text-warning me-2" style="-webkit-text-stroke: 2px black;"></i>
+                        Papan Peringkat
+                    </h2>
+                    <p class="text-dark fw-bold mb-0" style="font-size: 0.95rem;">Top 10 UMKM paling sering dikunjungi</p>
+                </div>
+
+                <!-- Tombol Close Neo-Brutalism -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background-color: #fff !important; border: 3px solid #000 !important; border-radius: 0 !important; box-shadow: 3px 3px 0 #000 !important; opacity: 1 !important; padding: 0.5rem !important;">
+                </button>
+            </div>
+
+            <!-- Body Modal (Menampung CSS Anda) -->
+            <div class="modal-body p-4">
+
+                @if ($topClicks->isEmpty())
+                    <!-- State Kosong -->
+                    <div class="p-4 text-center" style="border: 3px dashed #000; background: #fff; font-weight: 900;">
+                        <i class="fas fa-box-open fs-1 mb-2 d-block"></i>
+                        BELUM ADA DATA SAAT INI
+                    </div>
+                @else
+
+                    <!-- WRAPPER LEADERBOARD (Dari CSS Anda) -->
+                    <div class="leaderboard-wrapper">
+                        @foreach ($topClicks as $umkm)
+
+                            <!-- ROW LEADERBOARD (Dari CSS Anda) -->
+                            <div class="leaderboard-row">
+
+                                <div class="lb-rank">
+                                    {{ $loop->iteration }}
+                                </div>
+
+                                <img src="{{ $umkm->foto_umkm_url }}" alt="Foto" class="lb-image"
+                                    onerror="this.onerror=null;this.src='{{ $defaultUmkmImage }}';">
+
+                                <div class="lb-details">
+                                    <div class="lb-name">
+                                        {{ Str::limit($umkm->nama_umkm, 35) }}
+                                    </div>
+                                    <div class="lb-meta">
+                                        <span class="badge">
+                                            <i class="fas fa-tag me-1"></i>
+                                            {{ optional($umkm->kategori)->nama_kategori ?? 'Umum' }}
+                                        </span>
+
+                                        @php
+                                            $avgRating = $umkm->rating->avg('nilai_rating') ?? 0;
+                                            $ratingCount = $umkm->rating->count();
+                                        @endphp
+                                        <div class="d-inline-flex align-items-center ms-2">
+                                            <div class="lb-stars">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    @if ($i <= floor($avgRating))
+                                                        <i class="fas fa-star"></i>
+                                                    @elseif($i - 0.5 <= $avgRating)
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                    @else
+                                                        <i class="far fa-star"></i>
+                                                    @endif
+                                                @endfor
+                                            </div>
+                                            <span class="fw-bold ms-1" style="font-size: 0.85rem; color: #000;">{{ number_format($avgRating, 1) }}</span>
+                                            <span class="ms-1 fw-bold" style="font-size: 0.75rem; color: #000;">({{ $ratingCount }})</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="lb-score-action">
+                                    <div class="lb-score">
+                                        <i class="fas fa-fire"></i>
+                                        @if ((int) $umkm->total_klik >= 1000000)
+                                            {{ floor((int) $umkm->total_klik / 1000000) }}jt+ Dilihat
+                                        @else
+                                            {{ number_format((int) $umkm->total_klik, 0, ',', '.') }}x Dilihat
+                                        @endif
+                                    </div>
+                                    <button type="button" class="btn btn-sm"
+                                        data-umkm-detail data-umkm-id="{{ $umkm->id_umkm }}"
+                                        data-detail-url="{{ route('umkm.detail', $umkm->id_umkm) }}"
+                                        data-track-url="{{ route('umkm.track', $umkm->id_umkm) }}">
+                                        DETAIL <i class="fas fa-chevron-right ms-1"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+            </div>
         </div>
-    </section>
+    </div>
+</div>
 
     <!-- Recommended UMKM Section -->
     @if ($recommendedUmkms->isNotEmpty())

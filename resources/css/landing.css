@@ -37,6 +37,18 @@ body {
     font-family: "Plus Jakarta Sans", sans-serif;
 }
 
+/* Membuat backdrop Bootstrap tetap ada (untuk di-klik), tapi 100% transparan */
+.modal-backdrop {
+    background-color: transparent !important;
+    opacity: 0 !important;
+}
+
+/* Memastikan background body tidak ikut membeku/kaku saat modal terbuka di HP */
+body.modal-open {
+    overflow: auto !important;
+    padding-right: 0 !important;
+}
+
 /* Search Bar Styles */
 .search-bar-container {
     max-width: 600px;
@@ -721,6 +733,34 @@ body {
     background-color: #ff914d;
 } /* Perunggu */
 
+/* TOMBOL MELAYANG DI SAMPING KANAN LAYAR */
+.neo-floating-btn {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1040;
+    background-color: #ffde59; /* Warna Emas */
+    color: #000;
+    border: 4px solid #000;
+    border-right: none;
+    border-radius: 12px 0 0 12px;
+    box-shadow: -6px 6px 0 #000;
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.neo-floating-btn:active {
+    transform: translateY(-50%) translate(-4px, 4px);
+    box-shadow: -2px 2px 0 #000;
+}
+
 /* 3. PERINGKAT (Angka) */
 .lb-rank {
     font-size: 2.2rem;
@@ -829,6 +869,169 @@ body {
 .lb-score-action button:active {
     transform: translate(2px, 2px);
     box-shadow: 1px 1px 0 #5ad641 !important;
+}
+
+.neo-feature-card {
+    border: 4px solid #000;
+    border-radius: 0;
+    box-shadow: 8px 8px 0 #000;
+    padding: 1.5rem;
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+}
+
+.neo-feature-card:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0 #000;
+}
+
+.neo-feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    background: #fff;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    border-radius: 50%; /* Satu-satunya elemen bulat untuk variasi */
+}
+
+.neo-feature-title {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #000;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.neo-feature-desc {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+/* 1. Responsif untuk Layar Menengah / Tablet (seperti iPad pada gambar) */
+@media (max-width: 850px) {
+    .leaderboard-row {
+        flex-wrap: wrap; /* Mengizinkan isi kotak turun ke baris baru jika sempit */
+        padding: 15px;
+    }
+
+    .lb-details {
+        flex: 1 1 50%; /* Memastikan detail tetap fleksibel tapi tidak kaku */
+        min-width: 0; /* Mencegah teks panjang menembus kontainer */
+    }
+
+    .lb-score-action {
+        width: 100%; /* Memaksa kotak skor & tombol mengambil 100% lebar (turun ke bawah) */
+        flex-direction: row; /* Merubah susunan menjadi menyamping */
+        justify-content: space-between; /* Skor berada di kiri, tombol di kanan */
+        align-items: center;
+        margin-top: 15px; /* Memberikan jarak dari elemen atasnya */
+        padding-top: 12px;
+        border-top: 2px dashed #000; /* Garis pemisah putus-putus khas brutalism */
+    }
+}
+
+/* 2. Responsif Ekstra untuk Layar HP Kecil (Mobile) */
+@media (max-width: 575px) {
+    .lb-rank {
+        font-size: 1.8rem;
+        width: 35px;
+        margin-right: 10px;
+    }
+
+    .lb-image {
+        width: 50px;
+        height: 50px;
+        margin-right: 12px;
+    }
+
+    .lb-name {
+        font-size: 0.9rem;
+    }
+
+    .lb-meta {
+        gap: 8px; /* Mengurangi jarak antar tag agar tidak berantakan di HP */
+    }
+
+    .lb-score-action {
+        flex-direction: column; /* Mengembalikan susunan ke atas-bawah khusus untuk HP sangat sempit */
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .lb-score {
+        justify-content: center; /* Menengahkan teks tayangan di HP */
+    }
+}
+
+@media (max-width: 768px) {
+    /* 1. Mengurangi ruang kosong (padding) utama section */
+    .neo-about-section {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+
+    /* 2. Mengubah Layout Kotak Menjadi Menyamping (Grid) */
+    .neo-feature-card {
+        padding: 0.3rem; /* Mengurangi padding dalam kotak */
+        box-shadow: 5px 5px 0 #000; /* Mengecilkan bayangan agar proporsional */
+        display: grid;
+        grid-template-columns: auto 1fr; /* Kolom 1 selebar ikon, kolom 2 sisa layar */
+        grid-template-rows: auto auto; /* 2 baris (judul & deskripsi) */
+        column-gap: 15px; /* Jarak antara ikon dan teks */
+        row-gap: 4px; /* Jarak antara judul dan deskripsi */
+    }
+
+    /* Menyesuaikan bayangan saat disentuh di HP */
+    .neo-feature-card:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 7px 7px 0 #000;
+    }
+
+    /* 3. Mengecilkan Ikon dan meletakkannya di kiri */
+    .neo-feature-icon {
+        grid-column: 1 / 2; /* Taruh di kolom 1 */
+        grid-row: 1 / 3; /* Rentangkan dari baris 1 sampai 2 */
+        width: 40px;
+        height: 40px;
+        font-size: 1.7rem;
+        margin-bottom: 0; /* Hapus jarak bawah karena posisinya sudah di kiri */
+        border-width: 2px;
+        box-shadow: 3px 3px 0 #000;
+    }
+
+    /* 4. Menyesuaikan Judul di Kanan Atas */
+    .neo-feature-title {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+        font-size: 0.85rem; /* Mengecilkan ukuran font sedikit */
+        margin-bottom: 0;
+        align-self: end; /* Mendorong teks agak ke bawah sejajar dengan deskripsi */
+    }
+
+    /* 5. Menyesuaikan Deskripsi di Kanan Bawah */
+    .neo-feature-desc {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+        font-size: 0.65rem;
+    }
+
+    /* 6. Opsional: Mengecilkan jarak antar kotak (row gap) */
+    .neo-about-section .g-4 {
+        --bs-gutter-y: 1rem;
+    }
 }
 
 @media (max-width: 991.98px) {

@@ -83,7 +83,7 @@
     }
 </style>
 
-<div class="modal fade" id="umkmSubmissionModal" data-bs-backdrop="false" tabindex="-1" aria-labelledby="umkmSubmissionModalLabel"
+<div class="modal fade" id="umkmSubmissionModal" tabindex="-1" aria-labelledby="umkmSubmissionModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
 

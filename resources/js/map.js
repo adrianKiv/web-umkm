@@ -1031,7 +1031,7 @@ function showUmkmDetail(umkmId) {
     const closeBtn = document.createElement("button");
     closeBtn.type = "button";
     // PERUBAHAN: Gaya tombol close diubah ke neo
-    closeBtn.className = "btn btn-outline-dark border-0 p-1 custom-btn-close";
+    closeBtn.className = "neo-btn-close-panel"; // Hanya gunakan class CSS buatan Anda
     closeBtn.innerHTML = '<i class="fas fa-times fa-lg"></i>';
     closeBtn.addEventListener("click", closeDetailPanel);
 

@@ -117,8 +117,8 @@
                 <div>
                     <h4 class="mb-0 fw-bold text-uppercase">{{ $selectedUmkm->nama_umkm }}</h4>
                 </div>
-                <button type="button" class="btn btn-outline-dark border-0 p-1 custom-btn-close"
-                    onclick="closeDetailPanel()" aria-label="Tutup detail">
+                <!-- Tombol Close Neo-Brutalism -->
+                <button type="button" class="neo-btn-close-panel" onclick="closeDetailPanel()" aria-label="Tutup detail">
                     <i class="fas fa-times fa-lg"></i>
                 </button>
             </div>
@@ -296,7 +296,7 @@
 @endsection
 
 <!-- Rating Modal -->
-<div class="modal fade" id="ratingModal" tabindex="-1" data-bs-backdrop="false" aria-labelledby="ratingModalLabel"
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
 
@@ -411,7 +411,7 @@
 
 {{-- rating modal behavior moved to resources/js/refactor/map-modals.js --}}
 
-<div class="modal fade" id="menuSubmissionModal" data-bs-backdrop="false" tabindex="-1" aria-labelledby="menuSubmissionModalLabel"
+<div class="modal fade" id="menuSubmissionModal" tabindex="-1" aria-labelledby="menuSubmissionModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
 
@@ -655,7 +655,7 @@
 </div>
 {{-- menu submission modal behavior moved to resources/js/refactor/map-modals.js --}}
 
-<div class="modal fade" id="imageLightboxModal" data-bs-backdrop="false" tabindex="-1" aria-labelledby="imageLightboxLabel"
+<div class="modal fade" id="imageLightboxModal" tabindex="-1" aria-labelledby="imageLightboxLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content border-0 bg-transparent shadow-none lightbox-modal-content">

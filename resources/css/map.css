@@ -6,12 +6,13 @@ body.sheet-open {
     overflow: hidden;
 }
 
-/* Menghilangkan seluruh backdrop modal Bootstrap */
+/* Membuat backdrop Bootstrap tetap ada (untuk di-klik), tapi 100% transparan */
 .modal-backdrop {
-    display: none !important;
+    background-color: transparent !important;
+    opacity: 0 !important;
 }
 
-/* Memastikan background body tidak ikut membeku/kaku saat modal terbuka */
+/* Memastikan background body tidak ikut membeku/kaku saat modal terbuka di HP */
 body.modal-open {
     overflow: auto !important;
     padding-right: 0 !important;
@@ -545,6 +546,21 @@ body.modal-open {
     box-shadow: 4px 4px 0 #000;
     font-weight: bold;
     border-radius: 0;
+}
+
+.neo-btn-close-panel {
+background-color: #fff !important;
+border: 3px solid #000 !important;
+border-radius: 0 !important;
+box-shadow: 3px 3px 0 #000 !important;
+opacity: 1 !important;
+padding: 0.5rem !important;
+}
+
+/* Efek saat tombol diklik (tertekan ke dalam) */
+.neo-btn-close-panel:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 #000;
 }
 
 /* Tombol Hapus Menu */
