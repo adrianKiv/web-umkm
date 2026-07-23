@@ -1006,7 +1006,7 @@ body.modal-open {
         grid-row: 1 / 3; /* Rentangkan dari baris 1 sampai 2 */
         width: 40px;
         height: 40px;
-        font-size: 1.7rem;
+        font-size: 1.5rem;
         margin-bottom: 0; /* Hapus jarak bawah karena posisinya sudah di kiri */
         border-width: 2px;
         box-shadow: 3px 3px 0 #000;
