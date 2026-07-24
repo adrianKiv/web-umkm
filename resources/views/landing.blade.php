@@ -112,7 +112,7 @@
                         <div class="neo-feature-card" style="background-color: #81ecec;">
                             <div class="neo-feature-icon">👤</div>
                             <h3 class="neo-feature-title">Personalisasi Akun</h3>
-                            <p class="neo-feature-desc">Daftar dan kelola profil Anda untuk menyimpan riwayat ulasan, melacak status pengajuan UMKM, dan mendapat pengalaman maksimal.</p>
+                            <p class="neo-feature-desc">Daftar dan kelola profil Anda untuk menyimpan riwayat aktifitas, memperbarui nama, email, password, hingga hapus akun.</p>
                         </div>
                     </div>
 

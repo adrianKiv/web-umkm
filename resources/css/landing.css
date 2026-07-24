@@ -1032,6 +1032,31 @@ body.modal-open {
     .neo-about-section .g-4 {
         --bs-gutter-y: 1rem;
     }
+
+    .neo-floating-btn {
+        padding: 8px 10px; /* Ruang dalam diperkecil */
+        border-width: 3px; /* Garis tepi sedikit ditipiskan */
+        border-radius: 10px 0 0 10px; /* Lengkungan disesuaikan */
+        box-shadow: -4px 4px 0 #000; /* Bayangan diperkecil agar proposional */
+    }
+
+    /* Mengecilkan Ikon Piala di dalam tombol */
+    .neo-floating-btn i {
+        font-size: 1.25rem !important; /* Mengalahkan class fs-3 bawaan Bootstrap */
+        margin-bottom: 2px !important;
+    }
+
+    /* Mengecilkan Teks "Top 10" di dalam tombol */
+    .neo-floating-btn span {
+        font-size: 0.65rem !important; /* Mengalahkan inline style */
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* Penyesuaian posisi saat tombol ditekan di HP */
+    .neo-floating-btn:active {
+        transform: translateY(-50%) translate(-2px, 2px);
+        box-shadow: -1px 1px 0 #000;
+    }
 }
 
 @media (max-width: 991.98px) {
