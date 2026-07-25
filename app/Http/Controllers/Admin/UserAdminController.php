@@ -14,7 +14,7 @@ class UserAdminController extends Controller
     /**
      * Display a listing of users
      */
-    public function index()
+    public function index(Request $request)
     {
         $users = User::paginate(20);
 

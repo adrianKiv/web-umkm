@@ -11,7 +11,7 @@ class KelompokAdminController extends Controller
     /**
      * Display a listing of groups
      */
-    public function index()
+    public function index(Request $request)
     {
         $kelompoks = Kelompok::withCount('kategoris')->paginate(20);
                 // Jika ada inputan pencarian

@@ -12,7 +12,7 @@ class KategoriAdminController extends Controller
     /**
      * Display a listing of categories
      */
-    public function index()
+    public function index(Request $request)
     {
         $kategoris = Kategori::with('kelompok')->paginate(20);
                 // Jika ada inputan pencarian
