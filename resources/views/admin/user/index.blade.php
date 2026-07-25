@@ -16,6 +16,22 @@
         </div>
     @else
         <div class="admin-card">
+            <div class="admin-card-header d-flex justify-content-end">
+                <form action="{{ route('admin.user.index') }}" method="GET" class="m-0">
+                    <div class="input-group input-width-300">
+                        <input type="text" name="search" class="form-control"
+                            placeholder="Cari nama Pengguna atau email..." value="{{ request('search') }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        @if(request('search'))
+                            <a href="{{ route('admin.user.index') }}" class="btn btn-outline-danger" title="Reset Pencarian">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        @endif
+                    </div>
+                </form>
+            </div>
             <div class="table-responsive admin-table-wrapper">
                 <table class="table table-hover align-middle admin-table">
                     <thead>

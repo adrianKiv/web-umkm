@@ -15,6 +15,11 @@ class KategoriAdminController extends Controller
     public function index()
     {
         $kategoris = Kategori::with('kelompok')->paginate(20);
+                // Jika ada inputan pencarian
+        if ($request->has('search')) {
+            $search = $request->search;
+            $kategoris = $kategoris->where('nama_kategori', 'like', '%' . $search . '%');
+        }
 
         return view('admin.kategori.index', compact('kategoris'));
     }

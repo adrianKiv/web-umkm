@@ -18,6 +18,12 @@ class UserAdminController extends Controller
     {
         $users = User::paginate(20);
 
+        if ($request->has('search')) {
+            $search = $request->search;
+            $users = $users->where('name', 'like', '%' . $search . '%')
+                           ->orWhere('email', 'like', '%' . $search . '%');
+        }
+
         return view('admin.user.index', compact('users'));
     }
 
