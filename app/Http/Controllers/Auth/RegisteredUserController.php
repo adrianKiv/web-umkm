@@ -40,6 +40,7 @@ class RegisteredUserController extends Controller
     // Ini adalah pesan custom-nya
     'email.required'    => 'Waduh, kolom email tidak boleh kosong ya!',
     'email.email'       => 'Pastikan format email yang dimasukkan sudah benar.',
+    "email.unique"      => 'Email ini sudah terdaftar. Silakan gunakan email lain.',
     'password.required' => 'Password wajib diisi untuk masuk.',
     "password.confirmed" => 'Password konfirmasi tidak cocok dengan password yang dimasukkan.',
     'password.min'      => 'Password minimal harus 8 karakter.',
