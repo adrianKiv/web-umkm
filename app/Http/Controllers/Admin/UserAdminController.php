@@ -16,7 +16,7 @@ class UserAdminController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::paginate(20);
+        $query = User::paginate(20);
 
         if ($request->has('search')) {
             $search = $request->search;

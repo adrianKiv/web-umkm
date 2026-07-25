@@ -13,7 +13,7 @@ class KelompokAdminController extends Controller
      */
     public function index(Request $request)
     {
-        $kelompoks = Kelompok::withCount('kategoris')->paginate(20);
+        $query = Kelompok::withCount('kategoris')->paginate(20);
                 // Jika ada inputan pencarian
         if ($request->has('search')) {
             $search = $request->search;
