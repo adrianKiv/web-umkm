@@ -20,9 +20,11 @@ class UserAdminController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $users = $users->where('name', 'like', '%' . $search . '%')
+            $query = $query->where('name', 'like', '%' . $search . '%')
                            ->orWhere('email', 'like', '%' . $search . '%');
         }
+
+        $users = $query->paginate(15)->withQueryString();
 
         return view('admin.user.index', compact('users'));
     }

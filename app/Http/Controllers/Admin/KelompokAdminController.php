@@ -17,8 +17,10 @@ class KelompokAdminController extends Controller
                 // Jika ada inputan pencarian
         if ($request->has('search')) {
             $search = $request->search;
-            $kelompoks = $kelompoks->where('nama_kelompok', 'like', '%' . $search . '%');
+            $query = $query->where('nama_kelompok', 'like', '%' . $search . '%');
         }
+
+        $kelompoks = $query->paginate(15)->withQueryString();
 
         return view('admin.kelompok.index', compact('kelompoks'));
     }

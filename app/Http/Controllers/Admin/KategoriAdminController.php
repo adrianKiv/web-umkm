@@ -18,8 +18,10 @@ class KategoriAdminController extends Controller
                 // Jika ada inputan pencarian
         if ($request->has('search')) {
             $search = $request->search;
-            $kategoris = $kategoris->where('nama_kategori', 'like', '%' . $search . '%');
+            $query = $query->where('nama_kategori', 'like', '%' . $search . '%');
         }
+
+        $kategoris = $query->paginate(15)->withQueryString();
 
         return view('admin.kategori.index', compact('kategoris'));
     }
