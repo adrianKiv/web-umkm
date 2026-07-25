@@ -36,7 +36,14 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        ], [
+    // Ini adalah pesan custom-nya
+    'email.required'    => 'Waduh, kolom email tidak boleh kosong ya!',
+    'email.email'       => 'Pastikan format email yang dimasukkan sudah benar.',
+    'password.required' => 'Password wajib diisi untuk masuk.',
+    "password.confirmed" => 'Password konfirmasi tidak cocok dengan password yang dimasukkan.',
+    'password.min'      => 'Password minimal harus 8 karakter.',
+    ]);
 
     // 1. TANGKAP SESSION LAMA
     $oldSessionId = $request->session()->getId();
