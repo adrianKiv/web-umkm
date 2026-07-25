@@ -13,13 +13,15 @@ class KelompokAdminController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Kelompok::withCount('kategoris')->paginate(20);
-                // Jika ada inputan pencarian
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query = $query->where('nama_kelompok', 'like', '%' . $search . '%');
+        // Siapkan Query Builder (jangan panggil get() atau paginate() dulu)
+        $query = Kelompok::withCount('kategoris');
+
+        // Gunakan filled() untuk mengecek apakah input ada dan tidak kosong
+        if ($request->filled('search')) {
+            $query->where('nama_kelompok', 'like', '%' . $request->search . '%');
         }
 
+        // Eksekusi query dengan pagination di akhir
         $kelompoks = $query->paginate(15)->withQueryString();
 
         return view('admin.kelompok.index', compact('kelompoks'));

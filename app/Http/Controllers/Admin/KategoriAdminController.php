@@ -14,13 +14,14 @@ class KategoriAdminController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Kategori::with('kelompok')->paginate(20);
-                // Jika ada inputan pencarian
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query = $query->where('nama_kategori', 'like', '%' . $search . '%');
+        // Siapkan Query Builder
+        $query = Kategori::with('kelompok');
+
+        if ($request->filled('search')) {
+            $query->where('nama_kategori', 'like', '%' . $request->search . '%');
         }
 
+        // Eksekusi
         $kategoris = $query->paginate(15)->withQueryString();
 
         return view('admin.kategori.index', compact('kategoris'));

@@ -16,12 +16,17 @@ class UserAdminController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::paginate(20);
+        // Gunakan query() untuk memulai Query Builder
+        $query = User::query();
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query = $query->where('name', 'like', '%' . $search . '%')
-                           ->orWhere('email', 'like', '%' . $search . '%');
+            
+            // Bungkus pencarian dalam closure agar orWhere terisolasi
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%');
+            });
         }
 
         $users = $query->paginate(15)->withQueryString();
