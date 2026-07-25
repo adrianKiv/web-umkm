@@ -91,6 +91,7 @@
                                         <tr>
                                             <th>Pengusul</th>
                                             <th>Nama UMKM</th>
+                                            <th>Foto</th>
                                             <th>Kategori</th>
                                             <th>Kontak</th>
                                             <th>Menu Diajukan</th>
@@ -113,6 +114,13 @@
                                                     </div>
                                                     <small
                                                         class="text-muted">{{ \Illuminate\Support\Str::limit($submission->alamat_lengkap, 45) }}</small>
+                                                </td>
+                                                <td>
+                                                    <img src="{{ $submission->foto_umkm_url }}"
+                                                        alt="Foto {{ $submission->nama_umkm }}"
+                                                        class="thumb-56 lightbox-trigger" style="cursor: zoom-in;"
+                                                        onclick="openImagePreview(this.src, this.alt)"
+                                                        onerror="this.onerror=null;this.src='{{ asset('images/default-umkm.svg') }}';">
                                                 </td>
                                                 <td>{{ $submission->kategori->nama_kategori ?? '-' }}</td>
                                                 <td>{{ $submission->no_telfon }}</td>
@@ -191,7 +199,9 @@
                                                                     class="border rounded p-2 h-100 d-flex gap-2 align-items-start">
                                                                     <img src="{{ $menuSubmission->foto_menu_url }}"
                                                                         alt="Foto {{ $menuSubmission->nama_menu }}"
-                                                                        class="thumb-56"
+                                                                        class="thumb-56 lightbox-trigger"
+                                                                        style="cursor: zoom-in;"
+                                                                        onclick="openImagePreview(this.src, this.alt)"
                                                                         onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
                                                                     <div>
                                                                         @if ($menuSubmission->is_foto_daftar_menu)
@@ -244,7 +254,7 @@
                                             <th>Foto</th>
                                             <th>Pengusul</th>
                                             <th>UMKM Tujuan</th>
-                                            <th>Waktu</th>
+                                            <th>Tanggal</th>
                                             <th class="text-end">Aksi</th>
                                         </tr>
                                     </thead>
@@ -264,7 +274,8 @@
                                                 <td>
                                                     <img src="{{ $menuSubmission->foto_menu_url }}"
                                                         alt="Foto {{ $menuSubmission->nama_menu }}"
-                                                        class="thumb-56"
+                                                        class="thumb-56 lightbox-trigger" style="cursor: zoom-in;"
+                                                        onclick="openImagePreview(this.src, this.alt)"
                                                         onerror="this.onerror=null;this.src='{{ asset('images/default-menu.svg') }}';">
                                                 </td>
                                                 <td>
@@ -331,8 +342,7 @@
                             <ol class="list-group list-group-numbered list-group-flush leaderboard">
                                 @foreach ($topClicks as $umkm)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span class="text-truncate text-truncate-max-70"
-                                                title="{{ $umkm->nama_umkm }}">
+                                        <span class="text-truncate text-truncate-max-70" title="{{ $umkm->nama_umkm }}">
                                             {{ \Illuminate\Support\Str::limit($umkm->nama_umkm, 24) }}
                                         </span>
                                         <span
@@ -360,8 +370,7 @@
                             <ol class="list-group list-group-numbered list-group-flush leaderboard leaderboard-danger">
                                 @foreach ($lowestClicks as $umkm)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span class="text-truncate text-truncate-max-70"
-                                                title="{{ $umkm->nama_umkm }}">
+                                        <span class="text-truncate text-truncate-max-70" title="{{ $umkm->nama_umkm }}">
                                             {{ \Illuminate\Support\Str::limit($umkm->nama_umkm, 24) }}
                                         </span>
                                         <span
@@ -557,6 +566,34 @@
             </div>
         </div>
 
+        <!-- Modal Preview Foto Neo-Brutalism -->
+        <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true" style="z-index: 1070;">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content"
+                    style="border: 4px solid #000; border-radius: 0; box-shadow: 10px 10px 0 #000; background-color: #f4f4f0;">
+
+                    <!-- Header -->
+                    <div
+                        class="modal-header border-bottom-0 pb-0 pt-3 px-3 d-flex justify-content-between align-items-start">
+                        <h5 class="modal-title text-uppercase" id="imagePreviewTitle"
+                            style="color: #000; font-weight: 900; font-size: 1.1rem;">
+                            Preview Foto
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            style="background-color: #ff3838 !important; border: 3px solid #000 !important; border-radius: 0 !important; box-shadow: 3px 3px 0 #000 !important; opacity: 1 !important; padding: 0.5rem !important;">
+                        </button>
+                    </div>
+
+                    <!-- Body (Tempat Foto Ditampilkan) -->
+                    <div class="modal-body p-4 d-flex justify-content-center align-items-center">
+                        <img id="imagePreviewTarget" src="" alt="Preview"
+                            style="max-width: 100%; max-height: 70vh; object-fit: contain; border: 4px solid #000; box-shadow: 8px 8px 0 #000; background: #fff;">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
         <div class="modal fade" id="umkmQualityFixModal" tabindex="-1" aria-labelledby="umkmQualityFixModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
@@ -627,7 +664,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 @endsection
 
@@ -637,6 +673,21 @@
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        function openImagePreview(imageSrc, imageAlt) {
+            // 1. Ambil elemen gambar dan judul di dalam modal
+            const previewImage = document.getElementById('imagePreviewTarget');
+            const previewTitle = document.getElementById('imagePreviewTitle');
+
+            // 2. Timpa src dan alt dengan data dari gambar yang diklik
+            previewImage.src = imageSrc;
+            previewTitle.innerText = imageAlt;
+
+            // 3. Tampilkan modal menggunakan bawaan Bootstrap
+            const imageModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+            imageModal.show();
+        }
+    </script>
     <script id="adminDashboardConfig" type="application/json">
         {!! json_encode([
             'ratingLabels' => $ratingCategoryLabels,
