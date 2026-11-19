@@ -35,4 +35,23 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Rekomendasi (service Go, eksperimen skripsi)
+    |--------------------------------------------------------------------------
+    |
+    | engine:
+    |   php    -> 100% kode lama, service Go tidak dipanggil (default, aman)
+    |   shadow -> hitung keduanya, tetap pakai hasil PHP, selisih dicatat ke log
+    |   go     -> pakai hasil service Go, fallback ke PHP kalau service gagal
+    |
+    */
+
+    'rekomendasi' => [
+        'url' => env('REKOMENDASI_URL', 'http://127.0.0.1:8081'),
+        'key' => env('REKOMENDASI_API_KEY'),
+        'engine' => env('REKOMENDASI_ENGINE', 'php'),
+        'timeout' => (float) env('REKOMENDASI_TIMEOUT', 0.8),
+    ],
+
 ];

@@ -33,6 +33,13 @@ jobs:
         if: steps.check_files.outputs.files_exists == 'true'
         run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
 
+      # Service Go dan dokumen tidak dipakai runtime Laravel. Tanpa langkah ini
+      # keduanya ikut ke wwwroot, dan skrip parity PHP di go-umkm/parity/ bisa
+      # dieksekusi lewat URL publik.
+      - name: Buang folder non-aplikasi dari artefak deploy
+        run: rm -rf go-umkm docs
+
+
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
