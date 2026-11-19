@@ -127,14 +127,17 @@ go run ./cmd/warmup         # tabel 10 sampel
 - **Koreksi alat ukur:** `curl` per request menambah ~20 ms startup (angka 25 ms di Sprint 2 salah) → diganti alat beban Go; `php artisan serve` juga tidak dipakai untuk uji beban karena satu proses.
 - **Insiden saat pengukuran:** MySQL sempat mati di tengah sesi; `loadtest` awalnya melaporkan "status=500x0" yang berarti *semua request gagal*, bukan 500 sukses. Alat sudah diperbaiki: kini mencetak `ok=/err=` dan keluar dengan kode 2 kalau semua gagal. Angka di laporan hanya dari run dengan `ok=500 err=0`.
 
-### Sprint 6 — Deploy terpisah dari production Laravel (8-10 jam)
+### Sprint 6 — Deploy terpisah dari production Laravel ✅ SELESAI (19 Nov 2026)
 
 > **Penting (baca sebelum eksekusi):** App Service `umkmupi` men-deploy **seluruh isi repo** tiap push ke `main` (`webapps-deploy`, `package: .`). Artinya: jangan taruh binary/config Go yang tidak perlu di root repo, dan jangan pernah mengubah job deploy Laravel yang sudah jalan. Service Go harus jadi **App Service / Container App terpisah**, bukan sidecar di `umkmupi`.
 
-- Dockerfile multi-stage (`golang:1.2x` builder → `distroless`/`alpine` runtime, binary statis, non-root user).
-- GitHub Actions job baru `deploy-go.yml`: build image → push GHCR → deploy ke Azure Container App (`umkm-go`, internal ingress, min replicas 0/1) atau App Service Linux container baru.
-- Secrets: `REKOMENDASI_API_KEY` di App Service config + key sama di container app. Jangan commit.
-- **DoD:** health check `GET /healthz` dari Laravel staging balas 200; flag on di staging 1 hari tanpa error; rollback = set flag `php` (tanpa redeploy Go).
+- Dockerfile multi-stage (`golang:1.27-alpine` builder → `distroless/static:nonroot`, binary statis, non-root user). ✅
+- Image dibangun **GitHub Actions → GHCR** (bukan ACR): `az acr build` gagal di `indonesiacentral` karena ACR Tasks belum tersedia di region itu. GHCR gratis, paket publik, Container App menarik tanpa PAT. ✅
+- Azure Container App `rekomendasi-go` di `cae-umkmupi` (Indonesia Central, region sama dengan MySQL), ingress external, `min-replicas 0` / `max-replicas 2`, 0,25 vCPU / 0,5 GiB. ✅
+- Secrets: `db-pass` + `api-key` di Container App secret (env memakai `secretref:`), user MySQL baru `rekomendasi_ro` dengan `GRANT SELECT` saja. ✅
+- `DB_TLS=preferred` wajib: Azure MySQL menolak koneksi tanpa TLS (`Ssl_cipher` kosong → error 3159). ✅
+- **DoD tercapai sebagian:** `/healthz` 200, POST tanpa key 401, POST dengan key 200 (10 hasil, 144 kandidat), server-side 0,067–0,113 ms, end-to-end p50 30 ms. Yang belum: flag `shadow`/`go` di App Service produksi — menunggu merge ke `main`, karena App Service masih menjalankan kode `main` yang belum punya `RekomendasiClient`.
+- Rollback tetap = set flag `php` (tanpa redeploy Go).
 
 ### Sprint 7 — Concurrency showcase (opsional, 8 jam)
 - Pilih satu: (a) `SyncOsmUmkm` versi Go dengan worker pool + rate limit + upsert idempoten `osm_id`, atau (b) in-memory grid spatial index untuk `mapData` bbox.

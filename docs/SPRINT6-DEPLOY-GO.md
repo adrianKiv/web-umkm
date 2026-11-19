@@ -141,6 +141,33 @@ Lalu di App Service `umkmpui` (Configuration → Application settings):
 Rollback = set `REKOMENDASI_ENGINE=php`. Tidak ada perubahan skema, tidak ada data yang
 ditulis service ini.
 
+## Status eksekusi (19 Nov 2026)
+
+| Langkah | Status |
+|---|---|
+| Login `az` (Azure for Students) | ✅ `adrianmulianto@gmail.com` |
+| Provider `Microsoft.App`, `Microsoft.ContainerRegistry`, `Microsoft.OperationalInsights` | ✅ Registered |
+| User `rekomendasi_ro` + `GRANT SELECT` | ✅ `GRANT USAGE ON *.*` + `GRANT SELECT ON kulinerupi_db.*` |
+| Koneksi Go → MySQL produksi | ✅ TLS, `umkm=144 rating=4225 aktivitas=476` |
+| Container Apps environment `cae-umkmupi` | ✅ `gentlehill-5baf77a7.indonesiacentral.azurecontainerapps.io` |
+| Image di registry | ✅ GHCR publik `ghcr.io/adriankiv/umkm-rekomendasi` (tag `latest` + SHA), manifest anonim `HTTP 200` |
+| Container App `rekomendasi-go` | ✅ `rekomendasi-go.gentlehill-5baf77a7.indonesiacentral.azurecontainerapps.io`, min 0 / max 2, 0,25 vCPU / 0,5 GiB |
+| Verifikasi HTTP | ✅ `/healthz` → `{"status":"ok"}`; POST tanpa key → **401**; POST dengan key → **200**, 10 hasil |
+| Hasil rekomendasi produksi | ✅ `top_category_ids [1,7,2]`, ids `[99,131,89,40,79,105,15,106,145,35]`, 144 kandidat |
+| Latensi | server-side `lama_ms` 0,067–0,113 ms; end-to-end keep-alive dari rumah p50 **30 ms** (min 13 ms) |
+| Cleanup | ✅ firewall `laptop-adrian-temp` dihapus (4 rule asli tetap), file password scratch dihapus |
+
+Catatan region: ACR boleh dibuat di `indonesiacentral`, tapi `az acr build` gagal
+(`registries/listBuildSourceUploadUrl` tidak mendukung region itu) → image dibangun
+GitHub Actions dan ditaruh di GHCR (gratis, publik, tanpa PAT). Alternatif kalau CI
+tidak bisa dipakai: ACR di `southeastasia` (±$5/bulan dari kredit Students).
+
+Ambil ulang API key saat menyambungkan Laravel:
+
+```bash
+az containerapp secret list -g RG-WebGIS-KulinerUPI -n rekomendasi-go --show-values
+```
+
 ## Biaya
 
 | Pola | Perkiraan |
