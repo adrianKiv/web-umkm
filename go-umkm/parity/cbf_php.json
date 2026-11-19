@@ -1,0 +1,1192 @@
+[
+    {
+        "nama": "session-top-1",
+        "top_category_ids": [
+            3,
+            2,
+            6
+        ],
+        "skor_kategori": {
+            "3": 4.25,
+            "6": 2.8000000000000003,
+            "9": 2.1,
+            "2": 3.25,
+            "1": 2.5,
+            "10": 2.5,
+            "5": 1.4000000000000001,
+            "4": 1.4000000000000001,
+            "7": 1.05,
+            "8": 1.05
+        },
+        "recommended": [
+            {
+                "id_umkm": 123,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 14,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 20,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 128,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 110,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 74,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 71,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-top-2",
+        "top_category_ids": [
+            1,
+            2,
+            7
+        ],
+        "skor_kategori": {
+            "1": 3.6999999999999997,
+            "7": 2.4000000000000004,
+            "2": 2.5999999999999996,
+            "10": 2.35,
+            "6": 0.6000000000000001,
+            "3": 2.35,
+            "9": 1.2000000000000002,
+            "8": 1.2000000000000002,
+            "5": 0.30000000000000004,
+            "4": 0.30000000000000004
+        },
+        "recommended": [
+            {
+                "id_umkm": 99,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 40,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 79,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 105,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 15,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-top-3",
+        "top_category_ids": [
+            9,
+            3,
+            10
+        ],
+        "skor_kategori": {
+            "9": 3.2,
+            "3": 2.1,
+            "10": 1.9500000000000002,
+            "7": 1.6,
+            "8": 1.6,
+            "2": 1.35,
+            "1": 1.35
+        },
+        "recommended": [
+            {
+                "id_umkm": 76,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 83,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 150,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 153,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 123,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 14,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 20,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 5,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 2,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 94,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-top-4",
+        "top_category_ids": [
+            4,
+            6,
+            2
+        ],
+        "skor_kategori": {
+            "4": 2.4000000000000004,
+            "6": 2.4000000000000004,
+            "2": 1.8,
+            "5": 1.6,
+            "3": 0.9,
+            "1": 0.9,
+            "10": 0.9
+        },
+        "recommended": [
+            {
+                "id_umkm": 122,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 78,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 121,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 119,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 110,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 74,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 71,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-top-5",
+        "top_category_ids": [
+            7,
+            1,
+            2
+        ],
+        "skor_kategori": {
+            "1": 1.7500000000000002,
+            "2": 1.7000000000000002,
+            "7": 2.2,
+            "3": 1.1500000000000001,
+            "10": 1.1500000000000001,
+            "9": 1.1,
+            "8": 1.1
+        },
+        "recommended": [
+            {
+                "id_umkm": 79,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 105,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 15,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 97,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 99,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-top-6",
+        "top_category_ids": [
+            2,
+            3,
+            1
+        ],
+        "skor_kategori": {
+            "2": 3,
+            "3": 2.4499999999999997,
+            "1": 2.35,
+            "10": 1.9500000000000002
+        },
+        "recommended": [
+            {
+                "id_umkm": 106,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 60,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 123,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 14,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 20,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 99,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-top-7",
+        "top_category_ids": [
+            10,
+            2,
+            1
+        ],
+        "skor_kategori": {
+            "10": 2.5,
+            "2": 2.3500000000000005,
+            "1": 2.3500000000000005,
+            "3": 1.8
+        },
+        "recommended": [
+            {
+                "id_umkm": 5,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 2,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 94,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 154,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 99,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-top-8",
+        "top_category_ids": [
+            1,
+            3,
+            2
+        ],
+        "skor_kategori": {
+            "6": 0.8500000000000001,
+            "1": 1.5000000000000002,
+            "7": 0.8,
+            "2": 1,
+            "3": 1.1,
+            "5": 0.5,
+            "4": 0.45,
+            "10": 0.9000000000000001,
+            "9": 0.4,
+            "8": 0.4
+        },
+        "recommended": [
+            {
+                "id_umkm": 99,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 40,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 123,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 14,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 20,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-top-9",
+        "top_category_ids": [
+            7,
+            9,
+            8
+        ],
+        "skor_kategori": {
+            "7": 2.5500000000000003,
+            "9": 2.15,
+            "8": 2.1
+        },
+        "recommended": [
+            {
+                "id_umkm": 79,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 105,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 15,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 97,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 76,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 83,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 150,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 23,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 8,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 67,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-top-10",
+        "top_category_ids": [
+            6,
+            5,
+            4
+        ],
+        "skor_kategori": {
+            "5": 1.7000000000000002,
+            "6": 1.7500000000000002,
+            "7": 1.1,
+            "4": 1.1500000000000001,
+            "9": 0.55,
+            "8": 0.55
+        },
+        "recommended": [
+            {
+                "id_umkm": 110,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 74,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 71,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 147,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 34,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 113,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 101,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 122,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 78,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 121,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-explicit-1",
+        "top_category_ids": [
+            3,
+            2,
+            6
+        ],
+        "skor_kategori": {
+            "3": 4.25,
+            "6": 2.8000000000000003,
+            "9": 2.1,
+            "2": 3.25,
+            "1": 2.5,
+            "10": 2.5,
+            "5": 1.4000000000000001,
+            "4": 1.4000000000000001,
+            "7": 1.05,
+            "8": 1.05
+        },
+        "recommended": [
+            {
+                "id_umkm": 123,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 14,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 20,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 128,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 110,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 74,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 71,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-explicit-2",
+        "top_category_ids": [
+            1,
+            2,
+            10
+        ],
+        "skor_kategori": {
+            "2": 3.5999999999999996,
+            "1": 4.2,
+            "7": 2.4000000000000004,
+            "10": 2.85,
+            "6": 0.6000000000000001,
+            "3": 2.85,
+            "9": 1.2000000000000002,
+            "8": 1.2000000000000002,
+            "5": 0.30000000000000004,
+            "4": 0.30000000000000004
+        },
+        "recommended": [
+            {
+                "id_umkm": 99,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 40,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 5,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 2,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 94,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-explicit-3",
+        "top_category_ids": [
+            9,
+            7,
+            3
+        ],
+        "skor_kategori": {
+            "1": 2.35,
+            "7": 2.6,
+            "9": 3.7,
+            "3": 2.6,
+            "10": 2.45,
+            "2": 1.85,
+            "8": 2.1
+        },
+        "recommended": [
+            {
+                "id_umkm": 76,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 83,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 150,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 153,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 79,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 105,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 15,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 123,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 14,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 20,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-explicit-4",
+        "top_category_ids": [
+            4,
+            6,
+            2
+        ],
+        "skor_kategori": {
+            "10": 1.9,
+            "4": 2.4000000000000004,
+            "6": 2.4000000000000004,
+            "2": 2.3,
+            "3": 1.4,
+            "1": 1.4,
+            "5": 1.6
+        },
+        "recommended": [
+            {
+                "id_umkm": 122,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 78,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 121,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 119,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 110,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 74,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 71,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "session-explicit-5",
+        "top_category_ids": [
+            1,
+            2,
+            7
+        ],
+        "skor_kategori": {
+            "3": 2.1500000000000004,
+            "5": 1,
+            "1": 2.25,
+            "2": 2.2,
+            "7": 2.2,
+            "10": 1.6500000000000001,
+            "6": 0.5,
+            "4": 0.5,
+            "9": 1.1,
+            "8": 1.1
+        },
+        "recommended": [
+            {
+                "id_umkm": 99,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 40,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 79,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 105,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 15,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "eksplisit-satu",
+        "top_category_ids": [
+            1,
+            2,
+            3
+        ],
+        "skor_kategori": {
+            "1": 1,
+            "2": 0.5,
+            "3": 0.5,
+            "10": 0.5
+        },
+        "recommended": [
+            {
+                "id_umkm": 99,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 40,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 123,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 14,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 20,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "eksplisit-dua-kelompok",
+        "top_category_ids": [
+            1,
+            7,
+            2
+        ],
+        "skor_kategori": {
+            "1": 1,
+            "7": 1,
+            "2": 0.5,
+            "3": 0.5,
+            "10": 0.5,
+            "9": 0.5,
+            "8": 0.5
+        },
+        "recommended": [
+            {
+                "id_umkm": 99,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 40,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 79,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 105,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 15,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "eksplisit-tiga",
+        "top_category_ids": [
+            2,
+            10,
+            6
+        ],
+        "skor_kategori": {
+            "2": 1.5,
+            "6": 1,
+            "10": 1.5,
+            "3": 1,
+            "1": 1,
+            "5": 0.5,
+            "4": 0.5
+        },
+        "recommended": [
+            {
+                "id_umkm": 106,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 60,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 5,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 2,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 94,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 110,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 74,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 71,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "eksplisit-semua",
+        "top_category_ids": [
+            1,
+            2,
+            3
+        ],
+        "skor_kategori": {
+            "1": 2.5,
+            "2": 2.5,
+            "3": 2.5,
+            "4": 2,
+            "5": 2,
+            "6": 2,
+            "7": 2,
+            "8": 2,
+            "9": 2,
+            "10": 2.5
+        },
+        "recommended": [
+            {
+                "id_umkm": 99,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 40,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 123,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 14,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 20,
+                "peringkat": 3
+            }
+        ]
+    },
+    {
+        "nama": "eksplisit-kosong",
+        "top_category_ids": [],
+        "skor_kategori": [],
+        "recommended": []
+    },
+    {
+        "nama": "user-login",
+        "top_category_ids": [
+            3,
+            2,
+            1
+        ],
+        "skor_kategori": {
+            "3": 0.1,
+            "2": 0.05,
+            "1": 0.05,
+            "10": 0.05
+        },
+        "recommended": [
+            {
+                "id_umkm": 123,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 14,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 20,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 128,
+                "peringkat": 1
+            },
+            {
+                "id_umkm": 106,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 145,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 35,
+                "peringkat": 2
+            },
+            {
+                "id_umkm": 99,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 131,
+                "peringkat": 3
+            },
+            {
+                "id_umkm": 89,
+                "peringkat": 3
+            }
+        ]
+    }
+]

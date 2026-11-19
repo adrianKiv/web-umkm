@@ -8,6 +8,7 @@ use App\Models\Kategori;
 use App\Models\Kelompok;
 use App\Models\Rating;
 use App\Models\UserActivity;
+use App\Services\RekomendasiClient;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -113,27 +114,70 @@ public function landing(Request $request)
         ->groupBy('id_kategori')
         ->get();
 
-    // D. Kalkulasi Skor Dasar (Eksplisit + Implisit)
-    $baseCategoryScores = $explicitScores;
-    foreach ($implicitRows as $row) {
-        $catId = (int) $row->id_kategori;
-        $baseCategoryScores[$catId] = ($baseCategoryScores[$catId] ?? 0) + ((int) $row->total * 0.1);
-    }
+    // D-H. SKOR REKOMENDASI
+    // Dua jalur yang wajib menghasilkan angka sama:
+    //   - PHP : kode asli (default, REKOMENDASI_ENGINE=php)
+    //   - Go  : service eksternal (REKOMENDASI_ENGINE=go), fallback ke PHP
+    //           kalau service mati/lambat/JSON rusak.
+    // Catatan: filter request tidak dikirim ke service, jadi saat filter aktif
+    // kita tetap pakai PHP. Kalau tidak, rekomendasi bisa memuat UMKM yang
+    // sudah difilter keluar oleh user.
+    $client = app(RekomendasiClient::class);
+    $filterAktif = $request->filled('id_kategori')
+        || $request->filled('id_kelompok')
+        || $request->filled('search')
+        || ($request->filled('min_rating') && (float) $request->min_rating > 0);
 
-    // E. DISTRIBUSI SKOR KELOMPOK
-    // Jika user suka Kategori A, beri juga sedikit bobot ke Kategori B & C yang sekelompok
-    $finalCategoryScores = $baseCategoryScores;
-    foreach ($baseCategoryScores as $catId => $score) {
-        if ($score > 0) {
-            $kelompokId = $kategoriToKelompok[$catId] ?? null;
-            if ($kelompokId && isset($kelompokGroups[$kelompokId])) {
-                foreach ($kelompokGroups[$kelompokId] as $siblingCat) {
-                    $siblingId = (int) $siblingCat->id_kategori;
-                    // Beri cipratan 50% skor ke kategori saudara, biarkan kategori asli tetap
-                    if ($siblingId !== $catId) {
-                        $finalCategoryScores[$siblingId] = ($finalCategoryScores[$siblingId] ?? 0) + ($score * 0.5);
+    $hitungLokal = function () use ($explicitScores, $implicitRows, $kategoriToKelompok, $kelompokGroups) {
+        // D. Kalkulasi Skor Dasar (Eksplisit + Implisit)
+        $baseCategoryScores = $explicitScores;
+        foreach ($implicitRows as $row) {
+            $catId = (int) $row->id_kategori;
+            $baseCategoryScores[$catId] = ($baseCategoryScores[$catId] ?? 0) + ((int) $row->total * 0.1);
+        }
+
+        // E. DISTRIBUSI SKOR KELOMPOK
+        // Jika user suka Kategori A, beri juga sedikit bobot ke Kategori B & C yang sekelompok
+        $finalCategoryScores = $baseCategoryScores;
+        foreach ($baseCategoryScores as $catId => $score) {
+            if ($score > 0) {
+                $kelompokId = $kategoriToKelompok[$catId] ?? null;
+                if ($kelompokId && isset($kelompokGroups[$kelompokId])) {
+                    foreach ($kelompokGroups[$kelompokId] as $siblingCat) {
+                        $siblingId = (int) $siblingCat->id_kategori;
+                        // Beri cipratan 50% skor ke kategori saudara, biarkan kategori asli tetap
+                        if ($siblingId !== $catId) {
+                            $finalCategoryScores[$siblingId] = ($finalCategoryScores[$siblingId] ?? 0) + ($score * 0.5);
+                        }
                     }
                 }
+            }
+        }
+
+        // G. Tentukan 3 Kategori Teratas
+        $topCategoryIds = collect($finalCategoryScores)
+            ->mapWithKeys(fn($v, $k) => [(int) $k => (float) $v])
+            ->sortDesc()->keys()->take(3)->map(fn($id) => (int) $id)->values()->all();
+
+        return [$finalCategoryScores, $topCategoryIds];
+    };
+
+    [$finalCategoryScores, $topCategoryIds] = $hitungLokal();
+
+    // null = alokasi 4-3-3 dihitung di PHP; array = urutan final dari service Go
+    $urutanRekomendasi = null;
+
+    if ($client->aktif() && ! $filterAktif) {
+        $remote = $client->rekomendasi($preferredCategoryIds, $userId, $sessionId);
+
+        if ($remote !== null) {
+            // shadow mode: catat selisih, tapi hasil PHP yang dipakai
+            $client->bandingkan($finalCategoryScores, $topCategoryIds, $remote);
+
+            if (! $client->shadow()) {
+                $finalCategoryScores = $remote['skor_kategori'];
+                $topCategoryIds = $remote['top_category_ids'];
+                $urutanRekomendasi = $remote['id_umkm'];
             }
         }
     }
@@ -145,11 +189,6 @@ public function landing(Request $request)
         return $umkm;
     });
 
-    // G. Tentukan 3 Kategori Teratas
-    $topCategoryIds = collect($finalCategoryScores)
-        ->mapWithKeys(fn($v, $k) => [(int) $k => (float) $v])
-        ->sortDesc()->keys()->take(3)->map(fn($id) => (int) $id)->values()->all();
-
     // Tandai UMKM mana saja yang masuk dalam kategori rekomendasi (Untuk Badge)
     $allUmkms->each(function ($umkm) use ($topCategoryIds) {
         $umkm->setAttribute('is_recommended', in_array((int) $umkm->id_kategori, $topCategoryIds, true));
@@ -157,18 +196,30 @@ public function landing(Request $request)
 
     // H. Alokasi Proporsional agar 3 kategori muncul semua (Format 4-3-3)
     $recommendedUmkms = collect();
-    $allocationLimits = [4, 3, 3]; // Peringkat 1 (Max 4), Peringkat 2 (Max 3), Peringkat 3 (Max 3)
 
-    foreach ($topCategoryIds as $index => $catId) {
-        $limit = $allocationLimits[$index] ?? 3;
+    if ($urutanRekomendasi !== null) {
+        // Urutan sudah final dari service: cukup ambil model yang sudah ter-load,
+        // tidak perlu query tambahan.
+        $petaUmkm = $allUmkms->keyBy('id_umkm');
+        foreach ($urutanRekomendasi as $idUmkm) {
+            if ($petaUmkm->has($idUmkm)) {
+                $recommendedUmkms->push($petaUmkm->get($idUmkm));
+            }
+        }
+    } else {
+        $allocationLimits = [4, 3, 3]; // Peringkat 1 (Max 4), Peringkat 2 (Max 3), Peringkat 3 (Max 3)
 
-        $umkmsInCat = $scoredUmkms
-            ->where('id_kategori', $catId)
-            // Lakukan sort sekunder berdasarkan rating tertinggi agar yang tampil adalah yang terbaik di kategori tersebut
-            ->sortByDesc(fn($u) => $u->rating->avg('nilai_rating') ?? 0)
-            ->take($limit);
+        foreach ($topCategoryIds as $index => $catId) {
+            $limit = $allocationLimits[$index] ?? 3;
 
-        $recommendedUmkms = $recommendedUmkms->merge($umkmsInCat);
+            $umkmsInCat = $scoredUmkms
+                ->where('id_kategori', $catId)
+                // Lakukan sort sekunder berdasarkan rating tertinggi agar yang tampil adalah yang terbaik di kategori tersebut
+                ->sortByDesc(fn($u) => $u->rating->avg('nilai_rating') ?? 0)
+                ->take($limit);
+
+            $recommendedUmkms = $recommendedUmkms->merge($umkmsInCat);
+        }
     }
 
     // =========================================================================

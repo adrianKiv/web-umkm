@@ -1,0 +1,86 @@
+[
+    {
+        "nama": "Warung Nasi Ibu Imas",
+        "amenity": "restaurant",
+        "kategori": 1,
+        "slug": "warung-nasi-ibu-imas-1102938471"
+    },
+    {
+        "nama": "Kopi Kenangan",
+        "amenity": "cafe",
+        "kategori": 7,
+        "slug": "kopi-kenangan-1102938472"
+    },
+    {
+        "nama": "Bakso Pak Kumis",
+        "amenity": "restaurant",
+        "kategori": 3,
+        "slug": "bakso-pak-kumis-1102938473"
+    },
+    {
+        "nama": "Seblak Neng Ana",
+        "amenity": "",
+        "kategori": 4,
+        "slug": "seblak-neng-ana-1102938474"
+    },
+    {
+        "nama": "Ayam Geprek Bensu",
+        "amenity": "fast_food",
+        "kategori": 2,
+        "slug": "ayam-geprek-bensu-1102938475"
+    },
+    {
+        "nama": "Mie Ayam Pak Tono",
+        "amenity": "",
+        "kategori": 3,
+        "slug": "mie-ayam-pak-tono-1102938476"
+    },
+    {
+        "nama": "RM. Padang Sederhana",
+        "amenity": "",
+        "kategori": 1,
+        "slug": "rm-padang-sederhana-1102938477"
+    },
+    {
+        "nama": "Sate & Gule H. Mahmud",
+        "amenity": "restaurant",
+        "kategori": 1,
+        "slug": "sate-gule-h-mahmud-1102938478"
+    },
+    {
+        "nama": "Café Sudirman",
+        "amenity": "",
+        "kategori": 1,
+        "slug": "cafe-sudirman-1102938479"
+    },
+    {
+        "nama": "Café Sudirman",
+        "amenity": "cafe",
+        "kategori": 7,
+        "slug": "cafe-sudirman-1102938481"
+    },
+    {
+        "nama": "Kedai Aci Rasa",
+        "amenity": "",
+        "kategori": 4,
+        "slug": "kedai-aci-rasa-1102938480"
+    },
+    {
+        "nama": "AYAM Penyet Mas Budi",
+        "amenity": "",
+        "kategori": 2,
+        "slug": "ayam-penyet-mas-budi-1102938482"
+    },
+    {
+        "nama": "Warung 24 Jam",
+        "amenity": "fast_food",
+        "kategori": 2,
+        "slug": "warung-24-jam-1102938483"
+    },
+    {
+        "nama": "Toko Sembako (Murah)",
+        "amenity": "",
+        "kategori": 1,
+        "slug": "toko-sembako-murah-1102938484"
+    }
+]

@@ -1,0 +1,1972 @@
+Route::get('/eval-cbf-sensitivity', function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | C2 - CBF SENSITIVITY ANALYSIS
+    |--------------------------------------------------------------------------
+    |
+    | 10 SESSION x 3 CHECKPOINT x 9 CONFIGURATION
+    |
+    | Total:
+    | 10 x 3 x 9 = 270 evaluation runs
+    |
+    | Baseline production:
+    | implicit weight = 0.10
+    | spillover      = 0.50
+    | allocation     = 4-3-3
+    |
+    |--------------------------------------------------------------------------
+    */
+
+
+    // ========================================================================
+    // 1. KONFIGURASI SENSITIVITY
+    // ========================================================================
+
+    $configurations = [
+
+        /*
+        |--------------------------------------------------------------------------
+        | IMPLICIT WEIGHT
+        |--------------------------------------------------------------------------
+        */
+
+        'W1' => [
+            'parameter' => 'implicit_weight',
+            'label' => 'Implicit Weight 0.05',
+            'implicit_weight' => 0.05,
+            'spillover_rate' => 0.50,
+            'allocation' => [4, 3, 3],
+        ],
+
+        'W2' => [
+            'parameter' => 'implicit_weight',
+            'label' => 'Implicit Weight 0.10 (Baseline)',
+            'implicit_weight' => 0.10,
+            'spillover_rate' => 0.50,
+            'allocation' => [4, 3, 3],
+        ],
+
+        'W3' => [
+            'parameter' => 'implicit_weight',
+            'label' => 'Implicit Weight 0.20',
+            'implicit_weight' => 0.20,
+            'spillover_rate' => 0.50,
+            'allocation' => [4, 3, 3],
+        ],
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SPILLOVER RATE
+        |--------------------------------------------------------------------------
+        */
+
+        'S1' => [
+            'parameter' => 'spillover_rate',
+            'label' => 'Spillover 25%',
+            'implicit_weight' => 0.10,
+            'spillover_rate' => 0.25,
+            'allocation' => [4, 3, 3],
+        ],
+
+        'S2' => [
+            'parameter' => 'spillover_rate',
+            'label' => 'Spillover 50% (Baseline)',
+            'implicit_weight' => 0.10,
+            'spillover_rate' => 0.50,
+            'allocation' => [4, 3, 3],
+        ],
+
+        'S3' => [
+            'parameter' => 'spillover_rate',
+            'label' => 'Spillover 75%',
+            'implicit_weight' => 0.10,
+            'spillover_rate' => 0.75,
+            'allocation' => [4, 3, 3],
+        ],
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ALLOCATION PATTERN
+        |--------------------------------------------------------------------------
+        */
+
+        'A1' => [
+            'parameter' => 'allocation',
+            'label' => 'Allocation 5-3-2',
+            'implicit_weight' => 0.10,
+            'spillover_rate' => 0.50,
+            'allocation' => [5, 3, 2],
+        ],
+
+        'A2' => [
+            'parameter' => 'allocation',
+            'label' => 'Allocation 4-3-3 (Baseline)',
+            'implicit_weight' => 0.10,
+            'spillover_rate' => 0.50,
+            'allocation' => [4, 3, 3],
+        ],
+
+        'A3' => [
+            'parameter' => 'allocation',
+            'label' => 'Allocation 3-4-3',
+            'implicit_weight' => 0.10,
+            'spillover_rate' => 0.50,
+            'allocation' => [3, 4, 3],
+        ],
+    ];
+
+
+    // ========================================================================
+    // 2. 10 SESSION / 30 CHECKPOINT
+    // ========================================================================
+
+    $sessions = [
+
+        'S01' => [
+            'session_id' => 'HHxiQDLN7b6dZZIaYVNGY8sqSledhsjkRChSjgbZ',
+
+            'A' => [9, 4, 8],
+
+            'B' => [5],
+
+            'C' => [6, 5, 4],
+        ],
+
+
+        'S02' => [
+            'session_id' => '9OYJUdtUq5dBkLvV4NQ0vjk5kvBCjH85GAy1jONp',
+
+            'A' => [5, 3, 4],
+
+            'B' => [10],
+
+            'C' => [10, 2, 1],
+        ],
+
+
+        'S03' => [
+            'session_id' => 'swFmEtGocWgjUNnp1Ww4namkKhHF6zFzfftJuY70',
+
+            'A' => [2, 5, 7],
+
+            'B' => [6],
+
+            'C' => [6, 5, 9],
+        ],
+
+
+        'S04' => [
+            'session_id' => 'FdSOW7vDgY7xHCzaC2awq0JPSIj2yK6wszToVB9x',
+
+            'A' => [3, 8, 10],
+
+            'B' => [1],
+
+            'C' => [1, 2, 7],
+        ],
+
+
+        'S05' => [
+            'session_id' => 'hcO3x86ZVCqxpsJh4GSKOzc4YqZysW5nDIabh2gD',
+
+            'A' => [5, 9, 4],
+
+            'B' => [2],
+
+            'C' => [2, 3, 1],
+        ],
+
+
+        'S06' => [
+            'session_id' => 'wJhYswS76MY1wNf8QWynqVZLZSw6ZxNu7FUCyrhX',
+
+            'A' => [5, 1, 10],
+
+            'B' => [7],
+
+            'C' => [7, 9, 8],
+        ],
+
+
+        'S07' => [
+            'session_id' => '0F7ff3VI6LrXumO2EpC3vmoCwJxJVPEriAND6QYn',
+
+            'A' => [5, 9, 4],
+
+            'B' => [3],
+
+            'C' => [3, 6, 2],
+        ],
+
+
+        'S08' => [
+            'session_id' => 'TsYkCqyH98KQB5lp6hNS5nQRynord2VL1WniRAvT',
+
+            'A' => [3, 4, 10],
+
+            'B' => [8],
+
+            'C' => [8, 9, 7],
+        ],
+
+
+        'S09' => [
+            'session_id' => 'INpNQq8GjgDesQ3yoQEBsUp5wBXEObAy7TPj1hkM',
+
+            'A' => [5, 3, 10],
+
+            'B' => [4],
+
+            'C' => [4, 6, 2],
+        ],
+
+
+        'S10' => [
+            'session_id' => 'zYHfpqxlxFUjf6n5I1m8Ls7AWGxYQS7A8NMC5gz9',
+
+            'A' => [2, 6, 1],
+
+            'B' => [9],
+
+            'C' => [9, 3, 10],
+        ],
+    ];
+
+
+    // ========================================================================
+    // 3. LOAD MASTER DATA
+    // ========================================================================
+
+    /*
+    |--------------------------------------------------------------------------
+    | UMKM
+    |--------------------------------------------------------------------------
+    |
+    | Primary key:
+    | id_umkm
+    |
+    */
+
+    $allUmkms = Umkm::with('rating')->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | KATEGORI
+    |--------------------------------------------------------------------------
+    */
+
+    $kategoriList = Kategori::with('kelompok')
+        ->orderBy('nama_kategori')
+        ->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mapping:
+    |
+    | id_kategori -> id_kelompok
+    |--------------------------------------------------------------------------
+    */
+
+    $kategoriToKelompok = $kategoriList
+        ->pluck(
+            'id_kelompok',
+            'id_kategori'
+        )
+        ->toArray();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Group kategori berdasarkan kelompok
+    |--------------------------------------------------------------------------
+    */
+
+    $kelompokGroups =
+        $kategoriList->groupBy('id_kelompok');
+
+
+    // ========================================================================
+    // 4. FUNCTION CBF
+    // ========================================================================
+
+    $runCbf = function (
+        array $preferredCategoryIds,
+        $implicitRows,
+        float $implicitWeight,
+        float $spilloverRate,
+        array $allocationLimits
+    ) use (
+        $allUmkms,
+        $kategoriToKelompok,
+        $kelompokGroups
+    ) {
+
+
+        // ====================================================================
+        // A. EXPLICIT PREFERENCE
+        // ====================================================================
+
+        $preferredCategoryIds =
+            collect($preferredCategoryIds)
+                ->map(fn ($id) => (int) $id)
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+
+        $explicitScores =
+            collect($preferredCategoryIds)
+                ->mapWithKeys(
+                    fn ($id) => [
+                        (int) $id => 1.0
+                    ]
+                )
+                ->all();
+
+
+        // ====================================================================
+        // B. IMPLICIT PREFERENCE
+        // ====================================================================
+
+        $baseCategoryScores =
+            $explicitScores;
+
+
+        foreach ($implicitRows as $row) {
+
+            $catId =
+                (int) $row['id_kategori'];
+
+            $total =
+                (int) $row['total'];
+
+
+            $baseCategoryScores[$catId] =
+                ($baseCategoryScores[$catId] ?? 0)
+                +
+                ($total * $implicitWeight);
+        }
+
+
+        // ====================================================================
+        // C. SPILLOVER
+        // ====================================================================
+
+        $finalCategoryScores =
+            $baseCategoryScores;
+
+
+        foreach (
+            $baseCategoryScores
+            as $catId => $score
+        ) {
+
+            if ($score <= 0) {
+                continue;
+            }
+
+
+            $kelompokId =
+                $kategoriToKelompok[$catId] ?? null;
+
+
+            if (
+                $kelompokId &&
+                isset($kelompokGroups[$kelompokId])
+            ) {
+
+                foreach (
+                    $kelompokGroups[$kelompokId]
+                    as $siblingCat
+                ) {
+
+                    $siblingId =
+                        (int)
+                        $siblingCat->id_kategori;
+
+
+                    if (
+                        $siblingId !==
+                        (int) $catId
+                    ) {
+
+                        $finalCategoryScores[$siblingId] =
+                            ($finalCategoryScores[$siblingId] ?? 0)
+                            +
+                            (
+                                $score *
+                                $spilloverRate
+                            );
+                    }
+                }
+            }
+        }
+
+
+        // ====================================================================
+        // D. TOP 3 CATEGORY
+        // ====================================================================
+
+        $topCategoryIds =
+            collect($finalCategoryScores)
+                ->mapWithKeys(
+                    fn ($v, $k) => [
+                        (int) $k =>
+                            (float) $v
+                    ]
+                )
+                ->sortDesc()
+                ->keys()
+                ->take(3)
+                ->map(
+                    fn ($id) =>
+                        (int) $id
+                )
+                ->values()
+                ->all();
+
+
+        // ====================================================================
+        // E. SCORE UMKM
+        // ====================================================================
+
+        $scoredUmkms =
+            $allUmkms->map(
+                function ($umkm)
+                use ($finalCategoryScores) {
+
+                    $categoryId =
+                        (int)
+                        $umkm->id_kategori;
+
+
+                    $score =
+                        (float)
+                        (
+                            $finalCategoryScores[
+                                $categoryId
+                            ] ?? 0
+                        );
+
+
+                    $umkm->setAttribute(
+                        'recommendation_score',
+                        $score
+                    );
+
+
+                    return $umkm;
+                }
+            );
+
+
+        // ====================================================================
+        // F. ALLOCATION
+        // ====================================================================
+
+        $recommendedUmkms =
+            collect();
+
+
+        foreach (
+            $topCategoryIds
+            as $index => $catId
+        ) {
+
+            $limit =
+                $allocationLimits[$index]
+                ?? 0;
+
+
+            if ($limit <= 0) {
+                continue;
+            }
+
+
+            $umkmsInCat =
+                $scoredUmkms
+
+                    ->where(
+                        'id_kategori',
+                        $catId
+                    )
+
+                    ->sortByDesc(
+                        function ($u) {
+
+                            return
+                                $u->rating
+                                    ->avg(
+                                        'nilai_rating'
+                                    )
+                                ??
+                                0;
+                        }
+                    )
+
+                    ->take($limit);
+
+
+            $recommendedUmkms =
+                $recommendedUmkms
+                    ->merge($umkmsInCat);
+        }
+
+
+        // ====================================================================
+        // G. TOP 10
+        // ====================================================================
+
+        $top10 =
+            $recommendedUmkms
+                ->take(10)
+                ->values();
+
+
+        return [
+
+            'top10' =>
+                $top10,
+
+
+            'top10_ids' =>
+                $top10
+                    ->pluck('id_umkm')
+                    ->map(
+                        fn ($id) =>
+                            (int) $id
+                    )
+                    ->values()
+                    ->all(),
+
+
+            'top10_categories' =>
+                $top10
+                    ->pluck('id_kategori')
+                    ->map(
+                        fn ($id) =>
+                            (int) $id
+                    )
+                    ->values()
+                    ->all(),
+
+
+            'top_category_ids' =>
+                $topCategoryIds,
+
+
+            'base_category_scores' =>
+                $baseCategoryScores,
+
+
+            'final_category_scores' =>
+                $finalCategoryScores,
+        ];
+    };
+
+
+    // ========================================================================
+    // 5. FUNCTION METRICS
+    // ========================================================================
+
+    $calculateMetrics =
+        function (
+            $top10Categories,
+            $groundTruthCategories,
+            $totalRelevantItems
+        ) {
+
+
+            $top10Categories =
+                collect($top10Categories)
+                    ->map(
+                        fn ($id) =>
+                            (int) $id
+                    )
+                    ->values();
+
+
+            $groundTruthCategories =
+                collect($groundTruthCategories)
+                    ->map(
+                        fn ($id) =>
+                            (int) $id
+                    )
+                    ->unique()
+                    ->values();
+
+
+            // =================================================================
+            // RELEVANT ITEM
+            // =================================================================
+
+            $relevantCount =
+                $top10Categories
+                    ->filter(
+                        fn ($catId) =>
+                            $groundTruthCategories
+                                ->contains($catId)
+                    )
+                    ->count();
+
+
+            $k =
+                $top10Categories->count();
+
+
+            // =================================================================
+            // PRECISION@10
+            // =================================================================
+
+            $precision =
+                $k > 0
+                    ? $relevantCount / $k
+                    : 0;
+
+
+            // =================================================================
+            // RECALL@10
+            // =================================================================
+
+            $recall =
+                $totalRelevantItems > 0
+                    ? $relevantCount /
+                        $totalRelevantItems
+                    : 0;
+
+
+            // =================================================================
+            // F1@10
+            // =================================================================
+
+            $f1 =
+                (
+                    $precision +
+                    $recall
+                ) > 0
+
+                    ? 2 *
+                        (
+                            $precision *
+                            $recall
+                        )
+                        /
+                        (
+                            $precision +
+                            $recall
+                        )
+
+                    : 0;
+
+
+            // =================================================================
+            // CATEGORY COVERAGE
+            // =================================================================
+
+            $coveredCategories =
+                $groundTruthCategories
+                    ->filter(
+                        fn ($catId) =>
+                            $top10Categories
+                                ->contains($catId)
+                    )
+                    ->count();
+
+
+            $categoryCoverage =
+                $groundTruthCategories->count() > 0
+
+                    ? $coveredCategories /
+                        $groundTruthCategories
+                            ->count()
+
+                    : 0;
+
+
+            // =================================================================
+            // CATEGORY DIVERSITY
+            // =================================================================
+
+            $uniqueCategories =
+                $top10Categories
+                    ->unique()
+                    ->count();
+
+
+            $categoryDiversity =
+                $k > 0
+                    ? $uniqueCategories / $k
+                    : 0;
+
+
+            // =================================================================
+            // ILD@10
+            // =================================================================
+
+            $differentCategoryPairs =
+                0;
+
+            $totalPairs =
+                0;
+
+
+            for (
+                $i = 0;
+                $i < $k;
+                $i++
+            ) {
+
+                for (
+                    $j = $i + 1;
+                    $j < $k;
+                    $j++
+                ) {
+
+                    $totalPairs++;
+
+
+                    if (
+                        $top10Categories[$i]
+                        !==
+                        $top10Categories[$j]
+                    ) {
+
+                        $differentCategoryPairs++;
+                    }
+                }
+            }
+
+
+            $ild =
+                $totalPairs > 0
+
+                    ? $differentCategoryPairs /
+                        $totalPairs
+
+                    : 0;
+
+
+            return [
+
+                'relevant_in_top10' =>
+                    $relevantCount,
+
+                'precision_at_10' =>
+                    $precision,
+
+                'recall_at_10' =>
+                    $recall,
+
+                'f1_at_10' =>
+                    $f1,
+
+                'unique_categories' =>
+                    $uniqueCategories,
+
+                'category_coverage' =>
+                    $categoryCoverage,
+
+                'category_diversity' =>
+                    $categoryDiversity,
+
+                'ild_at_10' =>
+                    $ild,
+            ];
+        };
+
+
+    // ========================================================================
+    // 6. HASIL EVALUASI
+    // ========================================================================
+
+    $results = [];
+
+
+    // ========================================================================
+    // 7. LOOP SESSION
+    // ========================================================================
+
+    foreach (
+        $sessions
+        as $sessionCode => $sessionData
+    ) {
+
+
+        $sessionId =
+            $sessionData['session_id'];
+
+
+        // ====================================================================
+        // AMBIL ACTIVITY BERDASARKAN STRUKTUR DATABASE ANDA
+        // ====================================================================
+        //
+        // Primary key user_activities:
+        //
+        // id_user_activities
+        //
+        // BUKAN "id".
+        //
+        // ====================================================================
+
+        $activities =
+            UserActivity::query()
+
+                ->where(
+                    'interaction_type',
+                    'detail_click'
+                )
+
+                ->where(
+                    'id_session',
+                    $sessionId
+                )
+
+                ->orderBy(
+                    'created_at',
+                    'asc'
+                )
+
+                ->orderBy(
+                    'id_user_activities',
+                    'asc'
+                )
+
+                ->get([
+                    'id_user_activities',
+                    'id_user',
+                    'id_session',
+                    'id_kategori',
+                    'interaction_type',
+                    'created_at',
+                ]);
+
+
+        // ====================================================================
+        // CONVERT ACTIVITY
+        // ====================================================================
+
+        $activityRows =
+            $activities
+                ->map(
+                    function ($activity) {
+
+                        return [
+
+                            'id_user_activities' =>
+                                $activity
+                                    ->id_user_activities,
+
+                            'id_user' =>
+                                $activity
+                                    ->id_user,
+
+                            'id_session' =>
+                                $activity
+                                    ->id_session,
+
+                            'id_kategori' =>
+                                (int)
+                                $activity
+                                    ->id_kategori,
+
+                            'interaction_type' =>
+                                $activity
+                                    ->interaction_type,
+
+                            'created_at' =>
+                                $activity
+                                    ->created_at,
+                        ];
+                    }
+                )
+                ->values();
+
+
+        // ====================================================================
+        // CHECKPOINT A
+        // ====================================================================
+
+        /*
+        |--------------------------------------------------------------------------
+        | A = COLD START
+        |
+        | Hanya explicit preference.
+        |
+        | Tidak menggunakan click.
+        |--------------------------------------------------------------------------
+        */
+
+        $checkpointDefinitions = [
+
+            'A' => [
+
+                'name' =>
+                    'Checkpoint A (Cold-Start)',
+
+                'ground_truth' =>
+                    $sessionData['A'],
+
+                'activities' =>
+                    collect(),
+            ],
+
+
+            // =================================================================
+            // CHECKPOINT B
+            // =================================================================
+
+            /*
+            |--------------------------------------------------------------------------
+            | B = DYNAMIC OVERRIDE
+            |
+            | Menggunakan click pertama pada session sebagai
+            | implicit feedback kategori baru.
+            |--------------------------------------------------------------------------
+            */
+
+            'B' => [
+
+                'name' =>
+                    'Checkpoint B (Dynamic Override)',
+
+                'ground_truth' =>
+                    $sessionData['B'],
+
+                'activities' =>
+                    $activityRows->take(1),
+            ],
+
+
+            // =================================================================
+            // CHECKPOINT C
+            // =================================================================
+
+            /*
+            |--------------------------------------------------------------------------
+            | C = MULTI-CATEGORY UPDATE
+            |
+            | Menggunakan accumulated interaction.
+            |--------------------------------------------------------------------------
+            */
+
+            'C' => [
+
+                'name' =>
+                    'Checkpoint C (Multi-Category Update)',
+
+                'ground_truth' =>
+                    $sessionData['C'],
+
+                'activities' =>
+                    $activityRows,
+            ],
+        ];
+
+
+        // ====================================================================
+        // VALIDASI CLICK B
+        // ====================================================================
+
+        $firstActivity =
+            $activityRows->first();
+
+
+        $actualBCategory =
+            $firstActivity['id_kategori']
+            ?? null;
+
+
+        $expectedBCategory =
+            (int)
+            $sessionData['B'][0];
+
+
+        $bCategoryMatches =
+            $actualBCategory ===
+            $expectedBCategory;
+
+
+        // ====================================================================
+        // LOOP CHECKPOINT
+        // ====================================================================
+
+        foreach (
+            $checkpointDefinitions
+            as $checkpointCode =>
+            $checkpoint
+        ) {
+
+
+            // =================================================================
+            // HITUNG IMPLICIT COUNT
+            // =================================================================
+
+            $implicitCounts =
+                $checkpoint['activities']
+                    ->groupBy('id_kategori')
+                    ->map(
+                        fn ($rows) =>
+                            $rows->count()
+                    );
+
+
+            // =================================================================
+            // BENTUK IMPLICIT ROW
+            // =================================================================
+
+            $implicitRows =
+                $implicitCounts
+                    ->map(
+                        function (
+                            $total,
+                            $catId
+                        ) {
+
+                            return [
+
+                                'id_kategori' =>
+                                    (int) $catId,
+
+                                'total' =>
+                                    (int) $total,
+                            ];
+                        }
+                    )
+                    ->values();
+
+
+            // =================================================================
+            // GROUND TRUTH
+            // =================================================================
+
+            $groundTruthCategories =
+                collect(
+                    $checkpoint['ground_truth']
+                )
+                    ->map(
+                        fn ($id) =>
+                            (int) $id
+                    )
+                    ->unique()
+                    ->values()
+                    ->all();
+
+
+            // =================================================================
+            // TOTAL ITEM GT DI DATABASE
+            // =================================================================
+
+            $totalRelevantItems =
+                $allUmkms
+                    ->whereIn(
+                        'id_kategori',
+                        $groundTruthCategories
+                    )
+                    ->count();
+
+
+            // =================================================================
+            // LOOP 9 CONFIGURATION
+            // =================================================================
+
+            foreach (
+                $configurations
+                as $configCode =>
+                $config
+            ) {
+
+
+                // =============================================================
+                // RUN CBF
+                // =============================================================
+
+                $cbf =
+                    $runCbf(
+
+                        $sessionData['A'],
+
+                        $implicitRows,
+
+                        $config[
+                            'implicit_weight'
+                        ],
+
+                        $config[
+                            'spillover_rate'
+                        ],
+
+                        $config[
+                            'allocation'
+                        ]
+                    );
+
+
+                // =============================================================
+                // CALCULATE METRICS
+                // =============================================================
+
+                $metrics =
+                    $calculateMetrics(
+
+                        $cbf[
+                            'top10_categories'
+                        ],
+
+                        $groundTruthCategories,
+
+                        $totalRelevantItems
+                    );
+
+
+                // =============================================================
+                // CHECKPOINT B:
+                // OVERRIDE SUCCESS
+                // =============================================================
+
+                $overrideSuccess =
+                    null;
+
+
+                if (
+                    $checkpointCode === 'B'
+                ) {
+
+                    $top1Category =
+                        $cbf[
+                            'top10_categories'
+                        ][0]
+                        ?? null;
+
+
+                    $overrideSuccess =
+                        (
+                            $top1Category
+                            ===
+                            $expectedBCategory
+                        )
+                            ? 1
+                            : 0;
+                }
+
+
+                // =============================================================
+                // CHECKPOINT C:
+                // NEW CATEGORY ADOPTION
+                // =============================================================
+
+                $newCategoryAdoption =
+                    null;
+
+
+                if (
+                    $checkpointCode === 'C'
+                ) {
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Kategori C yang bukan explicit A
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $explicitCategories =
+                        collect(
+                            $sessionData['A']
+                        )
+                            ->map(
+                                fn ($id) =>
+                                    (int) $id
+                            );
+
+
+                    $newCategories =
+                        collect(
+                            $sessionData['C']
+                        )
+                            ->map(
+                                fn ($id) =>
+                                    (int) $id
+                            )
+                            ->filter(
+                                fn ($id) =>
+                                    !$explicitCategories
+                                        ->contains($id)
+                            )
+                            ->values();
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Berapa kategori baru masuk Top-3?
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $adoptedCount =
+                        $newCategories
+                            ->filter(
+                                fn ($id) =>
+                                    in_array(
+                                        $id,
+                                        $cbf[
+                                            'top_category_ids'
+                                        ],
+                                        true
+                                    )
+                            )
+                            ->count();
+
+
+                    $newCategoryAdoption =
+                        $newCategories->count() > 0
+
+                            ? $adoptedCount /
+                                $newCategories->count()
+
+                            : 0;
+                }
+
+
+                // =============================================================
+                // SIMPAN RESULT
+                // =============================================================
+
+                $results[] = [
+
+                    'session' =>
+                        $sessionCode,
+
+                    'session_id' =>
+                        $sessionId,
+
+                    'checkpoint' =>
+                        $checkpointCode,
+
+                    'checkpoint_name' =>
+                        $checkpoint['name'],
+
+                    'configuration' =>
+                        $configCode,
+
+                    'parameter_tested' =>
+                        $config['parameter'],
+
+                    'configuration_label' =>
+                        $config['label'],
+
+
+                    // ---------------------------------------------------------
+                    // PARAMETER
+                    // ---------------------------------------------------------
+
+                    'implicit_weight' =>
+                        $config[
+                            'implicit_weight'
+                        ],
+
+                    'spillover_rate' =>
+                        $config[
+                            'spillover_rate'
+                        ],
+
+                    'allocation' =>
+                        implode(
+                            '-',
+                            $config[
+                                'allocation'
+                            ]
+                        ),
+
+
+                    // ---------------------------------------------------------
+                    // INPUT
+                    // ---------------------------------------------------------
+
+                    'explicit_categories' =>
+                        $sessionData['A'],
+
+                    'implicit_counts' =>
+                        $implicitRows
+                            ->mapWithKeys(
+                                fn ($row) =>
+                                    [
+                                        $row[
+                                            'id_kategori'
+                                        ] =>
+                                        $row[
+                                            'total'
+                                        ]
+                                    ]
+                            )
+                            ->all(),
+
+
+                    // ---------------------------------------------------------
+                    // GROUND TRUTH
+                    // ---------------------------------------------------------
+
+                    'ground_truth' =>
+                        $groundTruthCategories,
+
+
+                    // ---------------------------------------------------------
+                    // RECOMMENDATION
+                    // ---------------------------------------------------------
+
+                    'top_3_categories' =>
+                        $cbf[
+                            'top_category_ids'
+                        ],
+
+                    'top_10_categories' =>
+                        $cbf[
+                            'top10_categories'
+                        ],
+
+                    'top_10_umkm_ids' =>
+                        $cbf[
+                            'top10_ids'
+                        ],
+
+
+                    // ---------------------------------------------------------
+                    // DATABASE GT
+                    // ---------------------------------------------------------
+
+                    'total_relevant_items' =>
+                        $totalRelevantItems,
+
+
+                    // ---------------------------------------------------------
+                    // METRICS
+                    // ---------------------------------------------------------
+
+                    'relevant_in_top10' =>
+                        $metrics[
+                            'relevant_in_top10'
+                        ],
+
+                    'precision_at_10' =>
+                        round(
+                            $metrics[
+                                'precision_at_10'
+                            ] * 100,
+                            2
+                        ),
+
+                    'recall_at_10' =>
+                        round(
+                            $metrics[
+                                'recall_at_10'
+                            ] * 100,
+                            2
+                        ),
+
+                    'f1_at_10' =>
+                        round(
+                            $metrics[
+                                'f1_at_10'
+                            ] * 100,
+                            2
+                        ),
+
+                    'category_coverage' =>
+                        round(
+                            $metrics[
+                                'category_coverage'
+                            ] * 100,
+                            2
+                        ),
+
+                    'category_diversity' =>
+                        round(
+                            $metrics[
+                                'category_diversity'
+                            ] * 100,
+                            2
+                        ),
+
+                    'ild_at_10' =>
+                        round(
+                            $metrics[
+                                'ild_at_10'
+                            ] * 100,
+                            2
+                        ),
+
+
+                    // ---------------------------------------------------------
+                    // STATE TRANSITION METRICS
+                    // ---------------------------------------------------------
+
+                    'override_success' =>
+                        $overrideSuccess,
+
+                    'new_category_adoption' =>
+                        $newCategoryAdoption === null
+
+                            ? null
+
+                            : round(
+                                $newCategoryAdoption
+                                * 100,
+                                2
+                            ),
+
+
+                    // ---------------------------------------------------------
+                    // VALIDASI DATABASE
+                    // ---------------------------------------------------------
+
+                    'expected_B_category' =>
+                        $expectedBCategory,
+
+                    'actual_B_category' =>
+                        $actualBCategory,
+
+                    'B_category_matches_data' =>
+                        $bCategoryMatches,
+                ];
+            }
+        }
+    }
+
+
+    // ========================================================================
+    // 8. SUMMARY PER CONFIGURATION
+    // ========================================================================
+
+    $configurationSummary =
+        collect($results)
+            ->groupBy('configuration')
+            ->map(
+                function (
+                    $rows,
+                    $configurationCode
+                ) {
+
+
+                    $average =
+                        function ($column)
+                        use ($rows) {
+
+                            $values =
+                                $rows
+                                    ->pluck($column)
+                                    ->filter(
+                                        fn ($v) =>
+                                            $v !== null
+                                    );
+
+
+                            return
+                                $values->count() > 0
+
+                                    ? round(
+                                        $values->avg(),
+                                        2
+                                    )
+
+                                    : null;
+                        };
+
+
+                    return [
+
+                        'configuration' =>
+                            $configurationCode,
+
+                        'parameter_tested' =>
+                            $rows
+                                ->first()
+                                [
+                                    'parameter_tested'
+                                ],
+
+                        'label' =>
+                            $rows
+                                ->first()
+                                [
+                                    'configuration_label'
+                                ],
+
+                        'implicit_weight' =>
+                            $rows
+                                ->first()
+                                [
+                                    'implicit_weight'
+                                ],
+
+                        'spillover_rate' =>
+                            $rows
+                                ->first()
+                                [
+                                    'spillover_rate'
+                                ],
+
+                        'allocation' =>
+                            $rows
+                                ->first()
+                                [
+                                    'allocation'
+                                ],
+
+                        'n_checkpoint' =>
+                            $rows->count(),
+
+                        'avg_precision_at_10' =>
+                            $average(
+                                'precision_at_10'
+                            ),
+
+                        'avg_recall_at_10' =>
+                            $average(
+                                'recall_at_10'
+                            ),
+
+                        'avg_f1_at_10' =>
+                            $average(
+                                'f1_at_10'
+                            ),
+
+                        'avg_category_coverage' =>
+                            $average(
+                                'category_coverage'
+                            ),
+
+                        'avg_category_diversity' =>
+                            $average(
+                                'category_diversity'
+                            ),
+
+                        'avg_ild_at_10' =>
+                            $average(
+                                'ild_at_10'
+                            ),
+
+                        'avg_override_success' =>
+                            $average(
+                                'override_success'
+                            ),
+
+                        'avg_new_category_adoption' =>
+                            $average(
+                                'new_category_adoption'
+                            ),
+                    ];
+                }
+            )
+            ->values();
+
+
+    // ========================================================================
+    // 9. SUMMARY PER CHECKPOINT
+    // ========================================================================
+
+    $checkpointSummary =
+        collect($results)
+            ->groupBy('checkpoint')
+            ->map(
+                function (
+                    $rows,
+                    $checkpointCode
+                ) {
+
+
+                    $average =
+                        function ($column)
+                        use ($rows) {
+
+                            $values =
+                                $rows
+                                    ->pluck($column)
+                                    ->filter(
+                                        fn ($v) =>
+                                            $v !== null
+                                    );
+
+
+                            return
+                                $values->count() > 0
+
+                                    ? round(
+                                        $values->avg(),
+                                        2
+                                    )
+
+                                    : null;
+                        };
+
+
+                    return [
+
+                        'checkpoint' =>
+                            $checkpointCode,
+
+                        'checkpoint_name' =>
+                            $rows
+                                ->first()
+                                [
+                                    'checkpoint_name'
+                                ],
+
+                        'n_session' =>
+                            $rows
+                                ->pluck('session')
+                                ->unique()
+                                ->count(),
+
+                        'n_configuration' =>
+                            $rows
+                                ->pluck(
+                                    'configuration'
+                                )
+                                ->unique()
+                                ->count(),
+
+                        'avg_precision_at_10' =>
+                            $average(
+                                'precision_at_10'
+                            ),
+
+                        'avg_recall_at_10' =>
+                            $average(
+                                'recall_at_10'
+                            ),
+
+                        'avg_f1_at_10' =>
+                            $average(
+                                'f1_at_10'
+                            ),
+
+                        'avg_category_coverage' =>
+                            $average(
+                                'category_coverage'
+                            ),
+
+                        'avg_category_diversity' =>
+                            $average(
+                                'category_diversity'
+                            ),
+
+                        'avg_ild_at_10' =>
+                            $average(
+                                'ild_at_10'
+                            ),
+
+                        'avg_override_success' =>
+                            $average(
+                                'override_success'
+                            ),
+
+                        'avg_new_category_adoption' =>
+                            $average(
+                                'new_category_adoption'
+                            ),
+                    ];
+                }
+            )
+            ->values();
+
+
+    // ========================================================================
+    // 10. BEST CONFIGURATION
+    // ========================================================================
+
+    $bestByF1 =
+        $configurationSummary
+            ->sortByDesc(
+                fn ($row) =>
+                    $row[
+                        'avg_f1_at_10'
+                    ] ?? 0
+            )
+            ->first();
+
+
+    $bestByILD =
+        $configurationSummary
+            ->sortByDesc(
+                fn ($row) =>
+                    $row[
+                        'avg_ild_at_10'
+                    ] ?? 0
+            )
+            ->first();
+
+
+    // ========================================================================
+    // 11. VALIDASI CHECKPOINT B
+    // ========================================================================
+
+    $bValidation =
+        collect($results)
+
+            ->where(
+                'checkpoint',
+                'B'
+            )
+
+            ->map(
+                fn ($row) => [
+
+                    'session' =>
+                        $row['session'],
+
+                    'expected_category' =>
+                        $row[
+                            'expected_B_category'
+                        ],
+
+                    'actual_first_click_category' =>
+                        $row[
+                            'actual_B_category'
+                        ],
+
+                    'matches' =>
+                        $row[
+                            'B_category_matches_data'
+                        ],
+                ]
+            )
+
+            ->unique('session')
+
+            ->values();
+
+
+    // ========================================================================
+    // 12. RESPONSE
+    // ========================================================================
+
+    return response()->json([
+
+        'status' =>
+            'CBF SENSITIVITY ANALYSIS',
+
+        'purpose' =>
+            'C2 - Sensitivity analysis of implicit weight, spillover rate, and allocation pattern',
+
+
+        'database_structure_used' => [
+
+            'user_activities_primary_key' =>
+                'id_user_activities',
+
+            'user_activities_session_column' =>
+                'id_session',
+
+            'user_activities_category_column' =>
+                'id_kategori',
+
+            'user_activities_interaction_column' =>
+                'interaction_type',
+
+            'umkm_primary_key' =>
+                'id_umkm',
+
+            'umkm_category_column' =>
+                'id_kategori',
+
+            'rating_value_column' =>
+                'nilai_rating',
+        ],
+
+
+        'dataset' => [
+
+            'session_count' =>
+                count($sessions),
+
+            'checkpoint_per_session' =>
+                3,
+
+            'total_checkpoint' =>
+                count($sessions) * 3,
+
+            'configuration_count' =>
+                count($configurations),
+
+            'total_evaluation_runs' =>
+                count($sessions)
+                * 3
+                * count($configurations),
+        ],
+
+
+        'baseline' => [
+
+            'implicit_weight' =>
+                0.10,
+
+            'spillover_rate' =>
+                0.50,
+
+            'allocation' =>
+                '4-3-3',
+        ],
+
+
+        'configuration_summary' =>
+            $configurationSummary,
+
+
+        'best_configuration_by_f1' =>
+            $bestByF1,
+
+
+        'best_configuration_by_ILD' =>
+            $bestByILD,
+
+
+        'checkpoint_summary' =>
+            $checkpointSummary,
+
+
+        'checkpoint_B_data_validation' =>
+            $bValidation,
+
+
+        'detailed_results' =>
+            $results,
+    ]);
+});
+
+// Route::get('/eval-cbf-live', function () {
+//     // 1. Ambil Data UMKM & Kategori
+//     $allUmkms = Umkm::with('rating')->get();
+//     $kategoriList = Kategori::with('kelompok')->orderBy('nama_kategori')->get();
+//     $kategoriToKelompok = $kategoriList->pluck('id_kelompok', 'id_kategori')->toArray();
+//     $kelompokGroups = $kategoriList->groupBy('id_kelompok');
+
+//     // 2. Ambil Explicit Preferences dari Session / Cookie
+//     $sessionCategories = session('umkm_preferred_categories');
+//     if (empty($sessionCategories) && request()->hasCookie('umkm_preferred_categories')) {
+//         $sessionCategories = json_decode(request()->cookie('umkm_preferred_categories'), true);
+//     }
+//     $preferredCategoryIds = collect($sessionCategories ?? [])
+//         ->map(fn($id) => (int) $id)->filter()->unique()->values()->all();
+
+//     $explicitScores = collect($preferredCategoryIds)
+//         ->mapWithKeys(fn($id) => [(int) $id => 1.0])->all();
+
+//     // 3. Ambil Implicit Preferences dari Database `user_activities`
+//     $userId = Auth::id();
+//     $sessionId = session()->getId();
+
+//     $implicitRows = UserActivity::query()
+//         ->select('id_kategori', DB::raw('COUNT(*) as total'))
+//         ->where('interaction_type', 'detail_click')
+//         ->when($userId, function ($query) use ($userId) {
+//             $query->where('id_user', $userId);
+//         }, function ($query) use ($sessionId) {
+//             $query->where('id_session', $sessionId);
+//         })
+//         ->groupBy('id_kategori')
+//         ->get();
+
+//     // 4. Kalkulasi Skor Dasar (Explicit + Implicit)
+//     $baseCategoryScores = $explicitScores;
+//     foreach ($implicitRows as $row) {
+//         $catId = (int) $row->id_kategori;
+//         $baseCategoryScores[$catId] = ($baseCategoryScores[$catId] ?? 0) + ((int) $row->total * 0.1);
+//     }
+
+//     // 5. Distribusi Skor Kelompok (Spillover Effect 50%)
+//     $finalCategoryScores = $baseCategoryScores;
+//     foreach ($baseCategoryScores as $catId => $score) {
+//         if ($score > 0) {
+//             $kelompokId = $kategoriToKelompok[$catId] ?? null;
+//             if ($kelompokId && isset($kelompokGroups[$kelompokId])) {
+//                 foreach ($kelompokGroups[$kelompokId] as $siblingCat) {
+//                     $siblingId = (int) $siblingCat->id_kategori;
+//                     if ($siblingId !== $catId) {
+//                         $finalCategoryScores[$siblingId] = ($finalCategoryScores[$siblingId] ?? 0) + ($score * 0.5);
+//                     }
+//                 }
+//             }
+//         }
+//     }
+
+//     // 6. Tentukan Top 3 Kategori
+//     $topCategoryIds = collect($finalCategoryScores)
+//         ->mapWithKeys(fn($v, $k) => [(int) $k => (float) $v])
+//         ->sortDesc()->keys()->take(3)->map(fn($id) => (int) $id)->values()->all();
+
+//     // 7. Alokasi Proporsional Pola 4-3-3 (Top-10 Rekomendasi Asli)
+//     $scoredUmkms = $allUmkms->map(function ($umkm) use ($finalCategoryScores) {
+//         $score = (float) ($finalCategoryScores[(int) $umkm->id_kategori] ?? 0);
+//         $umkm->setAttribute('recommendation_score', $score);
+//         return $umkm;
+//     });
+
+//     $recommendedUmkms = collect();
+//     $allocationLimits = [4, 3, 3];
+
+//     foreach ($topCategoryIds as $index => $catId) {
+//         $limit = $allocationLimits[$index] ?? 3;
+//         $umkmsInCat = $scoredUmkms
+//             ->where('id_kategori', $catId)
+//             ->sortByDesc(fn($u) => $u->rating->avg('nilai_rating') ?? 0)
+//             ->take($limit);
+
+//         $recommendedUmkms = $recommendedUmkms->merge($umkmsInCat);
+//     }
+
+// // 8. Penentuan Dynamic Ground Truth & Perhitungan Metrik Akurasi
+//     $totalKategoriDiklik = $implicitRows->count();
+
+//     if ($totalKategoriDiklik == 0) {
+//         // CHECKPOINT A: Cold-Start (Ground Truth = 3 Kategori Popup)
+//         $groundTruthCategories = $preferredCategoryIds;
+//         $fasePengujian = 'CHECKPOINT A (COLD-START)';
+//     } elseif ($totalKategoriDiklik == 1) {
+//         // CHECKPOINT B: Dynamic Override (Ground Truth = 1 Kategori Baru yang Diklik)
+//         // Menguji seberapa besar porsi kategori baru merebut posisi Top-10
+//         $groundTruthCategories = [$topCategoryIds[0]];
+//         $fasePengujian = 'CHECKPOINT B (DYNAMIC OVERRIDE)';
+//     } else {
+//         // CHECKPOINT C: Multi-Category 4-3-3 (Ground Truth = Top 3 Kategori Terpilih)
+//         // Menguji keberhasilan alokasi proporsional Pola 4-3-3
+//         $groundTruthCategories = $topCategoryIds;
+//         $fasePengujian = 'CHECKPOINT C (MULTI-CATEGORY 4-3-3)';
+//     }
+
+//     // Hitung Relevansi di Top-10 (|R ∩ P|)
+//     $relevanCount = 0;
+//     foreach ($recommendedUmkms as $umkm) {
+//         if (in_array((int)$umkm->id_kategori, array_map('intval', $groundTruthCategories))) {
+//             $relevanCount++;
+//         }
+//     }
+
+//     // Hitung Total Populer M di Database (Gabungan dari seluruh ID di Ground Truth)
+//     $totalM = Umkm::whereIn('id_kategori', $groundTruthCategories)->count();
+
+//     $precision = $relevanCount / 10;
+//     $recall = $totalM > 0 ? ($relevanCount / $totalM) : 0;
+//     $f1 = ($precision + $recall) > 0 ? (2 * ($precision * $recall) / ($precision + $recall)) : 0;
+
+//     return response()->json([
+//         'status_pengujian' => 'LIVE EVALUATION (MATCHING PRODUCTION CONTROLLER)',
+//         'session_id_aktif' => $sessionId,
+//         'user_id' => $userId,
+//         'fase_pengujian' => $fasePengujian,
+//         'pilihan_explicit_popup' => $preferredCategoryIds,
+//         'log_klik_implicit_db' => $implicitRows->pluck('total', 'id_kategori'),
+//         'skor_akhir_kategori' => $finalCategoryScores,
+//         'top_3_kategori_terpilih' => $topCategoryIds,
+//         'hasil_evaluasi_metrik' => [
+//             'ground_truth_kategori' => $groundTruthCategories,
+//             'jumlah_relevan_di_top10' => $relevanCount,
+//             'total_m_di_db' => $totalM,
+//             'precision_10' => round($precision * 100, 2) . '%',
+//             'recall_10' => round($recall * 100, 2) . '%',
+//             'f1_score_10' => round($f1 * 100, 2) . '%'
+//         ]
+//     ]);
+// });

@@ -1,0 +1,8 @@
+# Binary hasil build, jangan masuk repo (deploy Azure kirim seluruh isi repo).
+*.exe
+/bin/
+
+# Output sementara uji paritas (golden fixture tetap di-commit).
+parity/php_out.json
+parity/go_out.json
+bench_*.txt

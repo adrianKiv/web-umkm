@@ -1,0 +1,158 @@
+[
+    {
+        "nama": "session-top-1",
+        "explicit": [],
+        "session_id": "0F7ff3VI6LrXumO2EpC3vmoCwJxJVPEriAND6QYn",
+        "user_id": 0
+    },
+    {
+        "nama": "session-top-2",
+        "explicit": [],
+        "session_id": "FkRQ6Cw7Vhx6YvfbTn4TRHojaKAtFSfiz4akzhId",
+        "user_id": 0
+    },
+    {
+        "nama": "session-top-3",
+        "explicit": [],
+        "session_id": "zYHfpqxlxFUjf6n5I1m8Ls7AWGxYQS7A8NMC5gz9",
+        "user_id": 0
+    },
+    {
+        "nama": "session-top-4",
+        "explicit": [],
+        "session_id": "INpNQq8GjgDesQ3yoQEBsUp5wBXEObAy7TPj1hkM",
+        "user_id": 0
+    },
+    {
+        "nama": "session-top-5",
+        "explicit": [],
+        "session_id": "FdSOW7vDgY7xHCzaC2awq0JPSIj2yK6wszToVB9x",
+        "user_id": 0
+    },
+    {
+        "nama": "session-top-6",
+        "explicit": [],
+        "session_id": "hcO3x86ZVCqxpsJh4GSKOzc4YqZysW5nDIabh2gD",
+        "user_id": 0
+    },
+    {
+        "nama": "session-top-7",
+        "explicit": [],
+        "session_id": "9OYJUdtUq5dBkLvV4NQ0vjk5kvBCjH85GAy1jONp",
+        "user_id": 0
+    },
+    {
+        "nama": "session-top-8",
+        "explicit": [],
+        "session_id": "5OFnTONuiWkyGtR49ABBuL9rVKu7eJedQC3A4ED9",
+        "user_id": 0
+    },
+    {
+        "nama": "session-top-9",
+        "explicit": [],
+        "session_id": "wJhYswS76MY1wNf8QWynqVZLZSw6ZxNu7FUCyrhX",
+        "user_id": 0
+    },
+    {
+        "nama": "session-top-10",
+        "explicit": [],
+        "session_id": "HHxiQDLN7b6dZZIaYVNGY8sqSledhsjkRChSjgbZ",
+        "user_id": 0
+    },
+    {
+        "nama": "session-explicit-1",
+        "explicit": [],
+        "session_id": "0F7ff3VI6LrXumO2EpC3vmoCwJxJVPEriAND6QYn",
+        "user_id": 0
+    },
+    {
+        "nama": "session-explicit-2",
+        "explicit": [
+            2
+        ],
+        "session_id": "FkRQ6Cw7Vhx6YvfbTn4TRHojaKAtFSfiz4akzhId",
+        "user_id": 0
+    },
+    {
+        "nama": "session-explicit-3",
+        "explicit": [
+            1,
+            7
+        ],
+        "session_id": "zYHfpqxlxFUjf6n5I1m8Ls7AWGxYQS7A8NMC5gz9",
+        "user_id": 0
+    },
+    {
+        "nama": "session-explicit-4",
+        "explicit": [
+            10
+        ],
+        "session_id": "INpNQq8GjgDesQ3yoQEBsUp5wBXEObAy7TPj1hkM",
+        "user_id": 0
+    },
+    {
+        "nama": "session-explicit-5",
+        "explicit": [
+            3,
+            5
+        ],
+        "session_id": "FdSOW7vDgY7xHCzaC2awq0JPSIj2yK6wszToVB9x",
+        "user_id": 0
+    },
+    {
+        "nama": "eksplisit-satu",
+        "explicit": [
+            1
+        ],
+        "session_id": "sesi-tidak-ada",
+        "user_id": 0
+    },
+    {
+        "nama": "eksplisit-dua-kelompok",
+        "explicit": [
+            1,
+            7
+        ],
+        "session_id": "sesi-tidak-ada",
+        "user_id": 0
+    },
+    {
+        "nama": "eksplisit-tiga",
+        "explicit": [
+            2,
+            6,
+            10
+        ],
+        "session_id": "sesi-tidak-ada",
+        "user_id": 0
+    },
+    {
+        "nama": "eksplisit-semua",
+        "explicit": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "session_id": "sesi-tidak-ada",
+        "user_id": 0
+    },
+    {
+        "nama": "eksplisit-kosong",
+        "explicit": [],
+        "session_id": "sesi-tidak-ada",
+        "user_id": 0
+    },
+    {
+        "nama": "user-login",
+        "explicit": [],
+        "session_id": "",
+        "user_id": 4
+    }
+]

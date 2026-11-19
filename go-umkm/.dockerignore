@@ -1,0 +1,11 @@
+# Konteks build: hanya yang dibutuhkan kompilasi.
+bin/
+*.exe
+bench_*.txt
+parity/php_out.json
+parity/go_out.json
+parity/*.php
+.env
+.env.*
+Dockerfile
+.dockerignore
